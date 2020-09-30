@@ -1,0 +1,96 @@
+<!-- ============================================================== -->
+<!-- Devices - Income - Sales -->
+<!-- ============================================================== -->
+<div class="row m-t-30">
+    <!-- col -->
+    <div class="col-sm-12 col-lg-4">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Device Variations</h4>
+                <div class="m-t-20">
+                    <apx-chart [series]="DeviceSalesChartOptions.series" [chart]="DeviceSalesChartOptions.chart"
+                        [dataLabels]="DeviceSalesChartOptions.dataLabels" [legend]="DeviceSalesChartOptions.legends"
+                        [colors]="DeviceSalesChartOptions.colors" [stroke]="DeviceSalesChartOptions.stroke"
+                        [labels]="DeviceSalesChartOptions.labels" [tooltip]="DeviceSalesChartOptions.tooltip"
+                        [plotOptions]="DeviceSalesChartOptions.plotOptions"></apx-chart>
+                </div>
+                <ul class="list-inline text-center mt-3">
+                    <li class="list-inline-item">
+                        <i class="fa fa-circle text-info"></i> Mobiles</li>
+                    <li class="list-inline-item">
+                        <i class="fa fa-circle text-cyan"></i> Desktops</li>
+                    <li class="list-inline-item">
+                        <i class="fa fa-circle text-orange"></i> Tablets</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- col -->
+    <div class="col-sm-12 col-lg-4">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Net Income</h4>
+                <div class="m-t-30 d-flex flex-column">
+                    <apx-chart [series]="NetIncomeChartOptions.series" [chart]="NetIncomeChartOptions.chart"
+                        [xaxis]="NetIncomeChartOptions.xaxis" [yaxis]="NetIncomeChartOptions.yaxis"
+                        [grid]="NetIncomeChartOptions.grid" [stroke]="NetIncomeChartOptions.stroke"
+                        [tooltip]="NetIncomeChartOptions.tooltip" [dataLabels]="NetIncomeChartOptions.dataLabels"
+                        [legend]="NetIncomeChartOptions.legend" [colors]="NetIncomeChartOptions.colors"
+                        [markers]="NetIncomeChartOptions.markers" [fill]="NetIncomeChartOptions.fill">
+                    </apx-chart>
+                </div>
+                <ul class="list-inline text-center mt-2">
+                    <li class="list-inline-item">
+                        <i class="fa fa-circle text-info"></i> Net Income</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- col -->
+    <div class="col-sm-12 col-lg-4">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Sales Performance</h4>
+                <div class="row mt-3">
+                    <div class="col-6 m-t-40">
+                        <h2 class="m-b-5">$4316</h2>
+                        <span>(150-165 sales)</span>
+                    </div>
+                    <div class="col-6">
+                        <div class="ml-auto">
+                            <apx-chart [series]="SalesperformanceChartOptions.series"
+                                [chart]="SalesperformanceChartOptions.chart"
+                                [dataLabels]="SalesperformanceChartOptions.dataLabels"
+                                [legend]="SalesperformanceChartOptions.legends"
+                                [colors]="SalesperformanceChartOptions.colors"
+                                [stroke]="SalesperformanceChartOptions.stroke"
+                                [labels]="SalesperformanceChartOptions.labels"
+                                [tooltip]="SalesperformanceChartOptions.tooltip"
+                                [plotOptions]="SalesperformanceChartOptions.plotOptions"></apx-chart>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Monthly Sales</h4>
+                <div class="row mt-3 pt-2">
+                    <div class="col-6 m-t-40">
+                        <h2 class="m-b-5">$3528</h2>
+                        <span>(150-165 sales)</span>
+                    </div>
+                    <div class="col-6">
+                        <div style="height: 70px">
+                            <apx-chart [series]="MonthlysalesChartOptions.series"
+                                [chart]="MonthlysalesChartOptions.chart"
+                                [plotOptions]="MonthlysalesChartOptions.plotOptions"
+                                [labels]="MonthlysalesChartOptions.labels" [fill]="MonthlysalesChartOptions.fill">
+                            </apx-chart>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

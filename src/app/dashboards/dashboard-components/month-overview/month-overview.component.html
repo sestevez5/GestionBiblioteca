@@ -1,0 +1,22 @@
+<!-- ============================================================== -->
+<!-- Overview of the month -->
+<!-- ============================================================== -->
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Overview of the Month</h4>
+                <h5 class="card-subtitle">Users registered this month</h5>
+                <div class="m-t-20 d-flex flex-column">
+                    <apx-chart [series]="overviewChartOptions.series" [chart]="overviewChartOptions.chart"
+                        [xaxis]="overviewChartOptions.xaxis" [yaxis]="overviewChartOptions.yaxis"
+                        [grid]="overviewChartOptions.grid" [stroke]="overviewChartOptions.stroke"
+                        [tooltip]="overviewChartOptions.tooltip" [dataLabels]="overviewChartOptions.dataLabels"
+                        [legend]="overviewChartOptions.legend" [colors]="overviewChartOptions.colors"
+                        [markers]="overviewChartOptions.markers">
+                    </apx-chart>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

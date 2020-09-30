@@ -1,0 +1,12 @@
+.countries {
+  height: 300px;
+}
+
+.country-list {
+  height: 250px;
+  position: relative;
+}
+
+::ng-deep #vector-map {
+  height: 440px;
+}

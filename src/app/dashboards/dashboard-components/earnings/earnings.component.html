@@ -1,0 +1,25 @@
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">Earnings</h4>
+        <h5 class="card-subtitle">Total earnings of the month</h5>
+        <h2 class="text-info font-bold m-b-5">$43,567.53</h2>
+        <span class="font-bold text-muted">6.5% ($829.35)
+            <i class="fas fa-arrow-up text-info font-bold"></i>
+        </span>
+        <div>
+            <div class="text-center d-flex flex-column">
+                <apx-chart [series]="earning1ChartOptions.series" [chart]="earning1ChartOptions.chart"
+                    [xaxis]="earning1ChartOptions.xaxis" [yaxis]="earning1ChartOptions.yaxis"
+                    [grid]="earning1ChartOptions.grid" [stroke]="earning1ChartOptions.stroke"
+                    [tooltip]="earning1ChartOptions.tooltip" [dataLabels]="earning1ChartOptions.dataLabels"
+                    [legend]="earning1ChartOptions.legend" [colors]="earning1ChartOptions.colors"
+                    [markers]="earning1ChartOptions.markers" [fill]="earning1ChartOptions.fill">
+                </apx-chart>
+            </div>
+        </div>
+        <hr>
+        <span class="text-muted">Last Month Earnings</span>
+        <h3 class="font-bold">$36,826.87</h3>
+        <button class="btn btn-lg btn-info waves-effect waves-light mt-3 m-b-20">Check Full Report</button>
+    </div>
+</div>

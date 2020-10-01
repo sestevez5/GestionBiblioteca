@@ -1,3 +1,4 @@
+import { LoginComponent } from './moduloAuth/components/login/login.component';
 
 import { Routes } from '@angular/router';
 
@@ -9,7 +10,8 @@ export const Approutes: Routes = [
         path: '',
         component: FullComponent,
         children: [
-            { path: '', redirectTo: '/dashboard/classic', pathMatch: 'full' },
+          { path: '', redirectTo: '/login', pathMatch: 'full' },
+          { path: 'login', component:LoginComponent},
             {
                 path: 'dashboard',
                 loadChildren: () => import('./dashboards/dashboard.module').then(m => m.DashboardModule)

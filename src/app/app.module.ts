@@ -1,6 +1,9 @@
-import { AuthModule } from './moduloAuth/auth.module';
 //Módulos del proyecto
-import { } from './moduloAuth/auth.module';
+
+import { AuthModule } from './moduloAuth/auth.module';
+import { reducers, metaReducers } from './reducers';
+
+
 
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -82,9 +85,15 @@ const icons = {
     AgmCoreModule.forRoot({ apiKey: 'AIzaSyDoliAneRffQDyA7Ul9cDk3tLe7vaU4yP8' }),
 
     AuthModule.forRoot(),
-    StoreRouterConnectingModule.forRoot(),
-    StoreModule.forRoot({}, {}),
+
+
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
+
+
+    StoreModule.forRoot(reducers, { metaReducers }),
+
+
+    !environment.production ? StoreDevtoolsModule.instrument() : [],
   ],
   providers: [
     {

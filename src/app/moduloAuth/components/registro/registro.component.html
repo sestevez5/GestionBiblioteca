@@ -1,0 +1,64 @@
+<!-- row -->
+<div class="row">
+  <div class="col-12">
+      <div class="card">
+          <div class="card-body">
+              <h4 class="card-title">Autenticación</h4>
+              <h6 class="card-subtitle"> Registro de nuevo usuario</h6>
+              <form [formGroup] = "form" class="m-t-30">
+                  <div class="form-group">
+                      <label for="exampleInputEmail1">Correo electrónico</label>
+                      <input  type="email"
+                              class="form-control"
+                              id="exampleInputEmail1"
+                              aria-describedby="emailHelp"
+                              placeholder="Introduzca su correo electrónico"
+                              formControlName="email">
+                      <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                  </div>
+                  <div class="form-group">
+                      <label for="exampleInputPassword1">Password</label>
+                      <input  type="password"
+                              class="form-control"
+                              id="exampleInputPassword1"
+                              placeholder="Introduzca su contraseña"
+                              formControlName="password">
+                  </div>
+
+                  <div class="form-group">
+                    <label for="Nombre">Nombre</label>
+                    <input  type="text"
+                            class="form-control"
+                            id="nombre"
+                            placeholder="nombre"
+                            formControlName="nombre">
+                  </div>
+
+                  <div class="form-group">
+                    <label for="primerApellido">Primer apellido</label>
+                    <input  type="text"
+                            class="form-control"
+                            id="primerApellido"
+                            placeholder="Primer apellido"
+                            formControlName="primerApellido">
+                  </div>
+
+                  <div class="form-group">
+                    <label for="primerApellido">Segundo apellido</label>
+                    <input  type="text"
+                            class="form-control"
+                            id="segundoApellido"
+                            placeholder="Segundo apellido"
+                            formControlName="segundoApellido">
+                  </div>
+
+
+
+                  <button type="submit" class="btn btn-primary mr-3" (click)="onAceptar()">Aceptar</button>
+                  <button type="submit" class="btn btn-primary" (click)="onCancelar()">Cancelar</button>
+              </form>
+          </div>
+      </div>
+  </div>
+</div>
+

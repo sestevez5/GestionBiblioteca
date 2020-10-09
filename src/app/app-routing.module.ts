@@ -1,3 +1,4 @@
+import { RegistroComponent } from './moduloAuth/components/registro/registro.component';
 import { LoginComponent } from './moduloAuth/components/login/login.component';
 
 import { Routes } from '@angular/router';
@@ -11,7 +12,9 @@ export const Approutes: Routes = [
     component: FullComponent,
     children: [
       {path: '', redirectTo: '/login', pathMatch: "full"},
-      {path: 'login', component: LoginComponent}
+      { path: 'login', component: LoginComponent },
+      { path: 'registro', component: RegistroComponent },
+
     ]
   },
   {

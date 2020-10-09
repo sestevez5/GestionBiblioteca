@@ -1,25 +1,47 @@
+// Módulos angular
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
 
+// Módulos Firebase
+import { AngularFireModule } from "@angular/fire";
+import { AngularFireAuthModule } from "@angular/fire/auth";
+import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { environment } from '../../environments/environment';
+
+// modulos ngrx
 import { AuthRoutingModule } from './auth-routing.module';
 import { StoreModule } from '@ngrx/store';
-import * as fromAuth from './reducers';
+
+// componentes propios de la aplicación
+import { AuthService } from './auth.service';
+import { AuthReducers } from './store/reducers/index';
 import { LoginComponent } from './components/login/login.component';
-import { AuthService } from './auth.service'
+import { RegistroComponent } from './components/registro/registro.component'
 
 @NgModule({
   declarations: [
-    LoginComponent
+    LoginComponent,
+    RegistroComponent
   ],
   imports: [
     CommonModule,
     AuthRoutingModule,
-    StoreModule.forFeature(fromAuth.authFeatureKey, fromAuth.reducers, { metaReducers: fromAuth.metaReducers })
+    ReactiveFormsModule,
+    StoreModule.forFeature(AuthReducers.authFeatureKey, AuthReducers.authReducer),
+
+    // Módulos relativos a firebase2
+    AngularFireModule.initializeApp(environment.firebase),
+    AngularFireAuthModule,
+    AngularFirestoreModule
+
   ],
-  exports: [LoginComponent]
+  exports: [LoginComponent],
+  providers: [AuthService]
+
 })
 
-  
+
 export class AuthModule {
 
   static forRoot(): ModuleWithProviders<AuthModule> {

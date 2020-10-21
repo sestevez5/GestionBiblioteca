@@ -1,20 +1,26 @@
-import { AuthActions } from '../../store/actions/index';
-import { AppReducers } from '../../../reducers/index';
-import { AuthService } from './../../auth.service';
+import { Usuario } from './../../models/usuario.model';
+
+import { AuthService } from './../../services/auth.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { AppReducers } from '../../../reducers/index';
+import { AuthActions } from '../../store/actions/index';
 import { ActivatedRoute, Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
 
   form: FormGroup;
+
+  usuarioActivoSubscription: Subscription | undefined;
+
 
   constructor(
     private fb: FormBuilder,
@@ -36,19 +42,28 @@ export class LoginComponent implements OnInit {
 
 
 
-  }
 
-  onLogin()
-  {
+  }
+  ngOnDestroy() {
+    if (this.usuarioActivoSubscription) {
+      this.usuarioActivoSubscription.unsubscribe();
+     }
+   }
+
+
+
+  onLogin() {
     const credenciales = this.form.value;
 
-    this.authService.login(credenciales.email, credenciales.password);
-      // .pipe(
-      //   tap( usuario => {
-      //     console.log(usuario);
-      //     // this.store.dispatch( AuthActions.login({ usuarioActivo: }))
-      //   })
-      // )
+    this.store.dispatch(AuthActions.loging({ email: credenciales.email, password: credenciales.password }));
+
+    // this.usuarioActivoSubscription = this.authService.login(credenciales.email, credenciales.password)
+    //     .subscribe(
+    //       (usuario: Usuario) => {
+    //         this.store.dispatch(AuthActions.loging({ usuarioActivo: usuario }));
+    //       }
+    //     );
+
   }
 
   onRegistrarse() {

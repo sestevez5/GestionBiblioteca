@@ -46,6 +46,7 @@ export const Approutes: Routes = [
           }
       ]
   },
+  { path: 'ecom', loadChildren: () => import('./ecommerce/ecom.module').then(m => m.EcomModule) },
 
     {
         path: '**',

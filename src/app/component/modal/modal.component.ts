@@ -50,7 +50,8 @@ export class NgbdModalBasicComponent {
 	}
 
 	openstackmodal(contentstack: string) {
-		this.modalService.open(contentstack, { size: 'lg' });
+    this.modalService.open(contentstack, { size: 'lg' });
+
 	}
 
 

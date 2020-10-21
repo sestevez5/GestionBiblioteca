@@ -1,9 +1,12 @@
 import { Component, AfterViewInit, EventEmitter, Output } from '@angular/core';
-import {
-  NgbModal,
-} from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
+import { AppState } from 'src/app/reducers/app.reducer';
 declare var $: any;
+
+import { Store } from '@ngrx/store';
+import { AuthActions } from '../../../moduloAuth/store/actions/index';
 
 @Component({
   selector: 'app-navigation',
@@ -16,7 +19,9 @@ export class NavigationComponent implements AfterViewInit {
 
   public showSearch = false;
 
-  constructor(private modalService: NgbModal) {}
+  constructor(
+    private modalService: NgbModal,
+    private store: Store<AppState> ) { }
 
   // This is for Notifications
   notifications: Object[] = [
@@ -82,5 +87,14 @@ export class NavigationComponent implements AfterViewInit {
     }
   ];
 
-  ngAfterViewInit() {}
+  ngAfterViewInit() { }
+
+  onLogout() {
+
+
+    this.store.dispatch(AuthActions.logout());
+
+
+
+  }
 }

@@ -1,4 +1,4 @@
-import { Usuario } from './models/usuario.model';
+import { Usuario } from '../models/usuario.model';
 import { Injectable } from '@angular/core';
 
 import * as firebase from 'firebase/app';
@@ -9,6 +9,7 @@ import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/fire
 import { AngularFireAuth } from '@angular/fire/auth';
 import { from, Subject } from 'rxjs';
 import { switchMap, map, tap} from 'rxjs/operators'
+import { getJSON } from 'jquery';
 
 
 
@@ -56,41 +57,35 @@ export class AuthService {
 
   }
 
-  login1(email: string, password: string) {
-
-    console.log(email, password);
-    this.firebaseAuth
-
-      .signInWithEmailAndPassword(email, password)
-      .then(value => {
-        console.log(value);
-      })
-      .catch(err => {
-        console.log('Something went wrong:',err.message);
-      });
-  }
 
   login(email: string, password: string) {
 
-    const usuario$ = new Subject<any>();
-    console.log(email, password);
+    const usuario$ = new Subject<Usuario>();
+
     from(this.firebaseAuth.signInWithEmailAndPassword(email, password))
       .subscribe(
         // ok
         (userFirebase: any) => {
-          console.log("todo ok");
+
           return this.firebaseDB.collection('usuarios')
             .doc(userFirebase.user.uid)
             .valueChanges()
             .subscribe(
-              doc => usuario$.next(doc)
+              (doc) => {
+
+                const usuario: any = {
+                  ...doc as Usuario,
+                  uid: userFirebase.user.uid
+                };
+                delete usuario['password'];
+                usuario$.next(usuario as Usuario);
+              }
             )
         },
 
         // Error
         (error) => {
-          console.log('Ha habido un error')
-          return null;
+          usuario$.error(error);
         }
       ); // Fin subscribe
 

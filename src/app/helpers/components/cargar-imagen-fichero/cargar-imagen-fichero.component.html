@@ -1,0 +1,60 @@
+<div class="container d-flex flex-column" style="height: 600px;">
+
+  <div class="row d-flex justify-content-center">
+    <h3>Arraste la imagen en la siguiente sección</h3>
+  </div>
+
+  <div class="row flex-fill">
+    <!-- Recortador -->
+    <div class="dropzone d-flex flex-column" style="height: 100%;" appDnd (fileDropped)= "onArrastrarFicheros($event)">
+      <div class="row flex-fill justify-content-center">
+      <ng-container
+        *ngIf="this.imagenObtenida; then ConImagen; else SinImagen">
+      </ng-container>
+
+      </div>
+      <h3 *ngIf="this.mensajeError">{{this.mensajeError}}</h3>
+    </div>
+
+  </div>
+
+
+  <div class="row d-flex justify-content-center mt-3">
+    <input type="file" style="visibility: hidden;" #fileDropRef id="fileDropRef" (change) = "onSeleccionFicheros($event)">
+    <h3>o seleccione un archivo</h3>
+  </div>
+
+  <div class="row d-flex justify-content-center">
+
+    <label class="btn btn-outline-secondary waves-effect waves-light" for="fileDropRef">Seleccionar fichero</label>
+  </div>
+
+</div>
+
+
+
+ <!-- Plantilla cuando el recortador NO tiene imágen -->
+  <ng-template #SinImagen>
+
+  <div class="row  d-flex justify-content-center">
+
+    <img *ngIf="!this.imagenOriginal"  src="../../../../assets/images/cargarImagen/ic-upload-file.svg" class="flex-fill">
+
+  </div>
+
+  </ng-template>
+
+
+
+<!-- Plantilla cuando el recortador SI tiene imágen -->
+<ng-template #ConImagen>
+
+  <div class="mb-4 d-flex flex-column align-items-stretch">
+
+    <ng-content>
+
+    </ng-content>
+
+  </div>
+
+</ng-template>

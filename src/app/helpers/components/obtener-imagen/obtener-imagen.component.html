@@ -1,0 +1,30 @@
+<div class="p-2"style="width: 100%">
+  <ngb-tabset >
+    <ngb-tab >
+      <ng-template ngbTabTitle style="color: thistle">
+        <span class="visible-xs"><i class="ti-save"></i></span><span class="ml-2">
+        Obtener imagen desde el sistema de archivos
+      </span>
+      </ng-template>
+      <ng-template ngbTabContent>
+        <div class="p-3">
+        <app-cargar-imagen-fichero (imagenFicheroEvent) = "this.onObtenerImagen($event)" >
+          <app-editor-imagen [imagenOriginal]="this.imagenOriginal" (imagenRecortadaEvent)="this.onImagenProcesada($event)"></app-editor-imagen>
+        </app-cargar-imagen-fichero>
+
+      </div>
+      </ng-template>
+    </ngb-tab>
+    <ngb-tab >
+      <ng-template ngbTabTitle><span class="visible-xs "><i class="ti-video-camera"></i></span> <span class="ml-2">Capturar imagen</span> </ng-template>
+      <ng-template ngbTabContent>
+        <div class="p-3">
+          <app-capturar-imagen-webcam (imagenCamaraEvent) = "this.onObtenerImagen($event)">
+            <app-editor-imagen [imagenOriginal]="this.imagenOriginal" (imagenRecortadaEvent)="this.onImagenProcesada($event)"></app-editor-imagen>
+          </app-capturar-imagen-webcam>
+        </div>
+      </ng-template>
+    </ngb-tab>
+  </ngb-tabset>
+
+</div>

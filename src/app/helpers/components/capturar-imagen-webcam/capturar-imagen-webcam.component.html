@@ -1,0 +1,83 @@
+<div class="container d-flex flex-column" style="height: 600px;">
+
+  <div class="row d-flex justify-content-center">
+    <h3>Arraste la imagen en la siguiente sección</h3>
+  </div>
+
+  <div class="row flex-fill">
+    <!-- Recortador -->
+    <div class="dropzone d-flex flex-column" style="height: 100%;" >
+      <div class="row flex-fill justify-content-center">
+      <ng-container
+        *ngIf="this.imagenCapturada; then SeccionConImagen; else SeccionSinImagen">
+      </ng-container>
+
+      </div>
+
+      <!-- <h3 *ngIf="this.mensajeError">{{this.mensajeError}}</h3> -->
+    </div>
+
+  </div>
+
+  <div class="row d-flex justify-content-center mt-3">
+
+    <label *ngIf="!this.capturandoImagen" class="text-center" (click)="this.onHabilitarProcesoCaptura()">Habilitar cámara web para captura</label>
+    <label *ngIf="this.capturandoImagen" class="text-center" (click)="this.onIniciarCaptura()">Realizar captura</label>
+
+  </div>
+
+</div>
+
+ <!-- Plantilla cuando el recortador NO tiene imágen -->
+ <ng-template #SeccionSinImagen>
+
+   <div class="row  d-flex justify-content-center">
+
+     <div *ngIf = "this.capturandoImagen">
+
+      <webcam
+        [width]="350"
+        (imageCapture)="onCapturadaImagen($event)"
+        [trigger]="this.lanzarCapturaAsObservable" >
+      </webcam>
+
+    </div>
+
+
+      <div  *ngIf =  "!this.capturandoImagen" class="row  d-flex justify-content-center">
+
+        <div style="vertical-align: middle;" >
+        <i class="flex-fill" class="ti-video-camera"></i>
+      </div>
+
+      </div>
+
+
+
+  </div>
+
+</ng-template>
+
+<!-- Plantilla cuando el recortador SI tiene imágen -->
+<ng-template #SeccionConImagen>
+
+  <div class="mb-4 d-flex flex-column align-items-stretch">
+  <!-- Zona en la que se inseta el recortador -->
+    <ng-content>
+
+    </ng-content>
+  </div>
+
+</ng-template>
+
+
+
+
+
+
+
+
+
+
+
+

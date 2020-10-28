@@ -62,7 +62,10 @@
                       <div class="col-12 d-flex justify-content-center align-items-center">
                         <div class="card w-50 ">
                           <div class="el-card-item">
-                            <div class="el-card-avatar el-overlay-1"><img class="p-10" src="../../../../assets/images/nophoto.png" alt="user">
+                            <div class="el-card-avatar el-overlay-1">
+                              <img class="p-10" *ngIf="!this.fotoActual" src="../../../../assets/images/nophoto.png" alt="user">
+                              <img class="p-10" *ngIf="this.fotoActual" [src]="this.fotoActual" alt="user">
+
                               <div class="el-overlay">
                                 <ul class="list-style-none el-info">
                                   <li class="el-item"><a href="javascript:void(0);" class="btn default btn-outline el-link"><i class="icon-link"></i></a></li>
@@ -71,7 +74,7 @@
                             </div>
                             <div class="d-flex align-items-center justify-content-center">
                               <div>
-                                <button class="btn btn-xs btn-outline-primary" (click)="openModal(panelModal)">Subir imagen</button>
+                                <button class="btn btn-rounded btn-block btn-xs btn-outline-secondary" (click)="openModal(panelModal)">Subir imagen</button>
                               </div>
                             </div>
                           </div>
@@ -89,8 +92,8 @@
                 <!-- Sección: botones del formulario -->
                 <div class="row">
                   <div class="col-12 ">
-                    <button type="submit" class="btn btn-primary mr-3" (click)="onAceptar()">Aceptar</button>
-                    <button type="submit" class="btn btn-primary" (click)="onCancelar()" >Cancelar</button>
+                    <button type="submit" class="btn btn-sm btn-secondary mr-3" (click)="onAceptar()">Aceptar</button>
+                    <button type="submit" class="btn btn-sm btn-secondary" (click)="onCancelar()" >Cancelar</button>
                   </div>
 
                 </div>
@@ -102,33 +105,28 @@
 </div>
 
 <!-- Panel de la venta modal -->
-<ng-template #panelModal let-modal >
+<ng-template #panelModal let-modal>
 
+  <!-- Cabecera -->
   <div class="modal-header">
     <h4 class="modal-title">Subir foto</h4>
     <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
+
+  <!-- Cuerpo -->
   <div class="modal-body">
-
-   <div class="input-group mb-3">
-      <div class="custom-file">
-        <input type="file" class="custom-file-input" id="inputFile" accept=".jpg,.png,.jpeg,.gif">
-        <label class="custom-file-label" for="inputFile">Choose file</label>
-      </div>
-  </div> 
-
-   <div style="height: 400px">
-      <app-cargar-imagen></app-cargar-imagen>
+  <div >
+    <app-obtener-imagen (imagenProcesadaEvent)="onImagen($event)" ></app-obtener-imagen>
    </div>
-  
- 
-
-
-
   </div>
-  <div class="modal-footer"><button type="button" class="btn btn-inverse" (click)="modal.dismiss('Cross click')">Cerrar</button></div>
+
+  <!-- Pie -->
+  <div class="modal-footer">
+    <button type="button" class="btn btn-sm btn-secondary mr-3" (click)="modal.dismiss('Cross click')" >Aceptar</button>
+    <button type="button" class="btn btn-sm btn-secondary" (click)="modal.dismiss('Cross click')">Cancelar</button>
+  </div>
 </ng-template>
 
 

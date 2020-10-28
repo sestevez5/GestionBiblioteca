@@ -1,0 +1,15 @@
+<div class="mb-4 d-flex flex-column align-items-stretch">
+  <image-cropper
+  [imageBase64]="this.imagenOriginal"
+  [maintainAspectRatio]="true"
+  [aspectRatio]="1 / 1"
+  format="png"
+  (imageCropped)="onImagenRecortada($event)"
+  (imageLoaded)="this.onImagenCargada()"
+  (cropperReady)="this.onCortadorListo()"
+  (loadImageFailed)="this.onCargaErronea()"
+></image-cropper>
+
+<div id="imagenRecortada" class="d-flex justify-content-center mb-4">
+  <img class="rounded-circle w-25" [src]="this.imagenRecortada" />
+</div>

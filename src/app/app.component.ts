@@ -6,6 +6,11 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+
+  imagen='';
   title = 'app';
 
+  onImagen(imagen:string) {
+    this.imagen = imagen;
+  }
 }

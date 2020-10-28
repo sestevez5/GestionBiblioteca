@@ -13,10 +13,19 @@ import { Store } from '@ngrx/store';
   templateUrl: './registro.component.html',
   styleUrls: ['./registro.component.css']
 })
-export class RegistroComponent implements OnInit {
+export class RegistroComponent  {
 
   closeResult = '';
   form: FormGroup;
+  fotoActual = '';
+  fotoPrevia = ''
+  capturandoImagen = false;
+
+
+  onImagen(imagen: string)
+  {
+    this.fotoPrevia = imagen;
+  }
 
   constructor(
     private fb: FormBuilder,
@@ -36,12 +45,6 @@ export class RegistroComponent implements OnInit {
 
    }
 
-  ngOnInit(): void {
-
-
-
-  }
-
   onAceptar() {
 
     const usuario: Usuario = this.form.value;
@@ -57,8 +60,16 @@ export class RegistroComponent implements OnInit {
 
   }
 
+
+  onAceptarNuevaImagen()
+  {
+    this.capturandoImagen = false;
+    this.fotoActual = this.fotoPrevia;
+  }
+
   openModal(content2: any) {
-    this.modalService.open(content2, { scrollable: true, windowClass: 'dark-modal'  }).result.then((result) => {
+    this.capturandoImagen = true;
+    this.modalService.open(content2, { scrollable: true, windowClass: 'dark-modal', size: 'lg'  }).result.then((result) => {
 			this.closeResult = `Closed with: ${result}`;
 		}, (reason) => {
 			this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
@@ -77,11 +88,7 @@ export class RegistroComponent implements OnInit {
 		}
   }
 
-  onFileDropped(e:any) {
 
-    console.log(e);
-
-  }
 
 }
 

@@ -1,0 +1,7 @@
+image-cropper {
+  height: 200px;
+}
+
+#imagenRecortada img {
+  height: 100px;
+}

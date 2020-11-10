@@ -1,27 +1,47 @@
-import { Component, AfterViewInit, EventEmitter, Output } from '@angular/core';
+import { Observable } from 'rxjs';
+import { selectAuthState, selectUsuarioActivo } from './../../../moduloAuth/store/selectors/auth.selectors';
+import { Usuario } from './../../../moduloAuth/models/usuario.model';
+import { Component, AfterViewInit, EventEmitter, Output, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 import { AppState } from 'src/app/reducers/app.reducer';
 declare var $: any;
 
-import { Store } from '@ngrx/store';
+import { select, Store } from '@ngrx/store';
 import { AuthActions } from '../../../moduloAuth/store/actions/index';
 
 @Component({
   selector: 'app-navigation',
   templateUrl: './navigation.component.html'
 })
-export class NavigationComponent implements AfterViewInit {
+export class NavigationComponent implements AfterViewInit, OnInit {
   @Output() toggleSidebar = new EventEmitter<void>();
 
   public config: PerfectScrollbarConfigInterface = {};
 
   public showSearch = false;
 
+  usuario: Usuario | undefined;
+
   constructor(
     private modalService: NgbModal,
-    private store: Store<AppState> ) { }
+    private store: Store<AppState>) { }
+
+  ngOnInit(): void {
+
+    this.store
+      .pipe(
+        select(selectUsuarioActivo)
+      ).subscribe(
+        x => this.usuario = x
+      )
+
+
+
+
+  }
+
 
   // This is for Notifications
   notifications: Object[] = [
@@ -90,7 +110,6 @@ export class NavigationComponent implements AfterViewInit {
   ngAfterViewInit() { }
 
   onLogout() {
-
 
     this.store.dispatch(AuthActions.logout());
 

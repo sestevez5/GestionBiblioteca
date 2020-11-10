@@ -1,4 +1,4 @@
-import { HelperModule } from '../helpers/helper.module';
+import { HelperModule } from '../moduloHelpers/helper.module';
 // Módulos angular
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -12,7 +12,6 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { environment } from '../../environments/environment';
 
 // modulos ngrx
-import { AuthRoutingModule } from './auth-routing.module';
 import { StoreModule } from '@ngrx/store';
 
 // componentes propios de la aplicación
@@ -23,6 +22,9 @@ import { RegistroComponent } from './components/registro/registro.component'
 
 import { EffectsModule } from '@ngrx/effects'
 import { AuthEffects } from './store/effects/index';
+
+import { ModalModule } from 'ngb-modal';
+
 
 
 
@@ -35,7 +37,6 @@ import { AuthEffects } from './store/effects/index';
   imports: [
     HelperModule,
     CommonModule,
-    AuthRoutingModule,
     ReactiveFormsModule,
     StoreModule.forFeature(AuthReducers.authFeatureKey, AuthReducers.authReducer),
     EffectsModule.forFeature([AuthEffects.AuthEffects]),
@@ -44,7 +45,9 @@ import { AuthEffects } from './store/effects/index';
     // Módulos relativos a firebase2
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
-    AngularFirestoreModule
+    AngularFirestoreModule,
+
+    ModalModule
 
   ],
   exports: [LoginComponent],

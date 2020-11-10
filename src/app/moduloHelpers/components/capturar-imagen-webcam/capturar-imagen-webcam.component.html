@@ -1,4 +1,4 @@
-<div class="container d-flex flex-column" style="height: 600px;">
+<div class="container d-flex flex-column" >
 
   <div class="row d-flex justify-content-center">
     <h3>Arraste la imagen en la siguiente sección</h3>
@@ -37,6 +37,7 @@
 
       <webcam
         [width]="350"
+        [height]="200"
         (imageCapture)="onCapturadaImagen($event)"
         [trigger]="this.lanzarCapturaAsObservable" >
       </webcam>

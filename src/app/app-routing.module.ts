@@ -11,45 +11,26 @@ export const Approutes: Routes = [
     path: '',
     component: FullComponent,
     children: [
-      {path: '', redirectTo: '/login', pathMatch: "full"},
+      { path: '', redirectTo: '/login', pathMatch: "full"},
       { path: 'login', component: LoginComponent },
       { path: 'registro', component: RegistroComponent },
+      {
+        path: 'libros',
+        loadChildren:
+            () => import('./moduloLibros/libros-routing.module').then(m => m.LibrosRoutingModule)
+      },
+      {
+        path: 'lectores',
+        loadChildren:
+            () => import('./moduloLectores/lectores-routing.module').then(m => m.LectoresRoutingModule)
+      }
 
     ]
   },
-  {
-    path: '',
-    component: FullComponent,
-    children: [
-        {
-          path: 'libros',
-          loadChildren:
-              () => import('./moduloLibros/libros-routing.module').then(m => m.LibrosRoutingModule)
-        },
-        {
-          path: 'lectores',
-          loadChildren:
-              () => import('./moduloLectores/lectores-routing.module').then(m => m.LectoresRoutingModule)
-        }
-    ]
-},
-
 
   {
-      path: '',
-      component: BlankComponent,
-      children: [
-          {
-              path: 'authentication',
-              loadChildren:
-                  () => import('./authentication/authentication.module').then(m => m.AuthenticationModule)
-          }
-      ]
-  },
-  { path: 'ecom', loadChildren: () => import('./ecommerce/ecom.module').then(m => m.EcomModule) },
+    path: '**',
+    redirectTo: 'authentication/404'
+  }
 
-    {
-        path: '**',
-        redirectTo: 'authentication/404'
-    }
 ];

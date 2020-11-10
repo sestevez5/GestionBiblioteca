@@ -1,4 +1,4 @@
-<div class="p-2"style="width: 100%">
+<div class="p-1"style="width: 100%">
   <ngb-tabset >
     <ngb-tab >
       <ng-template ngbTabTitle style="color: thistle">
@@ -7,8 +7,8 @@
       </span>
       </ng-template>
       <ng-template ngbTabContent>
-        <div class="p-3">
-        <app-cargar-imagen-fichero (imagenFicheroEvent) = "this.onObtenerImagen($event)" >
+        <div class="p-1">
+        <app-cargar-imagen-fichero (imagenFicheroEvent) = "this.onObtenerImagen($event)"  [imagenObtenida]="this.imagenObtenida">
           <app-editor-imagen [imagenOriginal]="this.imagenOriginal" (imagenRecortadaEvent)="this.onImagenProcesada($event)"></app-editor-imagen>
         </app-cargar-imagen-fichero>
 
@@ -18,7 +18,7 @@
     <ngb-tab >
       <ng-template ngbTabTitle><span class="visible-xs "><i class="ti-video-camera"></i></span> <span class="ml-2">Capturar imagen</span> </ng-template>
       <ng-template ngbTabContent>
-        <div class="p-3">
+        <div class="p-1">
           <app-capturar-imagen-webcam (imagenCamaraEvent) = "this.onObtenerImagen($event)">
             <app-editor-imagen [imagenOriginal]="this.imagenOriginal" (imagenRecortadaEvent)="this.onImagenProcesada($event)"></app-editor-imagen>
           </app-capturar-imagen-webcam>

@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, Input } from '@angular/core';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 
 @Component({
@@ -12,7 +12,7 @@ export class CargarImagenComponent {
   @Output() imagenFicheroEvent = new EventEmitter<string>();
   // propiedades
 
-  imagenObtenida = false;
+  @Input() imagenObtenida = false;
 
   mensajeError: string | null = null;
 

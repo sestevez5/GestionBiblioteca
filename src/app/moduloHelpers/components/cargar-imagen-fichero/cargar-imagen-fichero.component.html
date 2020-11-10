@@ -1,4 +1,4 @@
-<div class="container d-flex flex-column" style="height: 600px;">
+<div class="container d-flex flex-column" >
 
   <div class="row d-flex justify-content-center">
     <h3>Arraste la imagen en la siguiente sección</h3>
@@ -21,12 +21,10 @@
 
   <div class="row d-flex justify-content-center mt-3">
     <input type="file" style="visibility: hidden;" #fileDropRef id="fileDropRef" (change) = "onSeleccionFicheros($event)">
-    <h3>o seleccione un archivo</h3>
   </div>
 
-  <div class="row d-flex justify-content-center">
-
-    <label class="btn btn-outline-secondary waves-effect waves-light" for="fileDropRef">Seleccionar fichero</label>
+  <div class="m-0 b-0 row d-flex justify-content-center">
+    <label class="m-0 b-0 btn btn-outline-secondary waves-effect waves-light" for="fileDropRef">Seleccionar fichero</label>
   </div>
 
 </div>
@@ -36,11 +34,11 @@
  <!-- Plantilla cuando el recortador NO tiene imágen -->
   <ng-template #SinImagen>
 
-  <div class="row  d-flex justify-content-center">
+    <div class="row  d-flex justify-content-center">
 
-    <img *ngIf="!this.imagenOriginal"  src="../../../../assets/images/cargarImagen/ic-upload-file.svg" class="flex-fill">
+      <img src="../../../../assets/images/cargarImagen/ic-upload-file.svg" class="flex-fill">
 
-  </div>
+    </div>
 
   </ng-template>
 
@@ -49,11 +47,9 @@
 <!-- Plantilla cuando el recortador SI tiene imágen -->
 <ng-template #ConImagen>
 
-  <div class="mb-4 d-flex flex-column align-items-stretch">
+  <div class="mb-1 d-flex flex-column align-items-stretch">
 
-    <ng-content>
-
-    </ng-content>
+    <ng-content></ng-content>
 
   </div>
 

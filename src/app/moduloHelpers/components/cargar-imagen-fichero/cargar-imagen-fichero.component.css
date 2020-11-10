@@ -1,10 +1,10 @@
 .dropzone {
   width: 450px;
-  height: 200px;
-  padding: 2rem;
+  max-width: 450;
+  height: 180px;
+  padding: 1rem;
   text-align: center;
   border: dashed 1px #979797;
-  position: relative;
   margin: 0 auto;
 }
 
@@ -18,17 +18,7 @@
     left: 0;
   }
 
-  label {
-    color: white;
-    width: 183px;
-    height: 30px;
-    border-radius: 21.5px;
-    background-color: #8bccf1;
 
-    padding-top: 5px;
-
-
-  }
 
   h3 {
     font-size: 20px;

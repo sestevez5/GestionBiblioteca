@@ -5,4 +5,6 @@ export interface Usuario
   primerApellido: string;
   segundoApellido: string;
   nombre: string;
+  foto: string;
+  
  }

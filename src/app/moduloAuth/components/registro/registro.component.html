@@ -9,7 +9,7 @@
               <form [formGroup] = "form" class="m-t-30">
                 <div class="row">
                   <!-- Sessión: Datos  -->
-                  <div class="col-9">
+                  <div class="col-10">
                     <div class="form-group">
                       <label for="Nombre">Nombre</label>
                       <input  type="text"
@@ -42,8 +42,12 @@
                               aria-describedby="emailHelp"
                               placeholder="Introduzca su correo electrónico"
                               formControlName="email">
-                      <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-                  </div>
+                      <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
+                    </div>
+
+
+               
+
                   <div class="form-group">
                       <label for="exampleInputPassword1">Password</label>
                       <input  type="password"
@@ -57,14 +61,14 @@
 
 
                   <!-- Sessión: Foto -->
-                  <div class="col-3 d-flex align-items-stretch">
-                    <div class="row el-element-overlay">
-                      <div class="col-12 d-flex justify-content-center align-items-center">
-                        <div class="card w-50 ">
-                          <div class="el-card-item">
-                            <div class="el-card-avatar el-overlay-1">
-                              <img class="p-10" *ngIf="!this.fotoActual" src="../../../../assets/images/nophoto.png" alt="user">
-                              <img class="p-10" *ngIf="this.fotoActual" [src]="this.fotoActual" alt="user">
+                  <div class="col-2 d-flex align-items-stretch">
+                    <div class="row el-element-overlay w-100">
+                      <div class="col-12 d-flex justify-content-center mt-4">
+                        <div class="card">
+                          <div class="el-card-item w-100">
+                            <div style="width: 100%;" class="el-card-avatar el-overlay-1">
+                              <img style="width: 100%;" class="p-10" *ngIf="!this.fotoActual" src="../../../../assets/images/nophoto.png" alt="user">
+                              <img style="width: 100%;" class="p-10" *ngIf="this.fotoActual" [src]="this.fotoActual" alt="user">
 
                               <div class="el-overlay">
                                 <ul class="list-style-none el-info">
@@ -74,7 +78,7 @@
                             </div>
                             <div class="d-flex align-items-center justify-content-center">
                               <div>
-                                <button class="btn btn-rounded btn-block btn-xs btn-outline-secondary" (click)="openModal(panelModal)">Subir imagen</button>
+                                <button class="btn btn-rounded btn-block btn-xs btn-outline-secondary" (click)="openModal()">Subir imagen</button>
                               </div>
                             </div>
                           </div>
@@ -104,30 +108,29 @@
 
 </div>
 
-<!-- Panel de la venta modal -->
-<ng-template #panelModal let-modal>
+
+
+<modal #panelModal (onOpen)="onOpen()" (onClose)="onClose()">
 
   <!-- Cabecera -->
-  <div class="modal-header">
-    <h4 class="modal-title">Subir foto</h4>
-    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
+  <modal-header>
+    <h1>Subir foto</h1>
+  </modal-header>
 
   <!-- Cuerpo -->
-  <div class="modal-body">
-  <div >
-    <app-obtener-imagen (imagenProcesadaEvent)="onImagen($event)" ></app-obtener-imagen>
-   </div>
-  </div>
+  <modal-content>
+    <div >
+      <app-obtener-imagen (imagenProcesadaEvent)="onImagen($event)"></app-obtener-imagen>
+    </div>
+  </modal-content>
 
   <!-- Pie -->
-  <div class="modal-footer">
-    <button type="button" class="btn btn-sm btn-secondary mr-3" (click)="modal.dismiss('Cross click')" >Aceptar</button>
-    <button type="button" class="btn btn-sm btn-secondary" (click)="modal.dismiss('Cross click')">Cancelar</button>
-  </div>
-</ng-template>
+  <modal-footer>
+      <button type="button" class="btn btn-sm btn-secondary mr-3" (click)="onAceptarModal()" >Aceptar</button>
+      <button type="button" class="btn btn-sm btn-secondary" (click)="onCancelarModal()">Cancelar</button>
+  </modal-footer>
+
+</modal>
 
 
 

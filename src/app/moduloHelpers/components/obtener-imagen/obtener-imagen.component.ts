@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
 
 @Component({
   selector: 'app-obtener-imagen',
@@ -11,8 +11,9 @@ export class ObtenerImagenComponent  {
 
   @Output() imagenProcesadaEvent = new EventEmitter<string>();
 
+  @Input() imagenOriginal = '';
 
-  imagenOriginal = '';
+  imagenObtenida = false;
 
   onObtenerImagen(imagen: string) {
     this.imagenOriginal = imagen;
@@ -21,5 +22,7 @@ export class ObtenerImagenComponent  {
   onImagenProcesada(imagenProcesada: string) {
     this.imagenProcesadaEvent.emit(imagenProcesada);
   }
+
+
 
 }

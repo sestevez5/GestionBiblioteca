@@ -27,10 +27,8 @@ export class CapturarImagenWebcamComponent {
   }
 
   onHabilitarProcesoCaptura() {
-    console.log("habilitar proceso captura");
     this.capturandoImagen = true;
     this.imagenCapturada = false;
-
   }
 
   onIniciarCaptura() {

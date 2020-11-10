@@ -34,12 +34,14 @@ import { StoreRouterConnectingModule } from '@ngrx/router-store';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
+import { ModalModule } from 'ngb-modal';
+
 
 // Módulos del proyecto
 import { AuthModule } from './moduloAuth/auth.module';
 import { AppReducers } from './reducers/index';
+import { HelperModule } from './moduloHelpers/helper.module';
 
-import { HelperModule } from './helpers/helper.module'
 
 
 
@@ -67,6 +69,7 @@ const icons = {
     BreadcrumbComponent,
     SidebarComponent,
 
+
   ],
   imports: [
     HelperModule,
@@ -84,6 +87,7 @@ const icons = {
     Ng2SearchPipeModule,
     RouterModule.forRoot(Approutes),
     PerfectScrollbarModule,
+    ModalModule,
 
     NgMultiSelectDropDownModule.forRoot(),
     AgmCoreModule.forRoot({ apiKey: 'AIzaSyDoliAneRffQDyA7Ul9cDk3tLe7vaU4yP8' }),

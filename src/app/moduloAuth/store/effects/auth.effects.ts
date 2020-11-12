@@ -30,7 +30,11 @@ export class AuthEffects {
               .pipe(
                 map(
 
-                  usuario => AuthActions.loginOK({ usuarioActivo: usuario })
+                  usuario => {
+                    
+                    return AuthActions.loginOK({ usuarioActivo: usuario })
+                  }
+
                 ), // Fin map
 
                 catchError(

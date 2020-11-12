@@ -23,8 +23,8 @@ import { NavigationComponent } from './shared/components/header-navigation/navig
 import { SidebarComponent } from './shared/components/sidebar/sidebar.component';
 import { BreadcrumbComponent } from './shared/components/breadcrumb/breadcrumb.component';
 
-import { Approutes } from './app-routing.module';
-import { AppComponent } from './app.component';
+import { Approutes } from './moduloPrincipal/app-routing.module';
+import { AppComponent } from './moduloPrincipal/components/app/app.component';
 import { SpinnerComponent } from './shared/spinner.component';
 
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
@@ -41,6 +41,7 @@ import { ModalModule } from 'ngb-modal';
 import { AuthModule } from './moduloAuth/auth.module';
 import { AppReducers } from './reducers/index';
 import { HelperModule } from './moduloHelpers/helper.module';
+import { IndexComponent } from './moduloPrincipal/components/index/index.component';
 
 
 
@@ -68,6 +69,7 @@ const icons = {
     NavigationComponent,
     BreadcrumbComponent,
     SidebarComponent,
+    IndexComponent,
 
 
   ],

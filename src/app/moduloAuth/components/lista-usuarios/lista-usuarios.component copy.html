@@ -1,0 +1,77 @@
+<button (click)="onPrueba()">prueba</button>
+<p *ngFor="let usuario of this.usuarios">
+  {{usuario.uid}}
+</p>
+
+<p>lista-usuarios works!</p>
+
+
+<div class="row">
+  <div class="col-12">
+    <div class="card card-body">
+      <h4 class="card-title">Employee Table</h4>
+      <h5 class="card-subtitle">Here is the employee list you can add, edit or delet the emplyee</h5>
+      <div class="d-flex mb-3 mt-3">
+        <input  type="text"
+                class="form-control w-25"
+                placeholder="Search by Name or Email"
+                [(ngModel)]='textoFiltro'>
+        <button class="btn btn-primary ml-auto" (click)="openModal(editUserModal, null)">Add User</button>
+      </div>
+      <div class="table-responsive table-bordered">
+        <table class="table table-striped mb-0 no-wrap v-middle">
+          <thead>
+            <tr>
+              <th class="text-center" scope="col">#</th>
+              <th scope="col">Name</th>
+              <th scope="col">Email</th>
+              <th scope="col">Mobile</th>
+              <th scope="col">Date of Joining</th>
+              <th scope="col">Salary</th>
+              <th scope="col">Projects</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of filterArray | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize">
+
+              <td class="text-center">
+                {{user.id}}
+              </td>
+
+              <td>
+                <div class="d-flex align-items-center">
+                  <img class="rounded-circle" [src]='user.imagePath' height=" 50px" width="50px">
+                  <div class="ml-3">
+                    <p class="font-medium mb-0">{{ user.Name }}</p>
+                    <small>{{user.Position}}</small>
+                  </div>
+                </div>
+              </td>
+              <td>{{ user.Email }}</td>
+
+              <td>{{ user.Mobile }}</td>
+              <td>{{ user.DateOfJoining |date :'fullDate' }}</td>
+
+              <td>{{ user.Salary }}</td>
+              <td>{{ user.Projects }}</td>
+              <td>
+                <a href="javascript: void(0);" (click)="openModal(editUserModal, user)" class="link mr-2"
+                  placement="top" ngbTooltip="Edit">
+                  <i-feather name="edit-2" class="feather-sm"></i-feather>
+                </a>
+                <a href="javascript: void(0);" class="link" (click)="deleteUser(user.id)" placement="top"
+                  ngbTooltip="Delete">
+                  <i-feather name="trash-2" class="feather-sm"></i-feather>
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="d-flex justify-content-center mt-5">
+        <!-- <ngb-pagination [(page)]="page" [pageSize]="pageSize" [collectionSize]="userList.length"></ngb-pagination> -->
+      </div>
+    </div>
+  </div>
+</div>

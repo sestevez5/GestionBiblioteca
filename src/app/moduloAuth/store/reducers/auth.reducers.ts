@@ -1,33 +1,50 @@
 import { Usuario } from '../../models/usuario.model';
-import { AuthActions } from '../actions/index'
+import { AuthActions } from '../actions/index';
+import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 
 
-import {
-  ActionReducer,
-  ActionReducerMap,
-  createFeatureSelector,
-  createReducer,
-  createSelector,
-  MetaReducer,
-  on
-} from '@ngrx/store';
-import { empty } from 'rxjs';
-
+import { createReducer, on } from '@ngrx/store';
 
 export const authFeatureKey = 'auth';
 
 
-export interface AuthState {
+// Definición del estado del módulo de Usuarios.
+export interface AuthState extends EntityState<Usuario> {
   usuarioActivo: Usuario | undefined;
-  cargandoUsuario: boolean;
+  cargando: boolean;
+  mensajeDeCarga: string;
   errorCargaUsuario: string | undefined;
 }
 
-export const initialAuthState: AuthState = {
-  usuarioActivo: undefined,
-  cargandoUsuario: false,
-  errorCargaUsuario: undefined
-};
+
+// Función que devuelve el identificador de la primary key
+export function seleccionarUsuarioPorId(usuario: Usuario): string {
+  return usuario.uid;
+}
+
+// Función que devuelve la estrategia de ordenación.
+export function ordenarUsuariosPorNombre(a: Usuario, b: Usuario): number {
+  return a.nombre.localeCompare(b.nombre);
+}
+
+export const adapter: EntityAdapter<Usuario> = createEntityAdapter<Usuario>(
+  {
+    selectId: seleccionarUsuarioPorId,
+    sortComparer: ordenarUsuariosPorNombre
+  }
+)
+
+// Definición del estado incial.
+export const initialAuthState: AuthState = adapter.getInitialState(
+  {
+    usuarioActivo: undefined,
+    cargando: false,
+    mensajeDeCarga: '',
+    errorCargaUsuario: undefined
+  }
+
+)
+
 
 export const authReducer = createReducer(
   initialAuthState,
@@ -36,7 +53,7 @@ export const authReducer = createReducer(
   on(
     AuthActions.loging,
     (state, action) => {
-      return { ...state, cargandoUsuario: true };
+      return { ...state, cargando: true, mensajeDeCarga: 'Autenticando' };
     }
   ),
 
@@ -44,7 +61,7 @@ export const authReducer = createReducer(
   on(
     AuthActions.loginOK,
     (state, action) => {
-      return { ...state, usuarioActivo: action.usuarioActivo, cargandoUsuario: false };
+      return { ...state, usuarioActivo: action.usuarioActivo, cargando: false, mensajeDeCarga: ''};
     }
   ),
 
@@ -52,7 +69,7 @@ export const authReducer = createReducer(
   on(
     AuthActions.loginError,
     (state, action) => {
-      return { ...state, usuarioActivo: undefined, cargandoUsuario: false, error: action.error};
+      return { ...state, usuarioActivo: undefined, cargando: false, mensajeDeCarga:'', error: action.error};
     }
   ),
 
@@ -64,10 +81,44 @@ export const authReducer = createReducer(
     }
   ),
 
+    // cargando usuarios.
+    on(
+      AuthActions.cargandoUsuarios,
+      (state, action) => {
+        return { ...state, cargando:true, mensajeDeCarga: 'cargando usuarios'};
+      }
+  ),
+
+    // usuarios cargados correctamente.
+    on(
+      AuthActions.UsuariosOK,
+      (state, action) => {
+        return adapter.setAll(action.usuarios, { ...state, cargando:false, mensajeDeCarga: '' })
+      }
+    ),
+
 
 
 
 )
 
+// get the selectors
+const {
+  selectIds,
+  selectEntities,
+  selectAll,
+  selectTotal,
+} = adapter.getSelectors();
 
+// select the array of user ids
+export const selectUsuariosIds = selectIds;
+
+// select the dictionary of user entities
+export const selectUsuariosEntities = selectEntities;
+
+// select the array of users
+export const selectTodosLosUsuarios = selectAll;
+
+// select the total user count
+export const selectTotalUsuarios = selectTotal;
 

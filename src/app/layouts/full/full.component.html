@@ -21,7 +21,10 @@
                 <!-- Logo -->
                 <!-- ============================================================== -->
                 <a class="navbar-brand d-flex justify-content-center" href="/">
-                  <b>Gestión de Biblioteca</b>
+                  <span class="m-0 b-0">
+                    <i class="m-0 b-0 mdi mdi-book-open-page-variant "></i>
+                  </span>
+
                 </a>
 
 
@@ -67,11 +70,21 @@
         <!-- ============================================================== -->
         <!-- Container fluid  -->
         <!-- ============================================================== -->
-        <div class="container-fluid">
+        <div class="container-fluid" style="position: relative;">
             <!-- ============================================================== -->
             <!-- Start Page Content -->
             <!-- ============================================================== -->
             <router-outlet></router-outlet>
+            <div *ngIf="this.cargando" id="miModal" class="mod">
+              <div class="modal-contenido">
+                  <div class="spinner">
+                    <div class="double-bounce1"></div>
+                    <div class="double-bounce2"></div>
+                  </div>
+
+              </div>
+            </div>
+
             <!-- ============================================================== -->
             <!-- End Start Page Content -->
             <!-- ============================================================== -->

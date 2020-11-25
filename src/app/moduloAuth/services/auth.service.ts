@@ -1,15 +1,15 @@
-import { Usuario } from '../models/usuario.model';
+import { Usuario } from './../models/usuario.model';
 import { Injectable } from '@angular/core';
 
 import * as firebase from 'firebase/app';
 
-import { Observable } from 'rxjs/Observable';
+
 
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { from, Subject } from 'rxjs';
-import { switchMap, map, tap} from 'rxjs/operators'
-import { getJSON } from 'jquery';
+import { Subject, Observable, from } from 'rxjs';
+import { take, map, tap } from 'rxjs/operators';
+
 
 
 
@@ -30,6 +30,7 @@ export class AuthService {
   }
 
 
+  // `Registro de un nuevo usuario`
   signup(nuevoUsuario: Usuario, password: string ) {
     const usuario$ = new Subject<any>();
 
@@ -58,6 +59,7 @@ export class AuthService {
   }
 
 
+  // Loguear a un usuario.
   login(email: string, password: string) {
 
     const usuario$ = new Subject<Usuario>();
@@ -92,15 +94,49 @@ export class AuthService {
     return usuario$;
   }
 
+  // Obtener usuario a partir de su clave primaria.
+  obtenerUsuarioporUid(uid: string): Observable<Usuario | undefined> {
+    return this.firebaseDB.doc<Usuario>(`usuarios/${uid}`).valueChanges();
 
-
-
-
-
-
-  logout() {
-    this.firebaseAuth
-      .signOut();
   }
+
+  // Logout
+  logout() { this.firebaseAuth.signOut(); }
+
+  // Obtener todos los usuarios.
+  ObtenerTodosLosUsuarios(): Observable<Usuario[]> {
+
+
+    return this.firebaseDB.collection('usuarios')
+      .get()
+      .pipe(
+        map(
+          value => {
+            const usuarios: Usuario[] = [];
+
+            // Procesamos cada uno de los elementos para convertirlos en la colección de Usuarios.
+            value.docs.forEach(
+              usuario => {
+                const nuevoUsuario: any = {
+                  ...usuario.data() as Usuario,
+                  uid: usuario.id
+                };
+
+                usuarios.push(nuevoUsuario);
+              }
+            );  // Fin foreach
+
+            return usuarios;
+
+          }
+        ),  // Fin map.
+
+        tap(console.log)
+
+      );
+
+  }
+
+
 
 }

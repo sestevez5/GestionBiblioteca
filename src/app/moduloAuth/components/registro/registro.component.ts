@@ -1,3 +1,5 @@
+import { Observable } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 import { ViewChild, ElementRef } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { Usuario } from './../../models/usuario.model';
@@ -15,13 +17,27 @@ import { ModalManager } from 'ngb-modal';
   templateUrl: './registro.component.html',
   styleUrls: ['./registro.component.css']
 })
-export class RegistroComponent  {
+export class RegistroComponent implements OnInit {
 
   closeResult = '';
   form: FormGroup;
   fotoActual = '';
   fotoPrevia = ''
   capturandoImagen = false;
+  modoCreacion = true;
+
+  private usuarioEdicion$: Observable<Usuario | undefined>;
+  usuario: Usuario | undefined = {
+    uid:'',
+    email: '',
+    movil: '',
+    primerApellido: '',
+    segundoApellido: '',
+    nombre: '',
+    foto: '',
+    FechaAlta: null,
+    FechaBaja: null
+  }
 
 
   @ViewChild("panelModal") panelModal: ElementRef;
@@ -37,20 +53,55 @@ export class RegistroComponent  {
     private fb: FormBuilder,
     private authService: AuthService,
     private store: Store<AppReducers.AppState>,
+    private route: ActivatedRoute,
     private modalService: ModalManager
   ) {
-      this.form = fb.group(
-        {
-          email: ['', [Validators.required]],
-          password: ['', [Validators.required]],
-          primerApellido: ['', [Validators.required]],
-          segundoApellido: ['', [Validators.required]],
-          nombre: ['', [Validators.required]],
-          foto: ['']
-        }
-      )
 
-   }
+
+  }
+
+  ngOnInit() {
+
+    this.construirFormulario(this.usuario);
+    const uidUsuario = this.route.snapshot.paramMap.get("id");
+
+    if (uidUsuario) {
+
+      // edición de un usuario existente.
+      this.modoCreacion = false;
+      this.usuarioEdicion$ = this.authService.obtenerUsuarioporUid(uidUsuario);
+      this.usuarioEdicion$
+        .subscribe(
+          usuario => {
+            this.usuario = usuario
+            this.construirFormulario(this.usuario)
+          }
+        )
+    } else {
+      // Nuevo usuario.
+      this.construirFormulario(this.usuario);
+
+    }
+
+  }
+
+
+  private construirFormulario(usuario: Usuario | undefined) {
+
+    // Verificamos is estamos ante una edición o un registro nuevo.
+    this.form = this.fb.group(
+      {
+        email: [this.usuario?.email, [Validators.required]],
+        primerApellido: [this.usuario?.primerApellido, [Validators.required]],
+        segundoApellido: [this.usuario?.segundoApellido, [Validators.required]],
+        nombre: [this.usuario?.nombre, [Validators.required]],
+        foto: [this.usuario?.foto],
+
+        password: ['', [Validators.required]], // No forma parte de la entidad Usuario
+      }
+    )
+
+  }
 
   onAceptar() {
 

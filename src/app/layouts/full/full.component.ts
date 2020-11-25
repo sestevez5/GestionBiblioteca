@@ -1,6 +1,9 @@
+import { selectEstadoCarga } from './../../moduloPrincipal/store/selectors/principal.selectors';
+import { select, Store } from '@ngrx/store';
 import { Component, OnInit, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
+import { AppState } from 'src/app/reducers/app.reducer';
 
 @Component({
   selector: 'app-full-layout',
@@ -10,7 +13,11 @@ import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 export class FullComponent implements OnInit {
   public config: PerfectScrollbarConfigInterface = {};
 
-  constructor(public router: Router) { }
+  cargando = false;
+
+  constructor(
+    public router: Router,
+    private store: Store<AppState>) { }
 
   tabStatus = 'justified';
 
@@ -39,6 +46,8 @@ export class FullComponent implements OnInit {
     this.expandLogo = !this.expandLogo;
   }
 
+
+
   ngOnInit() {
 
     if (this.router.url === '/') {
@@ -46,6 +55,19 @@ export class FullComponent implements OnInit {
     }
     this.defaultSidebar = this.options.sidebartype;
     this.handleSidebar();
+
+    // Observar si el sistema se encuentar realizando carga de datos.
+    this.store
+      .pipe(
+        select(selectEstadoCarga)
+      )
+      .subscribe(
+        value => {
+          this.cargando = value.cargando;
+          console.log("value: ", value);
+
+        }
+    );
   }
 
   @HostListener('window:resize', ['$event'])

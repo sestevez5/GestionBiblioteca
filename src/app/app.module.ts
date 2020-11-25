@@ -23,9 +23,9 @@ import { NavigationComponent } from './shared/components/header-navigation/navig
 import { SidebarComponent } from './shared/components/sidebar/sidebar.component';
 import { BreadcrumbComponent } from './shared/components/breadcrumb/breadcrumb.component';
 
-import { Approutes } from './moduloPrincipal/app-routing.module';
+import { Approutes } from './app-routing.module';
 import { AppComponent } from './moduloPrincipal/components/app/app.component';
-import { SpinnerComponent } from './shared/spinner.component';
+
 
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { PERFECT_SCROLLBAR_CONFIG } from 'ngx-perfect-scrollbar';
@@ -41,7 +41,7 @@ import { ModalModule } from 'ngb-modal';
 import { AuthModule } from './moduloAuth/auth.module';
 import { AppReducers } from './reducers/index';
 import { HelperModule } from './moduloHelpers/helper.module';
-import { IndexComponent } from './moduloPrincipal/components/index/index.component';
+import { PrincipalModule } from './moduloPrincipal/principal.module';
 
 
 
@@ -62,16 +62,13 @@ const icons = {
 
 @NgModule({
   declarations: [
-    AppComponent,
-    SpinnerComponent,
+
+
     FullComponent,
     BlankComponent,
     NavigationComponent,
     BreadcrumbComponent,
     SidebarComponent,
-    IndexComponent,
-
-
   ],
   imports: [
     HelperModule,
@@ -95,16 +92,22 @@ const icons = {
     AgmCoreModule.forRoot({ apiKey: 'AIzaSyDoliAneRffQDyA7Ul9cDk3tLe7vaU4yP8' }),
 
     AuthModule.forRoot(),
+    PrincipalModule.forRoot(),
 
 
-    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
+
+
+
 
 
     StoreModule.forRoot(AppReducers.reducers, { metaReducers }),
+    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
     EffectsModule.forRoot([]),
 
 
     !environment.production ? StoreDevtoolsModule.instrument() : [],
+
+
   ],
   providers: [
     {

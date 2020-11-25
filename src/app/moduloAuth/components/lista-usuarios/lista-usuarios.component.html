@@ -1,0 +1,65 @@
+<button (click)="onPrueba()">prueba</button>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card card-body">
+      <h4 class="card-title">Usuarios</h4>
+      <h5 class="card-subtitle">
+        Lista de usuarios de la aplicación.
+      </h5>
+
+      <div class="table-responsive">
+        <table class="table  mb-0 no-wrap v-middle">
+          <thead>
+            <tr>
+              <th class="text-center" scope="col">#</th>
+              <th scope="col">Apellidos</th>
+              <th scope="col">Nombre</th>
+              <th scope="col">email</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let usuario of this.usuarios">
+              <td>
+                <div class="d-flex align-items-center">
+                  <img *ngIf="!this.usuario.foto" class="rounded-circle" src="assets/images/users/1.jpg" height="50px" width="50px">
+                  <img *ngIf="this.usuario.foto" class="rounded-circle" [src]='usuario.foto' height="50px" width="50px">
+                  <div class="ml-3">
+                    <p class="font-medium mb-0">{{ usuario.nombre }}</p>
+                    <small>{{usuario.email}}</small>
+                  </div>
+                </div>
+              </td>
+              <td>
+                {{ usuario.primerApellido + ' ' + usuario.segundoApellido}}
+              </td>
+              <td>
+
+                {{ usuario.nombre}}
+
+              </td>
+              <td>
+                {{ usuario.email}}
+
+              </td>
+              <td>
+                <a href="javascript: void(0);"  class="link mr-2" placement="top" ngbTooltip="Edit">
+                <i-feather name="edit-2"></i-feather>
+              </a>
+              <a href="javascript: void(0);" class="link"  placement="top"
+                ngbTooltip="Delete">
+                <i-feather name="trash-2"></i-feather>
+              </a>
+              </td>
+
+
+            </tr>
+
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

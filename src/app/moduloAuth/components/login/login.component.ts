@@ -44,16 +44,16 @@ export class LoginComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
 
     this.store
-    .pipe(
-      select(selectUsuarioActivo)
-    ).subscribe(
-      x => {
-        console.log("sfjjkasfhjksa");
-        if (x) {
-          this.router.navigateByUrl('/index');
+      .pipe(
+        select(selectUsuarioActivo)
+      )
+      .subscribe(
+        x => {
+          if (x) {
+            this.router.navigateByUrl('/index');
+          }
         }
-      }
-    )
+      );
 
 
   }
@@ -76,8 +76,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   onRegistrarse() {
 
-
-    this.router.navigate(['/registro',{ replaceUrl: true }],
+    this.router.navigate(['/crearUsuario',{ replaceUrl: true }],
     ).then(r => console.log(r)).catch(error => console.log(error));
   }
 

@@ -10,9 +10,11 @@ export const authFeatureKey = 'auth';
 
 // Definición del estado del módulo de Usuarios.
 export interface AuthState extends EntityState<Usuario> {
-  usuarioActivo: Usuario | undefined;
+  usuarioLogueado: Usuario | undefined;
   cargando: boolean;
   mensajeDeCarga: string;
+
+  usuarioActivo: Usuario | undefined;
   errorCargaUsuario: string | undefined;
 }
 
@@ -30,16 +32,18 @@ export function ordenarUsuariosPorNombre(a: Usuario, b: Usuario): number {
 export const adapter: EntityAdapter<Usuario> = createEntityAdapter<Usuario>(
   {
     selectId: seleccionarUsuarioPorId,
-    sortComparer: ordenarUsuariosPorNombre
+    // sortComparer: ordenarUsuariosPorNombre
   }
 )
 
 // Definición del estado incial.
 export const initialAuthState: AuthState = adapter.getInitialState(
   {
-    usuarioActivo: undefined,
+    usuarioLogueado: undefined,
     cargando: false,
     mensajeDeCarga: '',
+
+    usuarioActivo: undefined,
     errorCargaUsuario: undefined
   }
 
@@ -61,7 +65,7 @@ export const authReducer = createReducer(
   on(
     AuthActions.loginOK,
     (state, action) => {
-      return { ...state, usuarioActivo: action.usuarioActivo, cargando: false, mensajeDeCarga: ''};
+      return { ...state, usuarioLogueado: action.usuariologueado, cargando: false, mensajeDeCarga: ''};
     }
   ),
 
@@ -69,7 +73,7 @@ export const authReducer = createReducer(
   on(
     AuthActions.loginError,
     (state, action) => {
-      return { ...state, usuarioActivo: undefined, cargando: false, mensajeDeCarga:'', error: action.error};
+      return { ...state, usuarioLogueado: undefined, cargando: false, mensajeDeCarga:'', error: action.error};
     }
   ),
 
@@ -77,25 +81,85 @@ export const authReducer = createReducer(
   on(
     AuthActions.logout,
     (state, action) => {
-      return { ...state, usuarioActivo: undefined };
+      return { ...state, usuarioLogueado: undefined };
     }
   ),
 
-    // cargando usuarios.
-    on(
-      AuthActions.cargandoUsuarios,
-      (state, action) => {
-        return { ...state, cargando:true, mensajeDeCarga: 'cargando usuarios'};
-      }
+  // cargando usuarios.
+  on(
+    AuthActions.cargarUsuarios,
+    (state, action) => {
+      return { ...state, cargando:true, mensajeDeCarga: 'cargando usuarios'};
+    }
   ),
 
-    // usuarios cargados correctamente.
-    on(
-      AuthActions.UsuariosOK,
-      (state, action) => {
-        return adapter.setAll(action.usuarios, { ...state, cargando:false, mensajeDeCarga: '' })
+  // usuarios cargados correctamente.
+  on(
+    AuthActions.cargarUsuariosOK,
+    (state, action) => {
+      return adapter.setAll(action.usuarios, { ...state, cargando:false, mensajeDeCarga: '' })
+    }
+  ),
+
+  // error en la carga de usuarios
+  on(
+    AuthActions.cargarUsuariosError,
+    (state, action) => {
+      return { ...state, usuarioLogueado: undefined, cargando: false, mensajeDeCarga:'', error: action.error};
+    }
+  ),
+
+   // cargando usuario.
+   on(
+    AuthActions.cargarUsuario,
+    (state, action) => {
+      return { ...state, cargando:true, mensajeDeCarga: 'cargando usuario'};
+    }
+  ),
+
+  // usuario cargado correctamente.
+  on(
+    AuthActions.cargarUsuarioOK,
+    (state, action) => {
+      return { ...state, cargando:false, mensajeDeCarga: '', usuarioActivo: action.usuario  }
+    }
+  ),
+
+  // error en la carga del usuario
+  on(
+    AuthActions.cargarUsuarioError,
+    (state, action) => {
+      return { ...state, usuarioActivo: undefined, cargando: false, mensajeDeCarga:'', error: action.error};
+    }
+  ),
+
+  // error en la carga de usuarios
+  on(
+    AuthActions.crearUsuario,
+    (state, action) => {
+      return { ...state, cargando:true, mensajeDeCarga: 'creando nuevo usuario'};
+    }
+  ),
+
+  // error en la carga de usuarios
+  on(
+    AuthActions.crearUsuarioOK,
+    (state, action) => {
+      if (!action.usuario) {
+        return state
       }
-    ),
+      return adapter.addOne(action.usuario, { ...state, cargando: false, mensajeDeCarga: '' });
+
+    }
+  ),
+
+      // error en la carga de usuarios
+  on(
+    AuthActions.crearUsuariosError,
+    (state, action) => {
+      return { ...state, cargando: false, mensajeDeCarga:'', error: action.error };
+    }
+  ),
 
 
 

@@ -5,14 +5,19 @@ import { AuthReducers } from '../reducers/index';
 
 export const selectAuthState = createFeatureSelector<AuthReducers.AuthState>('auth');
 
-export const selectUsuarioActivo = createSelector(
+export const selectUsuarioLogueado = createSelector(
   selectAuthState,
-  auth => auth.usuarioActivo
+  auth => auth.usuarioLogueado
 );
 
 export const selectTodosLosUsuarios = createSelector(
   selectAuthState,
   AuthReducers.selectTodosLosUsuarios
+);
+
+export const selectUsuarioActivo = createSelector(
+  selectAuthState,
+  authState => authState.usuarioActivo
 );
 
 

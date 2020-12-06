@@ -1,9 +1,12 @@
+import { delay, map } from 'rxjs/operators';
+import { Observable } from 'rxjs/Observable';
 import { selectEstadoCarga } from './../../moduloPrincipal/store/selectors/principal.selectors';
 import { select, Store } from '@ngrx/store';
 import { Component, OnInit, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 import { AppState } from 'src/app/reducers/app.reducer';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-full-layout',
@@ -12,8 +15,8 @@ import { AppState } from 'src/app/reducers/app.reducer';
 })
 export class FullComponent implements OnInit {
   public config: PerfectScrollbarConfigInterface = {};
-
-  cargando = false;
+  cargando$: Observable<boolean>;
+  mensajeCarga$: Observable<string>;
 
   constructor(
     public router: Router,
@@ -50,6 +53,7 @@ export class FullComponent implements OnInit {
 
   ngOnInit() {
 
+    
     if (this.router.url === '/') {
       this.router.navigate(['/dashboard/classic']);
     }
@@ -57,17 +61,32 @@ export class FullComponent implements OnInit {
     this.handleSidebar();
 
     // Observar si el sistema se encuentar realizando carga de datos.
-    this.store
-      .pipe(
-        select(selectEstadoCarga)
-      )
-      .subscribe(
-        value => {
-          this.cargando = value.cargando;
-          console.log("value: ", value);
-
-        }
+    const informacionCarga$ =  this.store.pipe(
+      select(selectEstadoCarga),
+      delay(0)
     );
+
+    this.cargando$ = this.store
+      .pipe(
+        select(selectEstadoCarga),
+        delay(0),
+        map(
+          value => value.cargando
+        )
+    );
+
+    this.mensajeCarga$ = this.store
+    .pipe(
+      select(selectEstadoCarga),
+      delay(0),
+      map(
+        value => value.mensajeCarga
+      )
+  );
+
+
+
+
   }
 
   @HostListener('window:resize', ['$event'])

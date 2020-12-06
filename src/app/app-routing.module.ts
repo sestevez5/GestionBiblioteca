@@ -17,6 +17,7 @@ export const Approutes: Routes = [
       { path: 'login', component: LoginComponent },
       { path: 'crearUsuario', component: RegistroComponent },
       { path: 'editarUsuario/:id', component: RegistroComponent },
+      { path: 'visualizarUsuario/:id', component: RegistroComponent },
       { path: 'index', component: IndexComponent },
       { path: 'usuarios', component:ListaUsuariosComponent},
       { path: 'libros',   loadChildren: () => import('./moduloLibros/libros-routing.module').then(m => m.LibrosRoutingModule)},

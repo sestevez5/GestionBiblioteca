@@ -1,6 +1,4 @@
-import { ɵangular_packages_animations_browser_browser_a } from "@angular/animations/browser";
-
-export class Usuario{
+export interface Usuario {
 
   uid: string;
   email: string;
@@ -9,6 +7,7 @@ export class Usuario{
   nombre: string;
   movil: string;
   foto: string;
+  esAdministrador: boolean;
   FechaAlta: Date | null;
   FechaBaja: Date | null;
 

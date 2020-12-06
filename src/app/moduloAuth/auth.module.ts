@@ -30,6 +30,8 @@ import { AuthEffects } from './store/effects/index';
 import { ModalModule } from 'ngb-modal';
 import { ListaUsuariosComponent } from './components/lista-usuarios/lista-usuarios.component';
 
+import { RouterModule, Routes } from '@angular/router';
+
 
 
 
@@ -48,6 +50,7 @@ import { ListaUsuariosComponent } from './components/lista-usuarios/lista-usuari
     StoreModule.forFeature(AuthReducers.authFeatureKey, AuthReducers.authReducer),
     EffectsModule.forFeature([AuthEffects.AuthEffects]),
     FeatherModule,
+    RouterModule,
 
 
     // Módulos relativos a firebase2

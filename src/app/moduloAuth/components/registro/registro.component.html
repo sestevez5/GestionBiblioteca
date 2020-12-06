@@ -45,8 +45,27 @@
                       <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
                     </div>
 
+                    <div class="custom-control custom-checkbox mr-sm-2 m-b-15">
+                      <input  type="checkbox"
+                              id="cbAdministrador"
+                              class="custom-control-input"
+                              formControlName="esAdministrador">
+                      <label  for="cbAdministrador" class="custom-control-label">Administrador</label>
+                    </div>
 
-               
+                    <div class="form-group">
+                      <label for="exampleInputEmail1">Correo electrónico</label>
+                      <input  type="check"
+                              class="form-control"
+                              id="esAdministrador"
+                              aria-describedby="emailHelp"
+
+                              formControlName="email">
+                      <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
+                    </div>
+
+
+
 
                   <div class="form-group">
                       <label for="exampleInputPassword1">Password</label>
@@ -78,7 +97,7 @@
                             </div>
                             <div class="d-flex align-items-center justify-content-center">
                               <div>
-                                <button class="btn btn-rounded btn-block btn-xs btn-outline-secondary" (click)="openModal()">Subir imagen</button>
+                                <button class="btn btn-rounded btn-block btn-xs btn-outline-secondary" (click)="AbrirVentanaModal()">Subir imagen</button>
                               </div>
                             </div>
                           </div>
@@ -110,7 +129,7 @@
 
 
 
-<modal #panelModal (onOpen)="onOpen()" (onClose)="onClose()">
+<modal #panelModal (onOpen)="onAbrirVentanaModal()" (onClose)="onCerrarVentanaModal()">
 
   <!-- Cabecera -->
   <modal-header>
@@ -120,14 +139,14 @@
   <!-- Cuerpo -->
   <modal-content>
     <div >
-      <app-obtener-imagen (imagenProcesadaEvent)="onImagen($event)"></app-obtener-imagen>
+      <app-obtener-imagen (imagenProcesadaEvent)="onObtenerImagen($event)" [imagenAProcesar]="this.fotoPrevia"></app-obtener-imagen>
     </div>
   </modal-content>
 
   <!-- Pie -->
   <modal-footer>
-      <button type="button" class="btn btn-sm btn-secondary mr-3" (click)="onAceptarModal()" >Aceptar</button>
-      <button type="button" class="btn btn-sm btn-secondary" (click)="onCancelarModal()">Cancelar</button>
+      <button type="button" class="btn btn-sm btn-secondary mr-3" (click)="onAceptarVentanaModal()" >Aceptar</button>
+      <button type="button" class="btn btn-sm btn-secondary" (click)="onCancelarVentanaModal()">Cancelar</button>
   </modal-footer>
 
 </modal>

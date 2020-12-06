@@ -1,5 +1,3 @@
-<button (click)="onPrueba()">prueba</button>
-
 <div class="row">
   <div class="col-12">
     <div class="card card-body">
@@ -8,6 +6,20 @@
         Lista de usuarios de la aplicación.
       </h5>
 
+      <!------------------------------------------------------->
+      <!----------------------- Buscador ---------------------->
+      <!------------------------------------------------------->
+      <div class="d-flex mb-3 mt-3">
+        <input  type="text"
+                class="form-control w-50"
+                placeholder="Buscar en apellidos, nombre, email,... "
+                [(ngModel)]='textoFiltro'>
+        <button class="btn btn-sm btn-secondary ml-auto" >Add User</button>
+      </div>
+
+      <!------------------------------------------------------->
+      <!------- Tabla que contiene la lista de usuarios. ------>
+      <!------------------------------------------------------->
       <div class="table-responsive">
         <table class="table  mb-0 no-wrap v-middle">
           <thead>
@@ -44,7 +56,7 @@
 
               </td>
               <td>
-                <a href="javascript: void(0);"  class="link mr-2" placement="top" ngbTooltip="Edit">
+                <a class="link mr-2" placement="top" ngbTooltip="Edit" [routerLink]="['/editarUsuario/', usuario.uid]" routerLinkActive="router-link-active" >
                 <i-feather name="edit-2"></i-feather>
               </a>
               <a href="javascript: void(0);" class="link"  placement="top"
@@ -52,14 +64,14 @@
                 <i-feather name="trash-2"></i-feather>
               </a>
               </td>
-
-
             </tr>
 
 
           </tbody>
         </table>
       </div>
+
+
     </div>
   </div>
 </div>

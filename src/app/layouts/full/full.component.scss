@@ -16,7 +16,17 @@
   left:0;
   opacity:1;
   pointer-events:none;
+  align-items: center;
 
   margin: 6px;
   border-radius: 6px;
+}
+
+.mensajeCarga {
+  font-size: 30px;
+  align-self: flex-end;
+  text-align: right;
+  padding-top: 30px;
+  padding-right: 30px;
+
 }

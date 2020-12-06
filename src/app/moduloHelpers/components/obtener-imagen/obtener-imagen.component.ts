@@ -11,12 +11,12 @@ export class ObtenerImagenComponent  {
 
   @Output() imagenProcesadaEvent = new EventEmitter<string>();
 
-  @Input() imagenOriginal = '';
+  @Input() imagenAProcesar = '';
 
-  imagenObtenida = false;
+
 
   onObtenerImagen(imagen: string) {
-    this.imagenOriginal = imagen;
+    this.imagenAProcesar = imagen;
   }
 
   onImagenProcesada(imagenProcesada: string) {

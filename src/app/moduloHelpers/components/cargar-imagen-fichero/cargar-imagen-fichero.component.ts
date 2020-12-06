@@ -14,6 +14,7 @@ export class CargarImagenComponent {
 
   @Input() imagenObtenida = false;
 
+  
   mensajeError: string | null = null;
 
   constructor() {}

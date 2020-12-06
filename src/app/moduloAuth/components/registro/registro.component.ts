@@ -1,16 +1,19 @@
-import { Observable } from 'rxjs';
+import { filter, first } from 'rxjs/operators';
+import { selectUsuarioActivo } from './../../store/selectors/auth.selectors';
+import { Observable, pipe } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { ViewChild, ElementRef } from '@angular/core';
-import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+
 import { Usuario } from './../../models/usuario.model';
 import { AppReducers } from '../../../reducers/index';
-
 
 import { AuthService } from './../../services/auth.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
-import { Store } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
 import { ModalManager } from 'ngb-modal';
+
+import { AuthActions } from '../../store/actions';
 
 @Component({
   selector: 'app-registro',
@@ -24,7 +27,8 @@ export class RegistroComponent implements OnInit {
   fotoActual = '';
   fotoPrevia = ''
   capturandoImagen = false;
-  modoCreacion = true;
+  modoFormulario: 'Crear' | 'Modificar' | 'Visualizar';
+  uidUsuario: string | null;
 
   private usuarioEdicion$: Observable<Usuario | undefined>;
   usuario: Usuario | undefined = {
@@ -34,6 +38,7 @@ export class RegistroComponent implements OnInit {
     primerApellido: '',
     segundoApellido: '',
     nombre: '',
+    esAdministrador: false,
     foto: '',
     FechaAlta: null,
     FechaBaja: null
@@ -44,132 +49,157 @@ export class RegistroComponent implements OnInit {
   private modalRef: any;
 
 
-  onImagen(imagen: string)
-  {
-    this.fotoPrevia = imagen;
-  }
-
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private store: Store<AppReducers.AppState>,
     private route: ActivatedRoute,
     private modalService: ModalManager
-  ) {
-
-
-  }
+  ) {}
 
   ngOnInit() {
 
     this.construirFormulario(this.usuario);
-    const uidUsuario = this.route.snapshot.paramMap.get("id");
+    this.uidUsuario = this.route.snapshot.paramMap.get("id");
 
-    if (uidUsuario) {
+    if (this.uidUsuario) {
 
-      // edición de un usuario existente.
-      this.modoCreacion = false;
-      this.usuarioEdicion$ = this.authService.obtenerUsuarioporUid(uidUsuario);
-      this.usuarioEdicion$
-        .subscribe(
-          usuario => {
-            this.usuario = usuario
+      this.store
+      .pipe(
+        select(selectUsuarioActivo),
+      )
+      .subscribe(
+
+          usuarioActivo => {
+            this.usuario = usuarioActivo
             this.construirFormulario(this.usuario)
           }
-        )
-    } else {
+
+      )
+
+      this.store.dispatch(AuthActions.cargarUsuario({ uidUsuario: this.uidUsuario }))
+      this.modoFormulario = 'Modificar';
+    }  else {
       // Nuevo usuario.
       this.construirFormulario(this.usuario);
+      this.modoFormulario = 'Crear'
 
     }
 
   }
 
+  onAceptar() {
+    const datosFormulario = this.form.value;
+    const password = datosFormulario.password;
+    delete datosFormulario.password;
+    let usuario: Usuario = datosFormulario;
 
+    if (this.fotoActual) {
+      usuario.foto = this.fotoActual;
+    }
+
+
+    if (this.modoFormulario === 'Crear') {
+
+      this.store.dispatch(AuthActions.crearUsuario({ usuario: usuario, password: password}));
+    } else {
+      if (this.uidUsuario) {
+        history.back();
+
+        usuario.uid = this.uidUsuario;
+       this.store.dispatch(AuthActions.modificarUsuario({ usuario: usuario }));
+      }
+
+   }
+
+
+
+
+
+
+  }
+
+  onCancelar()
+  {
+
+  }
+
+
+  // Gestores de botones de la ventana modal para la gestión de la imagen
+  onAceptarVentanaModal() {
+    this.fotoActual = this.fotoPrevia;
+    this.fotoPrevia = '';
+    this.cerrarVentanaModal();
+  }
+
+  onCancelarVentanaModal() {
+    this.fotoPrevia = ''
+    this.cerrarVentanaModal();
+  }
+
+  // ------------------------------------------
+  // Métodos auxiliares
+  // ------------------------------------------
   private construirFormulario(usuario: Usuario | undefined) {
 
-    // Verificamos is estamos ante una edición o un registro nuevo.
+      // Verificamos is estamos ante una edición o un registro nuevo.
     this.form = this.fb.group(
       {
         email: [this.usuario?.email, [Validators.required]],
         primerApellido: [this.usuario?.primerApellido, [Validators.required]],
         segundoApellido: [this.usuario?.segundoApellido, [Validators.required]],
         nombre: [this.usuario?.nombre, [Validators.required]],
+        esAdministrador: [this.usuario?.esAdministrador, [Validators.required]],
         foto: [this.usuario?.foto],
 
         password: ['', [Validators.required]], // No forma parte de la entidad Usuario
       }
-    )
+    );
+      if (this.usuario?.foto) {
+      this.fotoActual = this.usuario.foto;
+      } else {
+        this.fotoActual = '';
 
-  }
-
-  onAceptar() {
-
-    const usuario: Usuario = this.form.value;
-    if (this.fotoActual) {
-      usuario.foto = this.fotoActual;
     }
-
-    this.authService.signup(usuario, this.form.value.password)
-      .subscribe(
-        user => console.log("nuevo usuario: ", user)
-      );
-
-  }
-  onCancelar()
-  {
-
   }
 
-  onAceptarNuevaImagen()
-  {
-    this.capturandoImagen = false;
-    this.fotoActual = this.fotoPrevia;
+  onObtenerImagen(imagen: string) {
+    this.fotoPrevia = imagen;
+    
   }
 
-  openModal(){
+  cerrarVentanaModal(){
+      this.modalService.close(this.modalRef);
+      // or this.modalRef.close();
+  }
+
+  AbrirVentanaModal(){
     this.modalRef = this.modalService.open(this.panelModal, {
-        size: "lg",
-        modalClass: 'mymodal',
-        hideCloseButton: false,
-        centered: false,
-        backdrop: true,
-        animation: true,
-        keyboard: false,
-        closeOnOutsideClick: true,
-        backdropClass: "modal-backdrop"
-    })
+      size: "lg",
+      modalClass: 'mymodal',
+      hideCloseButton: false,
+      centered: false,
+      backdrop: true,
+      animation: true,
+      keyboard: false,
+      closeOnOutsideClick: true,
+      backdropClass: "modal-backdrop"
+    });
   }
 
-closeModal(){
-    this.modalService.close(this.modalRef);
-    // or this.modalRef.close();
-}
+
+  // ------------------------------------------
+  // Métodos no implementados.
+  // ------------------------------------------
+  onAbrirVentanaModal() {}
+
+  onCerrarVentanaModal() { }
 
 
-  onOpen() {
-
-  }
-
-  onClose() {
-
-  }
-
-  onAceptarModal() {
-
-    this.fotoActual = this.fotoPrevia;
-    this.fotoPrevia = '';
-    this.closeModal();
-  }
-
-  onCancelarModal() {
-
-    this.closeModal();
-
-  }
 
 
 }
+
 
 
 

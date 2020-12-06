@@ -75,9 +75,13 @@
             <!-- Start Page Content -->
             <!-- ============================================================== -->
             <router-outlet></router-outlet>
-            <div *ngIf="this.cargando" id="miModal" class="mod">
+            <div *ngIf="this.cargando$ | async " id="miModal" class="mod d-flex flex-column">
+               <p class="mensajeCarga">{{ this.mensajeCarga$ | async}}</p>
               <div class="modal-contenido">
+
+
                   <div class="spinner">
+
                     <div class="double-bounce1"></div>
                     <div class="double-bounce2"></div>
                   </div>

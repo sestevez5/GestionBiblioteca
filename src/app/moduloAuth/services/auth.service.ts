@@ -175,7 +175,6 @@ export class AuthService {
               }
             );  // Fin foreach
 
-
             return usuarios;
 
 
@@ -189,14 +188,26 @@ export class AuthService {
   ModificarUsuario(usuario: Usuario): Observable<Usuario> {
 
     const usuario$ = new Subject<Usuario>();
-    console.log(usuario);
-
-
-
     from(this.firebaseDB.doc<Usuario>(`usuarios/${usuario.uid}`).update(usuario))
       .subscribe(
         value => {
           usuario$.next(usuario);
+        },
+        error => {
+          (usuario$ as Observer<any>).error(error)
+        }
+      )
+    return usuario$;
+
+  }
+
+  EliminarUsuario(uidUsuario: string): Observable<string> {
+
+    const usuario$ = new Subject<string>();
+    from(this.firebaseDB.doc<Usuario>(`usuarios/${uidUsuario}`).delete())
+      .subscribe(
+        value => {
+          usuario$.next(uidUsuario);
         },
         error => {
           (usuario$ as Observer<any>).error(error)

@@ -11,7 +11,7 @@ export class ObtenerImagenComponent  {
 
   @Output() imagenProcesadaEvent = new EventEmitter<string>();
 
-  @Input() imagenAProcesar = '';
+  imagenAProcesar = '';
 
 
 

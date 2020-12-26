@@ -14,7 +14,7 @@
                 class="form-control w-50"
                 placeholder="Buscar en apellidos, nombre, email,... "
                 [(ngModel)]='textoFiltro'>
-        <button class="btn btn-sm btn-secondary ml-auto" >Add User</button>
+        <button class="btn btn-sm btn-secondary ml-auto" (click)="onAnyadirUsuario()" >Add User</button>
       </div>
 
       <!------------------------------------------------------->
@@ -60,7 +60,7 @@
                 <i-feather name="edit-2"></i-feather>
               </a>
               <a href="javascript: void(0);" class="link"  placement="top"
-                ngbTooltip="Delete">
+                ngbTooltip="Delete" (click)="this.AbrirVentanaModal(usuario)">
                 <i-feather name="trash-2"></i-feather>
               </a>
               </td>
@@ -75,3 +75,16 @@
     </div>
   </div>
 </div>
+
+<modal #panelModal >
+  <modal-header>
+
+  </modal-header>
+  <modal-content>
+      ¿Desea borrar el usuario seleccionado?
+  </modal-content>
+  <modal-footer>
+    <button type="button" class="btn btn-sm btn-secondary mr-3" (click)="onAceptarVentanaModal()" >Aceptar</button>
+    <button type="button" class="btn btn-sm btn-secondary" (click)="onCancelarVentanaModal()">Cancelar</button>
+  </modal-footer>
+</modal>

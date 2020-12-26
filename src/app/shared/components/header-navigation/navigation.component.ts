@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { selectAuthState, selectUsuarioActivo } from './../../../moduloAuth/store/selectors/auth.selectors';
+import { selectAuthState, selectUsuarioActivo, selectUsuarioLogueado } from './../../../moduloAuth/store/selectors/auth.selectors';
 import { Usuario } from './../../../moduloAuth/models/usuario.model';
 import { Component, AfterViewInit, EventEmitter, Output, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -32,7 +32,7 @@ export class NavigationComponent implements AfterViewInit, OnInit {
 
     this.store
       .pipe(
-        select(selectUsuarioActivo)
+        select(selectUsuarioLogueado)
       ).subscribe(
         x => this.usuario = x
       )

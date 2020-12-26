@@ -1,3 +1,7 @@
+import { Utils } from './../../../moduloHelpers/utils/mensajes';
+import { Router } from '@angular/router';
+import { Code } from 'angular-feather/icons';
+import { mensajeUsuario, TipoMensaje } from './../../../shared/models/mensajeUsuario.model';
 import { modificarUsuarioOK } from './../actions/auth.actions';
 import { AppState } from './../../../reducers/app.reducer';
 import { AuthService } from './../../services/auth.service';
@@ -12,14 +16,81 @@ import { PrincipalActions } from '../../../moduloPrincipal/store/actions/index'
 
 
 
+
 @Injectable()
 export class AuthEffects {
 
   constructor(
     private authService: AuthService,
     private action$: Actions,
-    private store: Store<AppState>
+    private store: Store<AppState>,
+    private router: Router
   ) { }
+
+    // ---------------------------------------------------------------------
+  // Crear Usuario
+  // ---------------------------------------------------------------------
+  crearUsuario$: Observable<Action> = createEffect(
+    () =>
+      this.action$.pipe(
+        ofType(AuthActions.crearUsuario),
+
+        switchMap(
+          action => {
+
+            this.store.dispatch(PrincipalActions.cargandoDatos({ mensaje: "cargando" }));
+            return this.authService.registrarUsuario(action.usuario, action.password)
+              .pipe(
+
+                map(
+
+                  usuario => {
+                    this.store.dispatch(PrincipalActions.cargadoDatos());
+                    this.router.navigateByUrl('/usuarios');
+                    return AuthActions.crearUsuarioOK({ usuario: usuario });
+
+                  }
+
+                ), // Fin map
+
+                catchError(
+                  error => {
+                    this.store.dispatch(PrincipalActions.cargadoDatos());
+                    if (error.code === 'auth/email-already-in-use') {
+                      this.store.dispatch(
+                      PrincipalActions.generarMensajeUsuario(
+                      {
+                        mensajeUsuario:
+                          { mensaje: 'Ya existe un usuario con el dni indicado', tipoMensaje: TipoMensaje.Error, observaciones: 'esto es un error' }
+                      })
+                      )
+                    }
+
+                    else {
+                      this.store.dispatch(
+                        PrincipalActions.generarMensajeUsuario(
+                        {
+                          mensajeUsuario:
+                            { mensaje: 'JKGHAJKGHKSJAGHAJKSHGJAK', tipoMensaje: TipoMensaje.Error, observaciones: 'esto es un error' }
+                        })
+                        )
+
+                    }
+
+
+                    return of(AuthActions.crearUsuariosError({ error: 'error' }))
+                  }
+
+                )
+              ) // fin pipe
+
+                }
+      ) // Fin mergeMap
+
+    ) // fin this.action$.pipe
+
+  ); // fin createeffect
+
 
   // ---------------------------------------------------------------------
   // Loguear usuario
@@ -32,26 +103,21 @@ export class AuthEffects {
         mergeMap(
           action => {
 
-            this.store.dispatch(PrincipalActions.cargandoDatos({ mensaje: "cargando" }));
+            this.store.dispatch(PrincipalActions.cargandoDatos({ mensaje: "Logueando usuario" }));
 
             return this.authService.login(action.email, action.password)
               .pipe(
 
-                map(
+                tap( value => this.store.dispatch(PrincipalActions.cargadoDatos()) ),
 
-                  usuario => {
-                    this.store.dispatch(PrincipalActions.cargadoDatos());
-                    return AuthActions.loginOK({ usuariologueado: usuario })
-                  }
+                map( usuario => AuthActions.loginOK({ usuariologueado: usuario })), // Fin map
 
-                ), // Fin map
-
-                catchError(
-                  error => {
-                    this.store.dispatch(PrincipalActions.cargadoDatos());
-                    return of(AuthActions.loginError({ error: 'error' }))
-                  }
-
+                catchError(error => {
+                  console.log('error',error);
+                  this.store.dispatch(PrincipalActions.cargadoDatos());
+                  this.store.dispatch(PrincipalActions.generarMensajeUsuario({ mensajeUsuario: Utils.construirMensaje(error['code']) }));
+                  return of(AuthActions.loginError({ error: 'error' }))
+                }
                 )
               ) // fin pipe
 
@@ -72,6 +138,7 @@ export class AuthEffects {
 
         switchMap(
           action => {
+            console.log("usuarios cargados desde effects");
 
             this.store.dispatch(PrincipalActions.cargandoDatos({ mensaje: "cargando" }));
             return this.authService.ObtenerUsuarios(action.fou)
@@ -80,6 +147,7 @@ export class AuthEffects {
                 map(
 
                   usuarios => {
+
                     this.store.dispatch(PrincipalActions.cargadoDatos());
                     return AuthActions.cargarUsuariosOK({ usuarios: usuarios });
                   }
@@ -114,18 +182,19 @@ export class AuthEffects {
         mergeMap(
           action => {
 
-
-
             this.store.dispatch(PrincipalActions.cargandoDatos({ mensaje: "cargando usuario" }));
 
             return this.authService.ObtenerUsuarioPorUid(action.uidUsuario)
               .pipe(
+                tap(value => this.store.dispatch(PrincipalActions.cargadoDatos())),
 
                 map(
 
+
+
                   usuario => {
 
-                    this.store.dispatch(PrincipalActions.cargadoDatos());
+
                     return AuthActions.cargarUsuarioOK({ usuario: usuario });
                   }
 
@@ -134,7 +203,6 @@ export class AuthEffects {
                   catchError(
                     error => {
 
-                      this.store.dispatch(PrincipalActions.cargadoDatos());
                       return of(AuthActions.cargarUsuarioError({ error: 'error' }))
                     }
 
@@ -148,47 +216,6 @@ export class AuthEffects {
 
   ); // fin createeffect
 
-  // ---------------------------------------------------------------------
-  // Crear Usuario
-  // ---------------------------------------------------------------------
-  crearUsuario$: Observable<Action> = createEffect(
-    () =>
-      this.action$.pipe(
-        ofType(AuthActions.crearUsuario),
-
-        switchMap(
-          action => {
-
-
-
-            this.store.dispatch(PrincipalActions.cargandoDatos({ mensaje: "cargando" }));
-            return this.authService.registrarUsuario(action.usuario, action.password)
-              .pipe(
-
-                map(
-
-                  usuario => {
-                    this.store.dispatch(PrincipalActions.cargadoDatos());
-                    return AuthActions.crearUsuarioOK({ usuario: usuario });
-                  }
-
-                ), // Fin map
-
-                catchError(
-                  error => {
-                    this.store.dispatch(PrincipalActions.cargadoDatos());
-                    return of(AuthActions.crearUsuariosError({ error: 'error' }))
-                  }
-
-                )
-              ) // fin pipe
-
-                }
-      ) // Fin mergeMap
-
-    ) // fin this.action$.pipe
-
-  ); // fin createeffect
 
   modificarUsuario$: Observable<Action> = createEffect(
     () =>
@@ -206,6 +233,7 @@ export class AuthEffects {
 
                   usuario => {
                     this.store.dispatch(PrincipalActions.cargadoDatos());
+                    
                     return AuthActions.modificarUsuarioOK({ usuario: usuario });
                   }
 
@@ -214,7 +242,6 @@ export class AuthEffects {
                 catchError(
                   error => {
                     this.store.dispatch(PrincipalActions.cargadoDatos());
-                    console.log(error);
                     return of(AuthActions.modificarUsuarioError({ error: 'error' }))
                   }
 
@@ -229,6 +256,44 @@ export class AuthEffects {
   ); // fin createeffect
 
 
+  eliminarUsuario$: Observable<Action> = createEffect(
+    () =>
+      this.action$.pipe(
+        ofType(AuthActions.eliminarUsuario),
+
+        switchMap(
+          action => {
+
+            this.store.dispatch(PrincipalActions.cargandoDatos({ mensaje: "eliminando usuario" }));
+            return this.authService.EliminarUsuario(action.uidUsuario)
+              .pipe(
+
+                map(
+
+                  uidUsuario => {
+                    this.store.dispatch(PrincipalActions.cargadoDatos());
+                    return AuthActions.eliminarUsuarioOK({uidUsuario: uidUsuario});
+                  }
+
+                ), // Fin map
+
+                catchError(
+                  error => {
+                    this.store.dispatch(PrincipalActions.cargadoDatos());
+
+                    return of(AuthActions.eliminarUsuarioError({ error: 'error' }))
+                  }
+
+                )
+              ) // fin pipe
+
+                }
+      ) // Fin mergeMap
+
+    ) // fin this.action$.pipe
+
+  ); // fin createeffect
 
 
- }
+}
+

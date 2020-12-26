@@ -1,3 +1,4 @@
+import { UsuarioAutenticadoGuard } from './moduloAuth/guards/usuarioAutenticado.guard';
 import { ListaUsuariosComponent } from './moduloAuth/components/lista-usuarios/lista-usuarios.component';
 import { RegistroComponent } from './moduloAuth/components/registro/registro.component';
 import { LoginComponent } from './moduloAuth/components/login/login.component';
@@ -12,6 +13,7 @@ export const Approutes: Routes = [
   {
     path: '',
     component: FullComponent,
+
     children: [
       { path: '', redirectTo: '/index', pathMatch: "full"},
       { path: 'login', component: LoginComponent },
@@ -19,7 +21,7 @@ export const Approutes: Routes = [
       { path: 'editarUsuario/:id', component: RegistroComponent },
       { path: 'visualizarUsuario/:id', component: RegistroComponent },
       { path: 'index', component: IndexComponent },
-      { path: 'usuarios', component:ListaUsuariosComponent},
+      { path: 'usuarios', component:ListaUsuariosComponent, canActivate: [UsuarioAutenticadoGuard]},
       { path: 'libros',   loadChildren: () => import('./moduloLibros/libros-routing.module').then(m => m.LibrosRoutingModule)},
       { path: 'lectores', loadChildren: () => import('./moduloLectores/lectores-routing.module').then(m => m.LectoresRoutingModule)}
     ]

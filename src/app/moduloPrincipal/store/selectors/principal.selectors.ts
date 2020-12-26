@@ -1,3 +1,4 @@
+import { mensajeUsuario } from './../../../shared/models/mensajeUsuario.model';
 import { PrincipalState } from './../reducers/principal.reducers';
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { principalReducer } from '../reducers/principal.reducers';
@@ -7,13 +8,11 @@ export const selectPrincipalState = createFeatureSelector<PrincipalState>('princ
 
 export const selectEstadoCarga = createSelector(
   selectPrincipalState,
+  principal => principal.estadoCarga
+);
 
-  principal => {
-    return {
-      "cargando": principal.cargando,
-      "mensajeCarga": principal.mensajeCarga
-    }
-
-  }
+export const selectMensajeUsuario = createSelector(
+  selectPrincipalState,
+  principal => principal.mensajeUsuario
 );
 

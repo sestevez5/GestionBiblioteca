@@ -14,7 +14,7 @@ import { AgmCoreModule } from '@agm/core';
 import { DataTablesModule } from 'angular-datatables';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
-import { ToastrModule } from 'ngx-toastr';
+import { ToastrModule, ToastContainerModule } from 'ngx-toastr';
 import { FullComponent } from './layouts/full/full.component';
 import { BlankComponent } from './layouts/blank/blank.component';
 import { FeatherModule } from 'angular-feather';
@@ -76,7 +76,8 @@ const icons = {
     BrowserModule,
     BrowserAnimationsModule,
     FormsModule,
-    ToastrModule.forRoot(),
+    ToastrModule.forRoot({ positionClass: 'inline' }),
+    ToastContainerModule,
     FeatherModule.pick(icons),
     ReactiveFormsModule,
     DataTablesModule,

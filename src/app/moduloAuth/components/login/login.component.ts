@@ -1,4 +1,4 @@
-import { selectUsuarioActivo } from './../../store/selectors/auth.selectors';
+import { selectUsuarioActivo, selectUsuarioLogueado } from './../../store/selectors/auth.selectors';
 import { Usuario } from './../../models/usuario.model';
 
 import { AuthService } from './../../services/auth.service';
@@ -8,7 +8,7 @@ import { select, Store } from '@ngrx/store';
 import { AppReducers } from '../../../reducers/index';
 import { AuthActions } from '../../store/actions/index';
 import { ActivatedRoute, Router } from '@angular/router';
-import { tap } from 'rxjs/operators';
+import { tap, filter } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -23,6 +23,8 @@ export class LoginComponent implements OnInit, OnDestroy {
   private usuario: Usuario | undefined;
 
   usuarioActivoSubscription: Subscription | undefined;
+
+  returnUrl: string;
 
 
   constructor(
@@ -43,15 +45,29 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
+    // Necesitamos obtener la url que nos invoca para devolver el flujo al punto de llamada.
+    this.route.queryParams
+      .subscribe(params => {
+        if (params.returnUrl) {
+            this.returnUrl = params['returnUrl']
+          }
+      });
+
     this.store
       .pipe(
-        select(selectUsuarioActivo)
+        select(selectUsuarioLogueado),
+        filter(usuarioLogueado => !!usuarioLogueado)
       )
       .subscribe(
-        x => {
-          if (x) {
-            this.router.navigateByUrl('/index');
-          }
+        usuarioLogueado => {
+
+                if (this.returnUrl) {
+                  this.router.navigateByUrl(this.returnUrl);
+                }
+                else {
+                  this.router.navigateByUrl('/index');
+                }
+
         }
       );
 
@@ -69,7 +85,11 @@ export class LoginComponent implements OnInit, OnDestroy {
   onLogin() {
     const credenciales = this.form.value;
 
+
+
     this.store.dispatch(AuthActions.loging({ email: credenciales.email, password: credenciales.password }));
+
+
 
 
   }

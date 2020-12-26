@@ -34,17 +34,17 @@
                               placeholder="Segundo apellido"
                               formControlName="segundoApellido">
                     </div>
+
                     <div class="form-group">
                       <label for="exampleInputEmail1">Correo electrónico</label>
-                      <input  type="email"
+                      <input  type="check"
                               class="form-control"
-                              id="exampleInputEmail1"
+                              id="esAdministrador"
                               aria-describedby="emailHelp"
-                              placeholder="Introduzca su correo electrónico"
+                              placeholder="correo electrónico"
                               formControlName="email">
                       <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
                     </div>
-
                     <div class="custom-control custom-checkbox mr-sm-2 m-b-15">
                       <input  type="checkbox"
                               id="cbAdministrador"
@@ -53,21 +53,10 @@
                       <label  for="cbAdministrador" class="custom-control-label">Administrador</label>
                     </div>
 
-                    <div class="form-group">
-                      <label for="exampleInputEmail1">Correo electrónico</label>
-                      <input  type="check"
-                              class="form-control"
-                              id="esAdministrador"
-                              aria-describedby="emailHelp"
-
-                              formControlName="email">
-                      <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
-                    </div>
 
 
 
-
-                  <div class="form-group">
+                  <div *ngIf="this.modoFormulario === 'Crear'" class="form-group">
                       <label for="exampleInputPassword1">Password</label>
                       <input  type="password"
                               class="form-control"
@@ -86,8 +75,8 @@
                         <div class="card">
                           <div class="el-card-item w-100">
                             <div style="width: 100%;" class="el-card-avatar el-overlay-1">
-                              <img style="width: 100%;" class="p-10" *ngIf="!this.fotoActual" src="../../../../assets/images/nophoto.png" alt="user">
-                              <img style="width: 100%;" class="p-10" *ngIf="this.fotoActual" [src]="this.fotoActual" alt="user">
+                              <img style="width: 100%;" class="p-10" *ngIf="!this.fotoVigente" src="../../../../assets/images/nophoto.png" alt="user">
+                              <img style="width: 100%;" class="p-10" *ngIf="this.fotoVigente" [src]="this.fotoVigente" alt="user">
 
                               <div class="el-overlay">
                                 <ul class="list-style-none el-info">
@@ -139,7 +128,7 @@
   <!-- Cuerpo -->
   <modal-content>
     <div >
-      <app-obtener-imagen (imagenProcesadaEvent)="onObtenerImagen($event)" [imagenAProcesar]="this.fotoPrevia"></app-obtener-imagen>
+      <app-obtener-imagen (imagenProcesadaEvent)="onObtenerImagen($event)"></app-obtener-imagen>
     </div>
   </modal-content>
 

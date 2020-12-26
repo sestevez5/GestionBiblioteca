@@ -1,12 +1,14 @@
-import { delay, map } from 'rxjs/operators';
-import { Observable } from 'rxjs/Observable';
-import { selectEstadoCarga } from './../../moduloPrincipal/store/selectors/principal.selectors';
+import { ToastContainerDirective,ToastrService } from 'ngx-toastr';
+import { mensajeUsuario, TipoMensaje } from './../../shared/models/mensajeUsuario.model';
+import { estadoCarga } from './../../shared/models/estadoCarga.model';
+import { delay, map, tap, filter, take } from 'rxjs/operators';
+import { selectEstadoCarga, selectMensajeUsuario } from './../../moduloPrincipal/store/selectors/principal.selectors';
 import { select, Store } from '@ngrx/store';
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 import { AppState } from 'src/app/reducers/app.reducer';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-full-layout',
@@ -15,22 +17,28 @@ import { Subscription } from 'rxjs';
 })
 export class FullComponent implements OnInit {
   public config: PerfectScrollbarConfigInterface = {};
-  cargando$: Observable<boolean>;
-  mensajeCarga$: Observable<string>;
 
-  constructor(
-    public router: Router,
-    private store: Store<AppState>) { }
+
+  @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
+
+  estadoCarga$: Observable<estadoCarga>;
+  mensajeUsuario$: Observable<mensajeUsuario>;
+  mostrarMensajeUsuario = false;
+
+
 
   tabStatus = 'justified';
-
   public isCollapsed = false;
-
   public innerWidth: any;
   public defaultSidebar: any;
   public showSettings = false;
   public showMobileMenu = false;
   public expandLogo = false;
+
+  constructor(
+    public router: Router,
+    private store: Store<AppState>,
+    private toastr: ToastrService) { }
 
   options = {
     theme: 'light', // two possible values: light, dark
@@ -53,7 +61,9 @@ export class FullComponent implements OnInit {
 
   ngOnInit() {
 
-    
+    this.toastr.overlayContainer = this.toastContainer;
+
+
     if (this.router.url === '/') {
       this.router.navigate(['/dashboard/classic']);
     }
@@ -61,33 +71,61 @@ export class FullComponent implements OnInit {
     this.handleSidebar();
 
     // Observar si el sistema se encuentar realizando carga de datos.
-    const informacionCarga$ =  this.store.pipe(
-      select(selectEstadoCarga),
-      delay(0)
-    );
-
-    this.cargando$ = this.store
+    this.estadoCarga$ = this.store
       .pipe(
         select(selectEstadoCarga),
-        delay(0),
-        map(
-          value => value.cargando
-        )
+        delay(0)
     );
 
-    this.mensajeCarga$ = this.store
-    .pipe(
-      select(selectEstadoCarga),
-      delay(0),
-      map(
-        value => value.mensajeCarga
-      )
-  );
+    // Observar si el sistema se encuentar realizando carga de datos.
+    this.mensajeUsuario$ = this.store
+      .pipe(
+        select(selectMensajeUsuario),
+        filter(mensaje => mensaje.tipoMensaje !== TipoMensaje.NoMensaje),
+        delay(0)
+    );
 
-
-
-
+    this.mensajeUsuario$.subscribe(
+      mensaje => {
+        this.mostrarMensaje(mensaje);
+      }
+    );
   }
+
+  mostrarMensaje(mensaje: mensajeUsuario) {
+    this.mostrarMensajeUsuario = true;
+     switch (mensaje.tipoMensaje) {
+
+       case TipoMensaje.Error: {
+         this.toastr.error(mensaje.mensaje,
+           '',
+           {
+             disableTimeOut: true,
+             positionClass: 'inline'
+           })
+           .onTap
+           .pipe(take(1))
+           .subscribe(
+             value => this.mostrarMensajeUsuario = false
+           );
+
+         break;
+       } // fin case Error.
+
+       default: {
+
+         break;
+
+       }
+
+
+
+       }  // Fin switch
+    }
+
+
+
+
 
   @HostListener('window:resize', ['$event'])
   onResize(event: string) {

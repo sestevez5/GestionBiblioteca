@@ -1,3 +1,4 @@
+
 <!-- ============================================================== -->
 <!-- Main wrapper - style you can find in pages.scss -->
 <!-- ============================================================== -->
@@ -26,6 +27,7 @@
                   </span>
 
                 </a>
+
 
 
                 <!-- ============================================================== -->
@@ -65,20 +67,25 @@
     <!-- ============================================================== -->
     <!-- Page wrapper  -->
     <!-- ============================================================== -->
+
     <div class="page-wrapper">
+
+
         <app-breadcrumb></app-breadcrumb>
         <!-- ============================================================== -->
         <!-- Container fluid  -->
         <!-- ============================================================== -->
+
         <div class="container-fluid" style="position: relative;">
             <!-- ============================================================== -->
             <!-- Start Page Content -->
             <!-- ============================================================== -->
+            <div style="margin: 2px; width: 100%;" toastContainer></div>
             <router-outlet></router-outlet>
-            <div *ngIf="this.cargando$ | async " id="miModal" class="mod d-flex flex-column">
-               <p class="mensajeCarga">{{ this.mensajeCarga$ | async}}</p>
-              <div class="modal-contenido">
 
+            <div *ngIf="(this.estadoCarga$ | async)?.cargando" id="miModal" class="mod d-flex flex-column">
+              <p class="mensajeCarga">{{ (estadoCarga$ | async)?.mensajeCarga}}</p>
+              <div class="modal-contenido">
 
                   <div class="spinner">
 
@@ -88,6 +95,20 @@
 
               </div>
             </div>
+
+            <div *ngIf="(this.estadoCarga$ | async)?.cargando" id="miModal" class="mod d-flex flex-column">
+              <p class="mensajeCarga">{{ (estadoCarga$ | async)?.mensajeCarga}}</p>
+
+            </div>
+
+
+            <div *ngIf="this.mostrarMensajeUsuario" id="miModal" class="mod d-flex flex-column">
+
+            </div>
+
+
+
+
 
             <!-- ============================================================== -->
             <!-- End Start Page Content -->

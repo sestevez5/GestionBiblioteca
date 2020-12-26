@@ -1,7 +1,6 @@
-import { filter, first } from 'rxjs/operators';
 import { selectUsuarioActivo } from './../../store/selectors/auth.selectors';
 import { Observable, pipe } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ViewChild, ElementRef } from '@angular/core';
 
 import { Usuario } from './../../models/usuario.model';
@@ -24,8 +23,8 @@ export class RegistroComponent implements OnInit {
 
   closeResult = '';
   form: FormGroup;
-  fotoActual = '';
-  fotoPrevia = ''
+  fotoVigente = '';
+  fotoCapturada = '';
   capturandoImagen = false;
   modoFormulario: 'Crear' | 'Modificar' | 'Visualizar';
   uidUsuario: string | null;
@@ -54,10 +53,12 @@ export class RegistroComponent implements OnInit {
     private authService: AuthService,
     private store: Store<AppReducers.AppState>,
     private route: ActivatedRoute,
+    private router: Router,
     private modalService: ModalManager
   ) {}
 
   ngOnInit() {
+
 
     this.construirFormulario(this.usuario);
     this.uidUsuario = this.route.snapshot.paramMap.get("id");
@@ -65,26 +66,23 @@ export class RegistroComponent implements OnInit {
     if (this.uidUsuario) {
 
       this.store
-      .pipe(
-        select(selectUsuarioActivo),
-      )
-      .subscribe(
-
+        .pipe(select(selectUsuarioActivo))
+        .subscribe(
           usuarioActivo => {
             this.usuario = usuarioActivo
             this.construirFormulario(this.usuario)
           }
-
-      )
+        );
 
       this.store.dispatch(AuthActions.cargarUsuario({ uidUsuario: this.uidUsuario }))
       this.modoFormulario = 'Modificar';
-    }  else {
+
+    } else {
       // Nuevo usuario.
       this.construirFormulario(this.usuario);
       this.modoFormulario = 'Crear'
-
     }
+
 
   }
 
@@ -92,49 +90,55 @@ export class RegistroComponent implements OnInit {
     const datosFormulario = this.form.value;
     const password = datosFormulario.password;
     delete datosFormulario.password;
-    let usuario: Usuario = datosFormulario;
+    let usuarioActual: Usuario = datosFormulario;
+    usuarioActual = {...usuarioActual, foto:this.fotoVigente};
 
-    if (this.fotoActual) {
-      usuario.foto = this.fotoActual;
-    }
-
-
-    if (this.modoFormulario === 'Crear') {
-
-      this.store.dispatch(AuthActions.crearUsuario({ usuario: usuario, password: password}));
-    } else {
-      if (this.uidUsuario) {
-        history.back();
-
-        usuario.uid = this.uidUsuario;
-       this.store.dispatch(AuthActions.modificarUsuario({ usuario: usuario }));
+    switch (this.modoFormulario) {
+      case 'Crear': {
+        this.store.dispatch(AuthActions.crearUsuario({ usuario: usuarioActual, password: password}));
+        break;
       }
 
-   }
+      case 'Modificar': {
+        if (this.uidUsuario) {
+          usuarioActual = { ...usuarioActual, uid: this.uidUsuario }
+          this.store.dispatch(AuthActions.modificarUsuario({ usuario: usuarioActual }));
+          this.store.pipe(
+            select(selectUsuarioActivo))
+            .subscribe(
+              usuarioActivo => console.log('hola')
+
+          )
+        }
+
+        break;
+      }
+
+      default: {
+        break
+      }
 
 
 
-
+    };
 
 
   }
 
   onCancelar()
   {
-
+    this.router.navigateByUrl('/usuarios');
   }
 
 
   // Gestores de botones de la ventana modal para la gestión de la imagen
   onAceptarVentanaModal() {
-    this.fotoActual = this.fotoPrevia;
-    this.fotoPrevia = '';
+    this.fotoVigente = this.fotoCapturada;
     this.cerrarVentanaModal();
   }
 
   onCancelarVentanaModal() {
-    this.fotoPrevia = ''
-    this.cerrarVentanaModal();
+     this.cerrarVentanaModal();
   }
 
   // ------------------------------------------
@@ -156,16 +160,16 @@ export class RegistroComponent implements OnInit {
       }
     );
       if (this.usuario?.foto) {
-      this.fotoActual = this.usuario.foto;
+      this.fotoVigente = this.usuario.foto;
       } else {
-        this.fotoActual = '';
+        this.fotoVigente = '';
 
     }
   }
 
   onObtenerImagen(imagen: string) {
-    this.fotoPrevia = imagen;
-    
+    this.fotoCapturada = imagen;
+
   }
 
   cerrarVentanaModal(){
@@ -173,7 +177,8 @@ export class RegistroComponent implements OnInit {
       // or this.modalRef.close();
   }
 
-  AbrirVentanaModal(){
+  AbrirVentanaModal() {
+    this.fotoCapturada = '';
     this.modalRef = this.modalService.open(this.panelModal, {
       size: "lg",
       modalClass: 'mymodal',
@@ -194,9 +199,6 @@ export class RegistroComponent implements OnInit {
   onAbrirVentanaModal() {}
 
   onCerrarVentanaModal() { }
-
-
-
 
 }
 

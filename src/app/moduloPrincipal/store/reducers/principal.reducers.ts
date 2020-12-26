@@ -1,3 +1,6 @@
+import { cargadoDatos } from './../actions/principal.actions';
+import { estadoCarga } from './../../../shared/models/estadoCarga.model';
+import { mensajeUsuario, TipoMensaje } from './../../../shared/models/mensajeUsuario.model';
 
 import { PrincipalActions } from '../actions/index'
 
@@ -20,14 +23,15 @@ export const principalFeatureKey = 'principal';
 
 export interface PrincipalState {
 
-  cargando: boolean;
-  mensajeCarga: string;
+  estadoCarga: estadoCarga;
+  mensajeUsuario: mensajeUsuario;
 
 }
 
 export const initialPrincipalState: PrincipalState = {
-  cargando: false,
-  mensajeCarga: ''
+  mensajeUsuario: { tipoMensaje: TipoMensaje.NoMensaje, mensaje: '', observaciones: '' },
+  estadoCarga: { cargando: false, mensajeCarga:''}
+
 };
 
 export const principalReducer = createReducer(
@@ -37,17 +41,34 @@ export const principalReducer = createReducer(
   on(
     PrincipalActions.cargandoDatos,
     (state, action) => {
-      return { ...state, cargando: true, mensajeCarga: action.mensaje };
+      return { ...state, estadoCarga: { cargando: true, mensajeCarga: action.mensaje} };
     }
   ),
 
-  // Ha finalizado la crga de datos.
+  // Ha finalizado la carga de datos.
   on(
     PrincipalActions.cargadoDatos,
     (state, action) => {
-      return { ...state, cargando: false, mensajeCarga: '' };
+      return { ...state, estadoCarga: { cargando: false, mensajeCarga: ''} };
     }
   ),
+
+    // Se está realizando la carga de datos.
+  on(
+      PrincipalActions.generarMensajeUsuario,
+      (state, action) => {
+        return { ...state, mensajeUsuario: action.mensajeUsuario};
+      }
+  ),
+
+  // Se está realizando la carga de datos.
+  on(
+    PrincipalActions.descartarMensajeUsuario,
+    (state, action) => {
+      return { ...state, mensajeUsuario: { tipoMensaje: TipoMensaje.NoMensaje, mensaje: '', observaciones: '' }};
+    }
+  )
+
 
 )
 

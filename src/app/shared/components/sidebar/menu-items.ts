@@ -22,7 +22,29 @@ export const ROUTES: RouteInfo[] = [
                 submenu: []
             }
         ]
-    },
+  },
+
+  {
+    path: 'dashboard',
+    title: 'LIBROS',
+    icon: 'mdi mdi-share',
+    class: 'has-arrow',
+    extralink: false,
+    label: '10',
+    labelClass: 'badge badge-info sidebar-badge',
+    submenu: [
+        {
+            path: './libros',
+            title: 'Visión general',
+            icon: '',
+            class: '',
+            extralink: false,
+            label: '',
+            labelClass: '',
+            submenu: []
+        }
+    ]
+},
 
   {
     path: 'dashboard',
@@ -136,27 +158,28 @@ export const ROUTES: RouteInfo[] = [
     ]
 },
 
-    {
-        path: '/apps/mail/inbox',
-        title: 'LIBROS',
-        icon: 'mdi mdi-book',
-        class: '',
-      extralink: false,
 
-        label: 'new',
-        labelClass: 'badge badge-success sidebar-badge',
-        submenu: []
-    },
-    {
-        path: '/apps/email',
-        title: 'ALUMNOS',
-        icon: 'mdi mdi-account',
-        class: '',
-        extralink: false,
-        label: '',
-        labelClass: '',
-        submenu: []
-    },
+{
+  path: 'dashboard',
+  title: 'LECTORES',
+  icon: 'mdi mdi-share',
+  class: 'has-arrow',
+  extralink: false,
+  label: '10',
+  labelClass: 'badge badge-info sidebar-badge',
+  submenu: [
+      {
+          path: './lectores',
+          title: 'Visión general',
+          icon: '',
+          class: '',
+          extralink: false,
+          label: '',
+          labelClass: '',
+          submenu: []
+      }
+  ]
+},
 
 
 

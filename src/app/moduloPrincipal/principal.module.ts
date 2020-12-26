@@ -5,8 +5,6 @@ import { IndexComponent } from './components/index/index.component';
 import { RouterModule } from '@angular/router';
 import { SpinnerComponent } from '../shared/spinner.component';
 import { PrincipalReducers } from './store/reducers/index';
-
-
 import { StoreModule } from '@ngrx/store';
 
 @NgModule({
@@ -18,6 +16,7 @@ import { StoreModule } from '@ngrx/store';
   imports: [
     CommonModule,
     RouterModule,
+
     StoreModule.forFeature(PrincipalReducers.principalFeatureKey, PrincipalReducers.principalReducer)
   ]
 })

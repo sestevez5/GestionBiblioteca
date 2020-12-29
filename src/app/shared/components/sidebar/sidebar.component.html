@@ -14,7 +14,7 @@
               <span class="hide-menu">{{sidebarnavItem.title}}</span>
             </div>
 
-            <a class="sidebar-link waves-effect waves-dark"
+                    <a class="sidebar-link waves-effect waves-dark"
                 [routerLink]="sidebarnavItem.class === '' ? [sidebarnavItem.path] : null"
                 [ngClass]="[sidebarnavItem.class]" *ngIf="!sidebarnavItem.extralink;"
                 (click)="addExpandClass(sidebarnavItem.title)"

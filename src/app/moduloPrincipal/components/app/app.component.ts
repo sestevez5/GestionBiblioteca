@@ -10,6 +10,10 @@ export class AppComponent {
   imagen='';
   title = 'app';
 
+  constructor() {
+    console.log('hola');
+  }
+
   onImagen(imagen:string) {
     this.imagen = imagen;
   }

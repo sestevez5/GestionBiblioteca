@@ -1,15 +1,15 @@
-import { Observable } from 'rxjs';
-import { selectAuthState, selectUsuarioActivo, selectUsuarioLogueado } from './../../../moduloAuth/store/selectors/auth.selectors';
+import { ModuloPrincipalRootState } from './../../../moduloPrincipal/store/index';
 import { Usuario } from './../../../moduloAuth/models/usuario.model';
 import { Component, AfterViewInit, EventEmitter, Output, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
-import { AppState } from 'src/app/reducers/app.reducer';
+
 declare var $: any;
 
 import { select, Store } from '@ngrx/store';
-import { AuthActions } from '../../../moduloAuth/store/actions/index';
+import * as AuthActions from '../../../moduloPrincipal/store/login/login.actions';
+
+import * as fromLoginSelector from '../../../moduloPrincipal/store/login/login.selectors'
 
 @Component({
   selector: 'app-navigation',
@@ -26,13 +26,13 @@ export class NavigationComponent implements AfterViewInit, OnInit {
 
   constructor(
     private modalService: NgbModal,
-    private store: Store<AppState>) { }
+    private store: Store<ModuloPrincipalRootState>) { }
 
   ngOnInit(): void {
 
     this.store
       .pipe(
-        select(selectUsuarioLogueado)
+        select(fromLoginSelector.selectUsuarioLogueado)
       ).subscribe(
         x => this.usuario = x
       )
@@ -112,8 +112,6 @@ export class NavigationComponent implements AfterViewInit, OnInit {
   onLogout() {
 
     this.store.dispatch(AuthActions.logout());
-
-
 
   }
 }

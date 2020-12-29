@@ -1,3 +1,5 @@
+import { UsuariosRoutingModule } from './auth-routing.module';
+import { UsuariosEffects } from './store/usuarios/usuarios.effects';
 import { HelperModule } from '../moduloHelpers/helper.module';
 // Módulos angular
 import { NgModule, ModuleWithProviders } from '@angular/core';
@@ -9,10 +11,11 @@ import { Camera, Heart, Github, Activity, Airplay, AlertCircle, AlertOctagon, Al
 
 
 
-// Módulos Firebase
+// MÓDULOS FIREBASE
 import { AngularFireModule } from "@angular/fire";
 import { AngularFireAuthModule } from "@angular/fire/auth";
 import { AngularFirestoreModule } from '@angular/fire/firestore';
+
 import { environment } from '../../environments/environment';
 
 // modulos ngrx
@@ -20,17 +23,13 @@ import { StoreModule } from '@ngrx/store';
 
 // componentes propios de la aplicación
 import { AuthService } from './services/auth.service';
-import { AuthReducers } from './store/reducers/index';
-import { LoginComponent } from './components/login/login.component';
+
 import { RegistroComponent } from './components/registro/registro.component'
-
 import { EffectsModule } from '@ngrx/effects'
-import { AuthEffects } from './store/effects/index';
-
 import { ModalModule } from 'ngb-modal';
 import { ListaUsuariosComponent } from './components/lista-usuarios/lista-usuarios.component';
 
-import { RouterModule, Routes } from '@angular/router';
+import { ModuloAuthFeaturekey, ModuloAuthReducers } from './store/index';
 
 
 
@@ -38,7 +37,6 @@ import { RouterModule, Routes } from '@angular/router';
 
 @NgModule({
   declarations: [
-    LoginComponent,
     RegistroComponent,
     ListaUsuariosComponent
   ],
@@ -47,12 +45,10 @@ import { RouterModule, Routes } from '@angular/router';
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
-    StoreModule.forFeature(AuthReducers.authFeatureKey, AuthReducers.authReducer),
-    EffectsModule.forFeature([AuthEffects.AuthEffects]),
+    StoreModule.forFeature(ModuloAuthFeaturekey, ModuloAuthReducers),
+    EffectsModule.forFeature([UsuariosEffects]),
     FeatherModule,
-    RouterModule,
-
-
+    UsuariosRoutingModule,
     // Módulos relativos a firebase2
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
@@ -61,7 +57,7 @@ import { RouterModule, Routes } from '@angular/router';
     ModalModule
 
   ],
-  exports: [LoginComponent],
+  exports: [],
   providers: [AuthService]
 
 })

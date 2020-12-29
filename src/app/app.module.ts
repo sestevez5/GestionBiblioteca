@@ -7,7 +7,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { RouterModule } from '@angular/router';
+import { PreloadAllModules, RouterModule } from '@angular/router';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AgmCoreModule } from '@agm/core';
@@ -42,6 +42,7 @@ import { AuthModule } from './moduloAuth/auth.module';
 import { AppReducers } from './reducers/index';
 import { HelperModule } from './moduloHelpers/helper.module';
 import { PrincipalModule } from './moduloPrincipal/principal.module';
+import { IndexSubsistemaComponent } from './shared/components/index-subsistema/index-subsistema.component';
 
 
 
@@ -69,6 +70,7 @@ const icons = {
     NavigationComponent,
     BreadcrumbComponent,
     SidebarComponent,
+    IndexSubsistemaComponent,
   ],
   imports: [
     HelperModule,
@@ -76,6 +78,7 @@ const icons = {
     BrowserModule,
     BrowserAnimationsModule,
     FormsModule,
+    ReactiveFormsModule,
     ToastrModule.forRoot({ positionClass: 'inline' }),
     ToastContainerModule,
     FeatherModule.pick(icons),
@@ -92,17 +95,11 @@ const icons = {
     NgMultiSelectDropDownModule.forRoot(),
     AgmCoreModule.forRoot({ apiKey: 'AIzaSyDoliAneRffQDyA7Ul9cDk3tLe7vaU4yP8' }),
 
-    AuthModule.forRoot(),
+    //AuthModule.forRoot(),
     PrincipalModule.forRoot(),
 
-
-
-
-
-
-
     StoreModule.forRoot(AppReducers.reducers, { metaReducers }),
-    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
+    StoreDevtoolsModule.instrument({ maxAge: 20 }),
     EffectsModule.forRoot([]),
 
 

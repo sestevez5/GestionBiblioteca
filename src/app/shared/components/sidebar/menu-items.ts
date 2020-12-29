@@ -12,7 +12,7 @@ export const ROUTES: RouteInfo[] = [
         labelClass: 'badge badge-info sidebar-badge',
         submenu: [
             {
-                path: './usuarios',
+                path: 'usuarios',
                 title: 'Visión general',
                 icon: '',
                 class: '',

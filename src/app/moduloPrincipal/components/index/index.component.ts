@@ -1,10 +1,10 @@
-import { filter } from 'rxjs/operators';
-import { selectUsuarioActivo, selectUsuarioLogueado } from './../../../moduloAuth/store/selectors/auth.selectors';
+
 import { Usuario } from './../../../moduloAuth/models/usuario.model';
 import { select, Store } from '@ngrx/store';
-import { AppState } from 'src/app/reducers/app.reducer';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
+import * as FromLoginSelector from '../../../moduloPrincipal/store/login/login.selectors';
+import { ModuloPrincipalRootState } from '../../store';
 
 @Component({
   selector: 'app-index',
@@ -14,13 +14,13 @@ import { Component, OnInit } from '@angular/core';
 export class IndexComponent implements OnInit {
 
   usuario: Usuario | undefined;
-  constructor(private route: ActivatedRoute, private router: Router, private store: Store<AppState>) { }
+  constructor(private route: ActivatedRoute, private router: Router, private store: Store<ModuloPrincipalRootState>) { }
 
   ngOnInit(): void {
 
     this.store
       .pipe(
-        select(selectUsuarioLogueado)
+        select(FromLoginSelector.selectUsuarioLogueado)
       ).subscribe(
         usuarioLogueado => this.usuario = usuarioLogueado
     );
@@ -31,7 +31,7 @@ export class IndexComponent implements OnInit {
 
   onAcceder() {
 
-    this.router.navigateByUrl('/login');
+    this.router.navigateByUrl('usuarios/login');
   }
 
 }

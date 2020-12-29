@@ -8,12 +8,12 @@ import {
 import { environment } from '../../environments/environment';
 
 
-export interface AppState {
+export interface RootState {
 }
 
-export const reducers: ActionReducerMap<AppState> = {
+export const reducers: ActionReducerMap<RootState> = {
 
 };
 
 
-export const metaReducers: MetaReducer<AppState>[] = !environment.production ? [] : [];
+export const metaReducers: MetaReducer<RootState>[] = !environment.production ? [] : [];

@@ -1,13 +1,17 @@
+import { ModuloAuthRootState } from './../store/index';
 import { Router } from '@angular/router';
 import { switchMap, catchError, filter, take, tap, map } from 'rxjs/operators';
-import { selectUsuarioLogueado } from './../store/selectors/auth.selectors';
+
 import { Observable, of, Subject, BehaviorSubject } from 'rxjs';
-import { AppState } from '../../reducers/app.reducer';
+import { RootState } from '../../reducers/app.reducer';
 import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot} from '@angular/router';
 import { Injectable } from '@angular/core';
 
 import { Store, select } from '@ngrx/store';
-import { AuthActions } from '../store/actions';
+import * as AuthActions from '../../moduloPrincipal/store/login/login.actions';
+
+import * as FromLoginSelector from '../../moduloPrincipal/store/login/login.selectors';
+import { ModuloPrincipalRootState } from 'src/app/moduloPrincipal/store';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +21,7 @@ import { AuthActions } from '../store/actions';
 export class UsuarioAutenticadoGuard implements CanActivate {
 
   constructor(
-    private store: Store<AppState>,
+    private store: Store<ModuloPrincipalRootState>,
     private router: Router
   ) {}
 
@@ -30,16 +34,16 @@ export class UsuarioAutenticadoGuard implements CanActivate {
     return this.store
       .pipe(
         take(1),
-        select(selectUsuarioLogueado),
+        select(FromLoginSelector.selectUsuarioLogueado),
         map(usuarioLogueado => {
           if (usuarioLogueado) {
             return true
           }
           else {
-            const c = '/login?returnUrl=' + state.url;
+            const c = 'login?returnUrl=' + state.url;
             console.log(c);
 
-            this.router.navigateByUrl('/login?returnUrl='+state.url+'&x=2');
+            this.router.navigateByUrl('login?returnUrl='+state.url+'&x=2');
 
             return false
           }

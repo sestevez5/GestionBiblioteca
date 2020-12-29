@@ -1,13 +1,14 @@
+import { ModuloPrincipalRootState } from './../../moduloPrincipal/store/index';
 import { ToastContainerDirective,ToastrService } from 'ngx-toastr';
 import { mensajeUsuario, TipoMensaje } from './../../shared/models/mensajeUsuario.model';
 import { estadoCarga } from './../../shared/models/estadoCarga.model';
 import { delay, map, tap, filter, take } from 'rxjs/operators';
-import { selectEstadoCarga, selectMensajeUsuario } from './../../moduloPrincipal/store/selectors/principal.selectors';
+import { selectEstadoCarga, selectMensajeUsuario} from '../../moduloPrincipal/store/comunicaciones/comunicaciones.selectors';
 import { select, Store } from '@ngrx/store';
 import { Component, OnInit, HostListener, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
-import { AppState } from 'src/app/reducers/app.reducer';
+import { RootState } from 'src/app/reducers/app.reducer';
 import { Subscription, Observable } from 'rxjs';
 
 @Component({
@@ -37,7 +38,7 @@ export class FullComponent implements OnInit {
 
   constructor(
     public router: Router,
-    private store: Store<AppState>,
+    private store: Store<ModuloPrincipalRootState>,
     private toastr: ToastrService) { }
 
   options = {

@@ -1,4 +1,5 @@
-import { selectUsuarioActivo } from './../../store/selectors/auth.selectors';
+import { ModuloAuthRootState } from './../../store/index';
+import { selectUsuarioActivo } from '../../store/usuarios/usuarios.selectors';
 import { Observable, pipe } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ViewChild, ElementRef } from '@angular/core';
@@ -12,7 +13,7 @@ import { Component, OnInit } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import { ModalManager } from 'ngb-modal';
 
-import { AuthActions } from '../../store/actions';
+import * as AuthActions from '../../store/usuarios/usuarios.actions';
 
 @Component({
   selector: 'app-registro',
@@ -51,7 +52,7 @@ export class RegistroComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private store: Store<AppReducers.AppState>,
+    private store: Store<ModuloAuthRootState>,
     private route: ActivatedRoute,
     private router: Router,
     private modalService: ModalManager

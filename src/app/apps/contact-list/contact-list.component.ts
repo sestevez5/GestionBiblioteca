@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ContactList } from './contact-list-data';
 import { ContactLists } from './contact-list';
-import { MailGlobalVariable } from '../mail/mail.service';
+// import { MailGlobalVariable } from '../mail/mail.service';
 
 @Component({
     selector: 'app-contact-list',
@@ -28,10 +28,14 @@ export class ContactListComponent implements OnInit {
     imgURL: string | null = null;
     public message = '';
 
-    constructor(public ms: MailGlobalVariable) {
+    // constructor(public ms: MailGlobalVariable) {
 
-        this.ms.selectedMail = null;
-    }
+    //     this.ms.selectedMail = null;
+    // }
+
+  constructor() {
+    
+  }
 
     ngOnInit() {
         this.contactFilter = this.contacts;

@@ -8,10 +8,13 @@ import { CapturarImagenWebcamComponent } from './components/capturar-imagen-webc
 import { ObtenerImagenComponent } from './components/obtener-imagen/obtener-imagen.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { EditorImagenComponent } from './components/editor-imagen/editor-imagen.component';
+import { ConfirmacionAccionUsuarioComponent } from './components/confirmacion-accion-usuario/confirmacion-accion-usuario.component';
 
+import { ModalModule } from 'ngb-modal';
+import { SelectorMultipleDobleListaComponent } from './components/selector-multiple-doble-lista/selector-multiple-doble-lista.component';
+import { ItemSelectorMultipleDobleListaComponent } from './components/selector-multiple-doble-lista/item-selector-multiple-doble-lista/item-selector-multiple-doble-lista.component';
 
-
-
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 @NgModule({
   declarations: [
@@ -19,19 +22,26 @@ import { EditorImagenComponent } from './components/editor-imagen/editor-imagen.
     DndDirective,
     CapturarImagenWebcamComponent,
     ObtenerImagenComponent,
-    EditorImagenComponent
+    EditorImagenComponent,
+    ConfirmacionAccionUsuarioComponent,
+    SelectorMultipleDobleListaComponent,
+    ItemSelectorMultipleDobleListaComponent
   ],
   imports: [
     CommonModule,
     ImageCropperModule,
     WebcamModule,
-    NgbModule
+    NgbModule,
+    ModalModule,
+    DragDropModule
   ],
   exports: [
     CargarImagenComponent,
     DndDirective,
     CapturarImagenWebcamComponent,
-    ObtenerImagenComponent
+    ObtenerImagenComponent,
+    ConfirmacionAccionUsuarioComponent,
+    SelectorMultipleDobleListaComponent
   ]
 })
 export class HelperModule { }

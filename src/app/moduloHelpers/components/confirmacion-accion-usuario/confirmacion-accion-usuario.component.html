@@ -1,0 +1,11 @@
+<modal #panelModal style="border-radius: 40px;">
+  <modal-header>
+  </modal-header>
+  <modal-content>
+      {{this.mensajeConfirmacion}}
+  </modal-content>
+  <modal-footer>
+    <button type="button" class="btn btn-sm btn-secondary mr-3" (click)="onAceptarConfirmacion(true)" >Aceptar</button>
+    <button type="button" class="btn btn-sm btn-secondary" (click)="onAceptarConfirmacion(false)">Cancelar</button>
+  </modal-footer>
+</modal>

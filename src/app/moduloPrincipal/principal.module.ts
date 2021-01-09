@@ -1,3 +1,4 @@
+import { HelperModule } from './../moduloHelpers/helper.module';
 import { LoginEffects } from './store/login/login.effects';
 import { EffectsModule } from '@ngrx/effects';
 
@@ -9,6 +10,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 // COMPONENTES PLANTILLA
 import { SpinnerComponent } from '../shared/spinner.component';
+import { SelectorMultipleDobleListaComponent } from '../moduloHelpers/components/selector-multiple-doble-lista/selector-multiple-doble-lista.component';
 
 // COMPONENTES APLICACIÓN
 import { AppComponent } from './components/app/app.component';
@@ -39,6 +41,7 @@ import { ModuloPrincipalFeaturekey, ModuloPrincipalReducers } from './store/inde
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
+    HelperModule,
 
     // Módulos relativos a firebase2
     AngularFireModule.initializeApp(environment.firebase),

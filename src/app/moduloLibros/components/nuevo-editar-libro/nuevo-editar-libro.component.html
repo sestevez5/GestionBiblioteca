@@ -1,1 +1,139 @@
-<p>nuevo-editar-libro works!</p>
+
+<!-- row -->
+<div class="row">
+  <div class="col-12">
+      <div class="card">
+          <div class="card-body">
+              <h4 class="card-title">{{this.modoFormulario === 'Crear' ? 'Añadir libro a la biblioteca': 'Modificar datos de un libro'}}</h4>
+              <!-- <h6 class="card-subtitle"> Registro de nuevo libro</h6> -->
+              <form [formGroup] = "form" class="m-t-30">
+                <div class="row">
+                  <!-- Sessión: Datos  -->
+                  <div class="col-10">
+                    <div class="form-group">
+                      <label for="Titulo">Titulo</label>
+                      <input  type="text"
+                              class="form-control"
+                              id="titulo"
+                              placeholder="título"
+                              formControlName="titulo">
+                    </div>
+                    <div class="form-group">
+                      <label for="isbn">Isbn</label>
+                      <input  type="text"
+                              class="form-control"
+                              id="isbn"
+                              placeholder="isbn"
+                              formControlName="isbn">
+                    </div>
+                    <div class="form-group">
+                      <label for="anyoEdicion">Año de edición</label>
+                      <input  type="text"
+                              class="form-control"
+                              id="anyoEdicion"
+                              placeholder="año de edición"
+                              formControlName="anyoEdicion">
+                    </div>
+                    <div class="form-group">
+                      <label for="anyoEdicion">Editorial</label>
+                      <input  type="text"
+                              class="form-control"
+                              id="editorial"
+                              placeholder="Editorial"
+                              formControlName="editorial">
+                    </div>
+                    <div class="form-group">
+                      <label for="autores">Autor/es</label>
+                      <input  type="check"
+                              class="form-control"
+                              id="autoresr"
+                              aria-describedby="emailHelp"
+                              placeholder="autores"
+                              formControlName="autores">
+                      <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
+                    </div>
+
+                  </div>
+                  <!-- Sessión: Foto -->
+                  <div class="col-2 d-flex align-items-stretch">
+                    <div class="row el-element-overlay w-100">
+                      <div class="col-12 d-flex justify-content-center mt-4">
+                        <div class="card">
+                          <div class="el-card-item w-100">
+                            <div style="width: 150px;" class="el-card-avatar el-overlay-1">
+                              <img style="width: 100%;" class="p-10 img-form" *ngIf="!this.fotoVigente" src="../../../../assets/images/nophoto.png" alt="user">
+                              <img style="width: 100%;" class="p-10 img-form" *ngIf="this.fotoVigente" [src]="this.fotoVigente" alt="user">
+<!--
+                              <div class="el-overlay">
+                                <ul class="list-style-none el-info">
+                                  <li class="el-item"><a href="javascript:void(0);" class="btn default btn-outline el-link"><i class="icon-link"></i></a></li>
+                                </ul>
+                              </div> -->
+                            </div>
+                            <div class="d-flex align-items-center justify-content-center">
+                              <div>
+                                <button class="btn btn-rounded btn-block btn-xs btn-outline-secondary" (click)="AbrirVentanaModal()">Subir imagen</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+
+
+                  </div>
+                </div>
+
+                <!-- Sección: botones del formulario -->
+                <div class="row">
+                  <div class="col-12 ">
+                    <button type="submit" class="btn btn-sm btn-secondary mr-3" (click)="onAceptar()">Aceptar</button>
+                    <button type="submit" class="btn btn-sm btn-secondary" (click)="onCancelar()" >Cancelar</button>
+                  </div>
+
+                </div>
+              </form>
+          </div>
+      </div>
+  </div>
+
+</div>
+
+
+
+<modal #panelModal (onOpen)="onAbrirVentanaModal()" (onClose)="onCerrarVentanaModal()">
+
+  <!-- Cabecera -->
+  <modal-header>
+    <h1>Subir foto</h1>
+  </modal-header>
+
+  <!-- Cuerpo -->
+  <modal-content>
+    <div >
+      <app-obtener-imagen (imagenProcesadaEvent)="onObtenerImagen($event)"></app-obtener-imagen>
+    </div>
+  </modal-content>
+
+  <!-- Pie -->
+  <modal-footer>
+      <button type="button" class="btn btn-sm btn-secondary mr-3" (click)="onAceptarVentanaModal()" >Aceptar</button>
+      <button type="button" class="btn btn-sm btn-secondary" (click)="onCancelarVentanaModal()">Cancelar</button>
+  </modal-footer>
+
+</modal>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

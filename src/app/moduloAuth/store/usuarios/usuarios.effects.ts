@@ -46,6 +46,7 @@ export class UsuariosEffects {
                   usuario => {
                     this.store.dispatch(PrincipalActions.cargadoDatos());
                     this.router.navigateByUrl('/usuarios');
+                    console.log('usuariocreado:', usuario);
                     return AuthActions.crearUsuarioOK({ usuario: usuario });
 
                   }
@@ -90,8 +91,6 @@ export class UsuariosEffects {
 
   ); // fin createeffect
 
-
-
   // ---------------------------------------------------------------------
   // Cargar Usuarios
   // ---------------------------------------------------------------------
@@ -102,8 +101,6 @@ export class UsuariosEffects {
 
         switchMap(
           action => {
-            console.log("usuarios cargados desde effects");
-
             this.store.dispatch(PrincipalActions.cargandoDatos({ mensaje: "cargando" }));
             return this.authService.ObtenerUsuarios(action.fou)
               .pipe(
@@ -134,7 +131,6 @@ export class UsuariosEffects {
 
   ); // fin createeffect
 
-
   // ---------------------------------------------------------------------
   // Cargar Usuario
   // ---------------------------------------------------------------------
@@ -146,6 +142,7 @@ export class UsuariosEffects {
         mergeMap(
           action => {
 
+
             this.store.dispatch(PrincipalActions.cargandoDatos({ mensaje: "cargando usuario" }));
 
             return this.authService.ObtenerUsuarioPorUid(action.uidUsuario)
@@ -153,12 +150,7 @@ export class UsuariosEffects {
                 tap(value => this.store.dispatch(PrincipalActions.cargadoDatos())),
 
                 map(
-
-
-
                   usuario => {
-
-
                     return AuthActions.cargarUsuarioOK({ usuario: usuario });
                   }
 
@@ -166,7 +158,6 @@ export class UsuariosEffects {
 
                   catchError(
                     error => {
-
                       return of(AuthActions.cargarUsuarioError({ error: 'error' }))
                     }
 
@@ -188,6 +179,7 @@ export class UsuariosEffects {
 
         switchMap(
           action => {
+            console.log('effect modificarusuario');
 
             this.store.dispatch(PrincipalActions.cargandoDatos({ mensaje: "cargando" }));
             return this.authService.ModificarUsuario(action.usuario)
@@ -197,8 +189,7 @@ export class UsuariosEffects {
 
                   usuario => {
                     this.store.dispatch(PrincipalActions.cargadoDatos());
-
-                    return AuthActions.modificarUsuarioOK({ usuario: usuario });
+                    return AuthActions.modificarUsuarioOK({ usuario: { id: usuario.uid, changes: { ...usuario } } });
                   }
 
                 ), // Fin map
@@ -218,7 +209,6 @@ export class UsuariosEffects {
     ) // fin this.action$.pipe
 
   ); // fin createeffect
-
 
   eliminarUsuario$: Observable<Action> = createEffect(
     () =>

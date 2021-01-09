@@ -1,3 +1,4 @@
+import { Update } from '@ngrx/entity/src/models';
 import { FiltroOrdenUsuario } from './../../models/filtroOrdenUsuarios.model';
 import { Usuario } from './../../models/usuario.model';
 import { createAction, props } from '@ngrx/store';
@@ -24,7 +25,7 @@ export const cargarUsuarioError     = createAction('[USUARIOS] carga usuario err
 
 // modificación de un usuario.
 export const modificarUsuario       = createAction('[USUARIOS] modificar usuario', props<{ usuario: Usuario }>());
-export const modificarUsuarioOK     = createAction('[USUARIOS] modificación usuario OK', props<{ usuario: Usuario }>());
+export const modificarUsuarioOK     = createAction('[USUARIOS] modificación usuario OK', props<{ usuario: Update<Usuario> }>());
 export const modificarUsuarioError  = createAction('[USUARIOS] modificación usuario errónea', props<{ error: string }>());
 
 // eliminación de un usuario.

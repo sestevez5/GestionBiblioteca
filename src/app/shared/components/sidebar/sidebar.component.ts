@@ -15,11 +15,8 @@ export class SidebarComponent {
   path = '';
 
   constructor(private menuServise: SidebarService, private router: Router) {
-
-    console.log('hola');
     this.menuServise.items.subscribe(menuItems => {
       this.sidebarnavItems = menuItems;
-      console.log(this.sidebarnavItems);
 
       // Active menu
       this.sidebarnavItems.filter(m => m.submenu.filter(

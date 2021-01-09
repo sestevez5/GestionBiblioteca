@@ -96,9 +96,9 @@
               </div>
             </div>
 
+
             <div *ngIf="(this.estadoCarga$ | async)?.cargando" id="miModal" class="mod d-flex flex-column">
               <p class="mensajeCarga">{{ (estadoCarga$ | async)?.mensajeCarga}}</p>
-
             </div>
 
 
@@ -558,5 +558,6 @@
             </ngb-tabset>
         </div>
     </aside>
+    
     <div class="chat-windows"></div>
 </div>

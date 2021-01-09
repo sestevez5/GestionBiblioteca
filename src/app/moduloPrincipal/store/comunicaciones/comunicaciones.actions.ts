@@ -2,12 +2,12 @@ import { mensajeUsuario } from './../../../shared/models/mensajeUsuario.model';
 import { createAction, props } from '@ngrx/store';
 
 export const cargandoDatos = createAction(
-  '[PRINCIPAL] Cargando datos',
+  '[PRINCIPAL] Inicio Carga Datos',
   props<{ mensaje: string }>()
 );
 
 export const cargadoDatos = createAction(
-  '[PRINCIPAL] Fin Carga'
+  '[PRINCIPAL] Fin Carga Datos'
 );
 
 export const generarMensajeUsuario = createAction(

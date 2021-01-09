@@ -14,7 +14,7 @@ export class CargarImagenComponent {
 
   @Input() imagenObtenida = false;
 
-  
+
   mensajeError: string | null = null;
 
   constructor() {}
@@ -40,7 +40,9 @@ export class CargarImagenComponent {
   // Funciones Auxiliares
   cargarImagen(file: File) {
 
-    if (file.type === 'image/png' || file.type === 'image/jpeg' ) {
+
+    if (file.type === 'image/png' || file.type === 'image/jpeg') {
+      console.log(file.type);
       const reader: FileReader = new FileReader();
       reader.readAsBinaryString(file);
       reader.onloadend = this.ConvertirImagenEnBase64.bind(this);

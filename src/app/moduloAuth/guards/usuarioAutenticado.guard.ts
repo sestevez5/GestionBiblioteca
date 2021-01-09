@@ -30,7 +30,7 @@ export class UsuarioAutenticadoGuard implements CanActivate {
     state: RouterStateSnapshot
   ): Observable<boolean> {
 
-    this.store.dispatch(AuthActions.loging({ email: 'sestevez5@gmail.com', password:'bartolo1234'}));
+   // this.store.dispatch(AuthActions.loging({ email: 'sestevez5@gmail.com', password:'bartolo1234'}));
     return this.store
       .pipe(
         take(1),

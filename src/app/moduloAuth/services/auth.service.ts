@@ -9,7 +9,7 @@ import * as firebase from 'firebase/app';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Subject, Observable, BehaviorSubject, from, Observer} from 'rxjs';
-import { take, map, tap } from 'rxjs/operators';
+import { take, map, tap, first } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -52,7 +52,12 @@ export class AuthService {
                       if (!value.data()) {
                         return (usuario$ as Observer<any>).error("Usuario no encontrado");
                       } else {
-                        usuario$.next(value.data() as Usuario);
+
+                        const nuevoUsuario = {
+                          ...value.data(),
+                          uid: userFirebase.user.uid
+                        }
+                        usuario$.next(nuevoUsuario as Usuario);
                       }
                     }
 
@@ -68,6 +73,7 @@ export class AuthService {
         }
     );
 
+
     return usuario$;
 
   }
@@ -81,16 +87,20 @@ export class AuthService {
     const usuario$ = new Subject<Usuario>();
 
 
-
     this.firebaseDB.doc<Usuario>(`usuarios/${uid}`).valueChanges()
       .pipe(
+        first(),
         map(value => {
           if (!value) {
             return (usuario$ as Observer<any>).error("Error")
           }
-          usuario$.next(value);
+           usuario$.next(value);
         })
-    ).subscribe();
+      ).subscribe(
+
+    );
+
+
 
     return usuario$;
   }
@@ -101,7 +111,7 @@ export class AuthService {
     return this.firebaseDB.collection('usuarios')
       .get()
       .pipe(
-        map(
+             map(
           value => {
             const usuarios: Usuario[] = [];
 

@@ -1,1 +1,52 @@
-<p>lista-libros works!</p>
+
+<div class="table-responsive">
+
+  <table class="table  mb-0 no-wrap v-middle">
+    <thead>
+      <tr>
+        <th scope="col">Portada</th>
+        <th scope="col">título (isbn)</th>
+        <th scope="col">Autores</th>
+        <th scope="col">Año edición</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let libro of this.libros">
+        <td>
+          <div class="d-flex">
+            <img *ngIf="!this.libro.foto" class="center" src="assets/images/general/NoPortada.png" height="80px" width="60px">
+            <img *ngIf="this.libro.foto" class="" [src]='libro.foto' height="80px" width="60px">
+            <!-- <div class="ml-3">
+              <p class="font-medium mb-0">{{ libro.nombre }}</p>
+              <small>{{libro.email}}</small>
+            </div> -->
+          </div>
+        </td>
+        <td>
+          {{ libro.titulo + ' (' + libro.isbn + ')'}}
+        </td>
+        <td>
+
+          {{ libro.autores}}
+
+        </td>
+        <td>
+          {{ libro.anyoEdicion}}
+
+        </td>
+        <td>
+          <a class="link mr-2" placement="top" ngbTooltip="Edit" (click)="OnEditar(libro)" >
+          <i-feather name="edit-2"></i-feather>
+        </a>
+        <a href="javascript: void(0);" class="link"  placement="top"
+          ngbTooltip="Delete" (click)="this.OnBorrar(libro)">
+          <i-feather name="trash-2"></i-feather>
+        </a>
+        </td>
+      </tr>
+
+
+    </tbody>
+  </table>
+</div>

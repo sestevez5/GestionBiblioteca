@@ -11,7 +11,6 @@ export class AppComponent {
   title = 'app';
 
   constructor() {
-    console.log('hola');
   }
 
   onImagen(imagen:string) {

@@ -5,6 +5,7 @@ export class Utils {
 
     let mensaje: mensajeUsuario;
 
+
     switch (codigo) {
       case 'auth/user-not-found':
         mensaje = {
@@ -13,6 +14,14 @@ export class Utils {
           observaciones: 'codigo: auth/user-not-found'
         }
         break;
+
+        case 'auth/invalid-email':
+          mensaje = {
+            tipoMensaje: TipoMensaje.Error,
+            mensaje: 'El correo electrónico no tiene un formato correcto',
+            observaciones: 'Revise el campo correo electrónico'
+          }
+          break;
 
       default:
         mensaje = {

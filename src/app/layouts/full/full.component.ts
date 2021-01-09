@@ -81,6 +81,7 @@ export class FullComponent implements OnInit {
     // Observar si el sistema se encuentar realizando carga de datos.
     this.mensajeUsuario$ = this.store
       .pipe(
+
         select(selectMensajeUsuario),
         filter(mensaje => mensaje.tipoMensaje !== TipoMensaje.NoMensaje),
         delay(0)

@@ -1,0 +1,50 @@
+<p>selector-multiple-doble-lista works!</p>
+
+<div class="row">
+  <div class="col-4">panelIzquierdo1
+    <div class="card">
+      <div class="bg-info py-2 px-3">
+        <h4 class="text-white mb-0">Elementos no seleccionados</h4>
+      </div>
+      <div>
+        <div></div>
+          <template class="d-flex flex-column" *ngFor="let item of this.items" (dblclick)="onSeleccionar(item)" (click)="onToggleMarcar(item)" >
+            <app-item-selector-multiple-doble-lista class="row" [marcado]="item.marcado" [texto]=item[this.campos.texto]></app-item-selector-multiple-doble-lista>
+          </template>
+        </div>
+
+    </div>
+
+  </div>
+  <div class="col-4" id="panelCentral">Panel central
+    <div>
+      <button (click)="onSeleccionarMarcados()">Seleccionar</button>
+    </div>
+    <div>
+      <button (click)="onDeseleccionarMarcados()">Seleccionar</button>
+    </div>
+  </div>
+  <div class="col-4">panelDerecho</div>
+
+
+</div>
+
+<div class="row">
+  <div class="col-4" id="panelIzquierdo">
+
+Panel Izquierdo
+    <div *ngFor="let item of this.itemsNoSeleccionados()" (dblclick)="onSeleccionar(item)" (click)="onToggleMarcar(item)">
+      <app-item-selector-multiple-doble-lista [marcado]="item.marcado" [texto]=item[this.campos.texto]></app-item-selector-multiple-doble-lista>
+    </div>
+  </div>
+  <div class="col-4" id="panelCentral">Panel central
+    <button (click)="onSeleccionarMarcados()">Seleccionar</button>
+    <button (click)="onDeseleccionarMarcados()">Seleccionar</button>
+
+  </div>
+  <div class="col-4" id="panelDerecho">Panel derecho
+    <div *ngFor="let item of this.itemsSeleccionados()" (dblclick)="onDeseleccionar(item)" (click)="onToggleMarcar(item)">
+      <app-item-selector-multiple-doble-lista [marcado]="item.marcado" [texto]=item[this.campos.texto]></app-item-selector-multiple-doble-lista>
+    </div>
+  </div>
+</div>

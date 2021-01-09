@@ -27,7 +27,7 @@ export const comunicacionesReducer = createReducer(
       ComunicacionesAction
       .generarMensajeUsuario,
       (state, action) => {
-        return { ...state, mensajeUsuario: action.mensajeUsuario};
+        return { ...state, mensajeUsuario: { tipoMensaje: action.mensajeUsuario.tipoMensaje, mensaje: action.mensajeUsuario.mensaje, observaciones: action.mensajeUsuario.observaciones }};
       }
   ),
 

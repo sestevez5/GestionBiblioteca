@@ -1,6 +1,5 @@
 import { UsuarioAutenticadoGuard } from './moduloAuth/guards/usuarioAutenticado.guard';
-import { ListaUsuariosComponent } from './moduloAuth/components/lista-usuarios/lista-usuarios.component';
-import { RegistroComponent } from './moduloAuth/components/registro/registro.component';
+import { RegistroComponent } from './moduloAuth/components/nuevo-editar-usuario/nuevo-editar-usuario.component';
 import { LoginComponent } from './moduloPrincipal/components/login/login.component';
 
 import { Routes } from '@angular/router';

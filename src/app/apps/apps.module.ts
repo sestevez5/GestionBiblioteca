@@ -26,10 +26,7 @@ import { NotesComponent } from './notes/notes.component';
 // new
 import { TasksComponent } from './tasks/tasks.component';
 import { ContactListComponent } from './contact-list/contact-list.component';
-import { MailboxComponent } from './mail/mailbox.component';
-import { ListingComponent } from './mail/listing/listing.component';
-import { DetailComponent } from './mail/detail/detail.component';
-import { ComposeComponent } from './mail/compose/compose.component';
+
 
 import { ContactComponent } from './contact/contact.component';
 import { ContactsComponent } from './contacts/contacts.component';
@@ -44,9 +41,6 @@ import { TodoService } from './todos/todo.service';
 import { UserService } from './users/userService.service';
 import { TasksService } from './tasks/tasks-service.service';
 
-// New
-import { MailGlobalVariable } from './mail/mail.service';
-import { MailService } from './mail/mailService';
 
 @NgModule({
     imports: [
@@ -80,10 +74,7 @@ import { MailService } from './mail/mailService';
         EditAddUserComponent,
         TasksComponent,
         ContactListComponent,
-        MailboxComponent,
-        ListingComponent,
-        DetailComponent,
-        ComposeComponent
+
     ],
     providers: [
         ContactService,
@@ -94,7 +85,7 @@ import { MailService } from './mail/mailService';
         TicketService,
         DecimalPipe,
         TasksService,
-        MailService, MailGlobalVariable
+
     ]
 })
 export class AppsModule { }

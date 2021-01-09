@@ -11,9 +11,7 @@ import { ContactComponent } from './contact/contact.component';
 import { ContactsComponent } from './contacts/contacts.component';
 import { TasksComponent } from './tasks/tasks.component';
 import { ContactListComponent } from './contact-list/contact-list.component';
-import { MailboxComponent } from './mail/mailbox.component';
-import { DetailComponent } from './mail/detail/detail.component';
-import { ComposeComponent } from './mail/compose/compose.component';
+
 
 import { ListUsersComponent } from './users/list-users/list-users.component';
 export const AppsRoutes: Routes = [
@@ -31,21 +29,21 @@ export const AppsRoutes: Routes = [
                 }
             },
 
-            {
-                path: 'mail/:type',
-                component: MailboxComponent,
-                children: [
+            // {
+            //     path: 'mail/:type',
+            //     component: MailboxComponent,
+            //     children: [
 
-                    { path: ':id', component: DetailComponent },
-                    { path: '/compose', component: ComposeComponent }
-                ],
-                data: {
-                    title: '',
-                    urls: [
+            //         { path: ':id', component: DetailComponent },
+            //         { path: '/compose', component: ComposeComponent }
+            //     ],
+            //     data: {
+            //         title: '',
+            //         urls: [
 
-                    ]
-                }
-            },
+            //         ]
+            //     }
+            // },
 
             {
                 path: 'ticket/ticketlist',

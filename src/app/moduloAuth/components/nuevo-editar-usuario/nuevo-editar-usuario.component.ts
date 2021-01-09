@@ -1,26 +1,29 @@
-import { ModuloAuthRootState } from './../../store/index';
+import { ModuloAuthRootState } from '../../store/index';
+import { filter } from 'rxjs/operators';
 import { selectUsuarioActivo } from '../../store/usuarios/usuarios.selectors';
-import { Observable, pipe } from 'rxjs';
+import { Observable, pipe, Subscription } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ViewChild, ElementRef } from '@angular/core';
+import { ViewChild, ElementRef, OnDestroy } from '@angular/core';
 
-import { Usuario } from './../../models/usuario.model';
-import { AppReducers } from '../../../reducers/index';
+import { Usuario } from '../../models/usuario.model';
 
-import { AuthService } from './../../services/auth.service';
+
+import { AuthService } from '../../services/auth.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import { ModalManager } from 'ngb-modal';
 
 import * as AuthActions from '../../store/usuarios/usuarios.actions';
+import * as FromUsuariosSelectors from '../../store/usuarios/usuarios.selectors';
+
 
 @Component({
-  selector: 'app-registro',
-  templateUrl: './registro.component.html',
-  styleUrls: ['./registro.component.css']
+  selector: 'app-nuevo-editar-libro',
+  templateUrl: './nuevo-editar-usuario.component.html',
+  styleUrls: ['./nuevo-editar-usuario.component.css']
 })
-export class RegistroComponent implements OnInit {
+export class RegistroComponent implements OnInit, OnDestroy {
 
   closeResult = '';
   form: FormGroup;
@@ -29,8 +32,8 @@ export class RegistroComponent implements OnInit {
   capturandoImagen = false;
   modoFormulario: 'Crear' | 'Modificar' | 'Visualizar';
   uidUsuario: string | null;
+  returnUrl: string;
 
-  private usuarioEdicion$: Observable<Usuario | undefined>;
   usuario: Usuario | undefined = {
     uid:'',
     email: '',
@@ -44,6 +47,7 @@ export class RegistroComponent implements OnInit {
     FechaBaja: null
   }
 
+  usuariosActivo: Subscription;
 
   @ViewChild("panelModal") panelModal: ElementRef;
   private modalRef: any;
@@ -53,6 +57,7 @@ export class RegistroComponent implements OnInit {
     private fb: FormBuilder,
     private authService: AuthService,
     private store: Store<ModuloAuthRootState>,
+
     private route: ActivatedRoute,
     private router: Router,
     private modalService: ModalManager
@@ -61,13 +66,23 @@ export class RegistroComponent implements OnInit {
   ngOnInit() {
 
 
+    this.route.queryParams
+    .subscribe(params => {
+      if (params.returnUrl) {
+          this.returnUrl = params['returnUrl']
+        }
+    });
+
     this.construirFormulario(this.usuario);
     this.uidUsuario = this.route.snapshot.paramMap.get("id");
 
     if (this.uidUsuario) {
 
       this.store
-        .pipe(select(selectUsuarioActivo))
+        .pipe(
+          select(selectUsuarioActivo)
+          ,filter( usuario => !!usuario)
+        )
         .subscribe(
           usuarioActivo => {
             this.usuario = usuarioActivo
@@ -87,6 +102,11 @@ export class RegistroComponent implements OnInit {
 
   }
 
+  ngOnDestroy() {
+
+    this.usuariosActivo?.unsubscribe();
+  }
+
   onAceptar() {
     const datosFormulario = this.form.value;
     const password = datosFormulario.password;
@@ -101,16 +121,32 @@ export class RegistroComponent implements OnInit {
       }
 
       case 'Modificar': {
+
+        this.usuariosActivo = this.store
+          .pipe(
+            select(FromUsuariosSelectors.selectUsuarioActivo),
+            filter(usuarioActivo => !usuarioActivo)
+          )
+          .subscribe(
+
+            usuarioActivo => {
+              console.log('modificando')
+
+                  if (this.returnUrl) {
+                    this.router.navigateByUrl(this.returnUrl);
+                  }
+                  else {
+                    this.router.navigateByUrl('usuarios/index');
+                  }
+
+          }
+        );
+
         if (this.uidUsuario) {
           usuarioActual = { ...usuarioActual, uid: this.uidUsuario }
           this.store.dispatch(AuthActions.modificarUsuario({ usuario: usuarioActual }));
-          this.store.pipe(
-            select(selectUsuarioActivo))
-            .subscribe(
-              usuarioActivo => console.log('hola')
+        };
 
-          )
-        }
 
         break;
       }
@@ -128,7 +164,7 @@ export class RegistroComponent implements OnInit {
 
   onCancelar()
   {
-    this.router.navigateByUrl('/usuarios');
+    this.router.navigateByUrl('usuarios/index');
   }
 
 

@@ -2,6 +2,7 @@ import { initialUsuariosState, adapter } from './usuarios.state';
 import { Usuario } from '../../models/usuario.model';
 import * as AuthActions from './usuarios.actions';
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
+import { Update } from '@ngrx/entity/src/models'
 import { createReducer, on } from '@ngrx/store';
 
 
@@ -56,7 +57,15 @@ export const usuariosReducer = createReducer(
   on(
     AuthActions.cargarUsuariosOK,
     (state, action) => {
-      return adapter.setAll(action.usuarios, { ...state })
+
+      if (state.ids.length === 0 && action.usuarios.length === 0) {
+        return state;
+      }
+      else {
+        return adapter.setAll(action.usuarios, { ...state });
+      }
+
+
     }
   ),
 
@@ -64,7 +73,7 @@ export const usuariosReducer = createReducer(
   on(
     AuthActions.cargarUsuariosError,
     (state, action) => {
-      return { ...state, usuarioLogueado: undefined, error: action.error};
+      return { ...state,  error: action.error};
     }
   ),
 
@@ -114,7 +123,8 @@ export const usuariosReducer = createReducer(
   on(
     AuthActions.modificarUsuarioOK,
     (state, action) => {
-      return { ...state, usuarioActivo: undefined }
+      return adapter.updateOne(action.usuario, { ...state, usuarioActivo: undefined })
+
     }
   ),
 

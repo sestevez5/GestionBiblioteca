@@ -38,7 +38,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   ) {
     this.form = fb.group(
       {
-        email: ['', [Validators.required]],
+        email: ['', [Validators.required, Validators.email]],
         password: ['', [Validators.required]],
       }
     )

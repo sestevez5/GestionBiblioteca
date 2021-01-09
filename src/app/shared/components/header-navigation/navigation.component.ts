@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { ModuloPrincipalRootState } from './../../../moduloPrincipal/store/index';
 import { Usuario } from './../../../moduloAuth/models/usuario.model';
 import { Component, AfterViewInit, EventEmitter, Output, OnInit } from '@angular/core';
@@ -26,7 +27,8 @@ export class NavigationComponent implements AfterViewInit, OnInit {
 
   constructor(
     private modalService: NgbModal,
-    private store: Store<ModuloPrincipalRootState>) { }
+    private store: Store<ModuloPrincipalRootState>,
+    private router: Router) { }
 
   ngOnInit(): void {
 
@@ -112,6 +114,7 @@ export class NavigationComponent implements AfterViewInit, OnInit {
   onLogout() {
 
     this.store.dispatch(AuthActions.logout());
+    this.router.navigateByUrl('index');
 
   }
 }

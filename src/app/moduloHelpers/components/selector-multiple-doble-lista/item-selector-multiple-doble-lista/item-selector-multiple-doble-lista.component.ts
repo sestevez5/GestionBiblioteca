@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { camposSelectorDoble } from '../selector-multiple-doble-lista.component';
 
 @Component({
   selector: 'app-item-selector-multiple-doble-lista',
@@ -7,14 +8,14 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class ItemSelectorMultipleDobleListaComponent implements OnInit {
 
-  @Input() texto: string;
-  @Input() leyenda: string;
-  @Input() imagen: string;
-  @Input() color: string;
+  @Input() camposConfig: camposSelectorDoble;
   @Input() marcado = false;
+  @Input() item: any;
   constructor() { }
 
   ngOnInit(): void {
   }
 
 }
+
+

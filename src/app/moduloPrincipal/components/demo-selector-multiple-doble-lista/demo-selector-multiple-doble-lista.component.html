@@ -1,0 +1,55 @@
+<h2>Componente: Selector múltiple basado en dos listas</h2>
+<app-selector-multiple-doble-lista
+  [items]="this.libros"
+  [camposConfig]="{ texto: 'titulo', imagen: 'foto', leyenda: 'autores'}"
+  (SeleccionItems)= "onItemsSeleccionados($event)"
+  >
+
+</app-selector-multiple-doble-lista>
+<br>
+<h2>Consumidor del componente (DEMO)</h2>
+
+
+
+<div class="d-flex flex-wrap">
+  <div style="width: 300px;" *ngFor="let libro of this.librosSeleccionados" class="card m-1">
+    <div class="row no-gutters">
+      <div class="col-md-3 col" style="height: 100px;">
+       <img class="card-img" [src]="libro.foto" alt="Card image cap">
+      </div>
+
+      <div class="col-md-9 col">
+        <div class="card-body">
+        <div class="card-title ">
+          <h5>{{ libro.titulo}}</h5>
+        </div>
+        <div class="card-text">
+          Isbn: {{ libro.isbn}}
+        </div>
+        <div class="card-text">
+          {{ libro.autores}}
+        </div>
+        <div class="card-text">
+          {{ libro.anyoEdicion}}
+        </div>
+      </div>
+      </div>
+
+    </div>
+  </div>
+
+
+
+  <!-- <div style="width:200px;" *ngFor="let libro of this.librosSeleccionados" class="card">
+    <img class="card-img-top" [src]="libro.foto" alt="Card image cap">
+    <div class="card-body">
+      <h5 class="card-title">Card title</h5>
+      <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+      <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+    </div>
+  </div> -->
+
+</div>
+
+
+

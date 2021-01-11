@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import {
   CdkDragDrop,
   moveItemInArray,
@@ -14,14 +14,10 @@ import {
 export class SelectorMultipleDobleListaComponent implements OnInit {
 
   @Input() items: any[];
-  @Input() campos: any;
+  @Input() camposConfig: camposSelectorDoble;
+  @Output() SeleccionItems: EventEmitter<any[]> = new EventEmitter();
 
-  public camposItems: {
-    identificador: null,
-    imagen: null,
-    texto: null,
-    leyenda: null,
-  }
+
 
   constructor() { }
 
@@ -40,19 +36,24 @@ export class SelectorMultipleDobleListaComponent implements OnInit {
     this.items[id].seleccionado = true;
     this.items[id].marcado = false;
 
+    this.SeleccionItems.emit(this.itemsSeleccionados());
+
+
+
 
   }
 
   onDeseleccionar(item: any) {
-    console.log("DesSeleccionado elemento: ", item.nombre);
+
     const id = this.items.indexOf(item);
     this.items[id].seleccionado = false;
     this.items[id].marcado = false;
+
+    this.SeleccionItems.emit(this.itemsSeleccionados());
   }
 
 
   onToggleMarcar(item: any) {
-    console.log("toggle elemento: ", item.nombre);
     const id = this.items.indexOf(item);
     this.items[id].marcado = !this.items[id].marcado;
 
@@ -65,7 +66,11 @@ export class SelectorMultipleDobleListaComponent implements OnInit {
         item.seleccionado = true;
         item.marcado = false;
       }
-      )
+    );
+
+    this.SeleccionItems.emit(this.itemsSeleccionados());
+
+
 
   }
 
@@ -75,7 +80,9 @@ export class SelectorMultipleDobleListaComponent implements OnInit {
         item.seleccionado = false;
         item.marcado = false;
       }
-      )
+    );
+
+    this.SeleccionItems.emit(this.itemsSeleccionados());
 
   }
 
@@ -87,6 +94,16 @@ export class SelectorMultipleDobleListaComponent implements OnInit {
   itemsNoSeleccionados() {
     return this.items.filter(item => !item.seleccionado);
   }
+
+  hayItemsSeleccionadosMarcados() {
+    return this.items.filter(item => !!item.seleccionado && !!item.marcado).length != 0;
+  }
+
+  hayItemsNoSeleccionadosMarcados() {
+    return this.items.filter(item => !item.seleccionado && !!item.marcado).length != 0;
+  }
+
+
 
   onDrop(event: CdkDragDrop<string[]>) {
     if (event.previousContainer === event.container) {
@@ -106,4 +123,12 @@ export class SelectorMultipleDobleListaComponent implements OnInit {
   }
 
 
+}
+
+
+export interface camposSelectorDoble {
+  texto: string;
+  leyenda: string;
+  imagen: string;
+  color: string;
 }

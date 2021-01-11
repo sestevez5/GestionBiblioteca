@@ -16,22 +16,6 @@ export class IndexComponent implements OnInit {
   usuario: Usuario | undefined;
   constructor(private route: ActivatedRoute, private router: Router, private store: Store<ModuloPrincipalRootState>) { }
 
-  items = [
-    {
-      uid: '1',
-      nombre: 'nombre elemento 1',
-      apellidos: 'apellido elemento 1',
-    },
-    {
-      uid: '2',
-      nombre: 'nombre elemento 2',
-      apellidos: 'apellido elemento 2',
-
-    }
-  ];
-
-
-
   ngOnInit(): void {
 
     this.store

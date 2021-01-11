@@ -1,3 +1,4 @@
+import { DemoSelectorMultipleDobleListaComponent } from './moduloPrincipal/components/demo-selector-multiple-doble-lista/demo-selector-multiple-doble-lista.component';
 import { UsuarioAutenticadoGuard } from './moduloAuth/guards/usuarioAutenticado.guard';
 import { RegistroComponent } from './moduloAuth/components/nuevo-editar-usuario/nuevo-editar-usuario.component';
 import { LoginComponent } from './moduloPrincipal/components/login/login.component';
@@ -17,6 +18,8 @@ export const Approutes: Routes = [
     children: [
       { path: '', redirectTo: '/index', pathMatch: "full" },
       { path: 'index', component: IndexComponent },
+      { path: 'demo', component: DemoSelectorMultipleDobleListaComponent },
+
 
       // -------------------------------------------
       // Gestión de usuarios. Incluye login

@@ -1,3 +1,4 @@
+import { HttpClientModule } from '@angular/common/http';
 import { HelperModule } from './../moduloHelpers/helper.module';
 import { LoginEffects } from './store/login/login.effects';
 import { EffectsModule } from '@ngrx/effects';
@@ -27,6 +28,7 @@ import { environment } from '../../environments/environment';
 // STORE
 import { StoreModule } from '@ngrx/store';
 import { ModuloPrincipalFeaturekey, ModuloPrincipalReducers } from './store/index';
+import { DemoSelectorMultipleDobleListaComponent } from './components/demo-selector-multiple-doble-lista/demo-selector-multiple-doble-lista.component';
 
 
 @NgModule({
@@ -34,7 +36,8 @@ import { ModuloPrincipalFeaturekey, ModuloPrincipalReducers } from './store/inde
     SpinnerComponent,
     AppComponent,
     IndexComponent,
-    LoginComponent
+    LoginComponent,
+    DemoSelectorMultipleDobleListaComponent
   ],
   imports: [
     CommonModule,
@@ -42,6 +45,7 @@ import { ModuloPrincipalFeaturekey, ModuloPrincipalReducers } from './store/inde
     ReactiveFormsModule,
     RouterModule,
     HelperModule,
+    HttpClientModule,
 
     // Módulos relativos a firebase2
     AngularFireModule.initializeApp(environment.firebase),

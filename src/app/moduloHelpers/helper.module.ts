@@ -15,6 +15,7 @@ import { SelectorMultipleDobleListaComponent } from './components/selector-multi
 import { ItemSelectorMultipleDobleListaComponent } from './components/selector-multiple-doble-lista/item-selector-multiple-doble-lista/item-selector-multiple-doble-lista.component';
 
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { HorarioComponent } from './components/horario/horario.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
     EditorImagenComponent,
     ConfirmacionAccionUsuarioComponent,
     SelectorMultipleDobleListaComponent,
-    ItemSelectorMultipleDobleListaComponent
+    ItemSelectorMultipleDobleListaComponent,
+    HorarioComponent
   ],
   imports: [
     CommonModule,

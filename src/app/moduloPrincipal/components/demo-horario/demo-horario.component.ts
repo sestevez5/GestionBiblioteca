@@ -1,3 +1,4 @@
+import { HorarioG } from './../../../moduloHelpers/models/horarioG.model';
 import { HorarioService } from './../../../moduloHelpers/services/horario.service';
 
 import { Actividad } from '../../../moduloHelpers/models/actividad.model';
@@ -11,17 +12,17 @@ import { Component, OnInit } from '@angular/core';
 export class DemoHorarioComponent implements OnInit {
 
 
+  actividades: Actividad[];
 
   constructor(horarioService: HorarioService) {
 
-    var actividades: Actividad[];
 
-    actividades = horarioService.obtenerTodasLasActividades();
 
-    var diasSemana = horarioService.obtenerDiasSemana(actividades);
+    this.actividades = horarioService.obtenerTodasLasActividades();
+    var hg = new HorarioG(this.actividades);
 
-    console.log(diasSemana);
-
+  
+    console.log(hg.obtenerDiasSemanaHorario());
 
    }
 

@@ -1,4 +1,3 @@
-import { HorarioG } from './horarioG.model';
 import { DiaSemana } from '../models/diaSemana.model';
 import { ActividadG } from './actividadG.model';
 import { Actividad } from './actividad.model';
@@ -17,9 +16,10 @@ export class HorarioG {
 
   ];
 
-  static parser = d3.timeParse("%I:%M");
+  public static convertirCadenaHoraEnTiempo: any = d3.timeParse("%I:%M%p");
+  public static convertirTiempoEnCadenaHora: any = d3.timeFormat("%I:%M%p")
 
-  actividadesG: ActividadG[]
+  actividadesG: ActividadG[] = [];
 
   constructor(actividades: Actividad[]) {
 
@@ -30,21 +30,26 @@ export class HorarioG {
   private procesarActividades(actividades: Actividad[]) {
 
     // Inicialmente añadimos el contenido de las actividades a nuestras actividades gráficas.
-    actividades.forEach(
+
+    actividades.sort(this.compare).forEach(
       act => {
-        this.actividadesG.push(new ActividadG(act))
+        const nuevaActividadG = new ActividadG(act);
+        nuevaActividadG.horaInicio = HorarioG.convertirCadenaHoraEnTiempo(act.sesion.horaInicio);
+        nuevaActividadG.horaFin = HorarioG.convertirCadenaHoraEnTiempo(act.sesion.horaFin);
+        this.actividadesG.push(nuevaActividadG)
       }
     )
 
     // Calculamos el ancho de cada actividad para que permita visualizar las qeu solapa.
 
-    this.actividadesG.sort(this.compare).forEach(
+    this.actividadesG.forEach(
       act => {
 
         const actividadesCubiertas = this.actividadesCubiertasPor(act);
 
-        if (actividadesCubiertas.length > 0) {
-          act.nivelAncho = d3.max(actividadesCubiertas.map(act => act.nivelAncho)) + 1;
+        if (actividadesCubiertas && act) {
+
+          act.nivelAncho = d3.max(actividadesCubiertas.map(act => act.nivelAncho)) as number + 1;
         }
 
       }
@@ -52,8 +57,7 @@ export class HorarioG {
 
 
   }
-
-  public obtenerDiasSemanasHorario(): DiaSemana[] {
+  public obtenerDiasSemanaHorario(): DiaSemana[] {
 
     const x = Array.from(new Set(this.actividadesG.map(
       act => act.sesion.diaSemana
@@ -74,49 +78,53 @@ export class HorarioG {
     return this.actividadesG.filter(
       act =>
         act.sesion.diaSemana === actividad.sesion.diaSemana
-        && HorarioG.parser(act.sesion.horaInicio) <= HorarioG.parser(actividad.sesion.horaInicio)
-        && HorarioG.parser(act.sesion.horaFin) >= HorarioG.parser(actividad.sesion.horaFin)
+        && HorarioG.convertirCadenaHoraEnTiempo(act.sesion.horaInicio) <= HorarioG.convertirCadenaHoraEnTiempo(actividad.sesion.horaInicio)
+        && HorarioG.convertirCadenaHoraEnTiempo(act.sesion.horaFin) >= HorarioG.convertirCadenaHoraEnTiempo(actividad.sesion.horaFin)
     )
 
 
 
   }
 
-  private compare(a: ActividadG, b: ActividadG) {
+  public minimoIntervaloTemporal(): Date {
+    return this.obtenerHorasInicionHorasFin().reduce((n, m) => n < m ? n : m);
+  }
+
+  public maximoIntervaloTemporal() {
+    return this.obtenerHorasInicionHorasFin().reduce((n, m) => n > m ? n : m);
+
+  }
+
+  private compare(a: Actividad, b: Actividad): number {
 
     const codigosDiasSemana = HorarioG.diasSemana.map(ds => ds.codigo);
 
-    if (codigosDiasSemana.indexOf(a.sesion.diaSemana) < codigosDiasSemana.indexOf(a.sesion.diaSemana))
-      return -1;
+    if (codigosDiasSemana.indexOf(a.sesion.diaSemana) < codigosDiasSemana.indexOf(b.sesion.diaSemana))      return -1
+    else if (codigosDiasSemana.indexOf(a.sesion.diaSemana) > codigosDiasSemana.indexOf(b.sesion.diaSemana)) return 1
+    else {
 
-    if (codigosDiasSemana.indexOf(a.sesion.diaSemana) > codigosDiasSemana.indexOf(a.sesion.diaSemana))
-      return 1;
+      if (HorarioG.convertirCadenaHoraEnTiempo(a.sesion.horaInicio) < HorarioG.convertirCadenaHoraEnTiempo(b.sesion.horaInicio)) return -1
+      else if (HorarioG.convertirCadenaHoraEnTiempo(a.sesion.horaInicio) > HorarioG.convertirCadenaHoraEnTiempo(b.sesion.horaInicio)) return 1
+      else if (HorarioG.convertirCadenaHoraEnTiempo(a.sesion.horaInicio) == HorarioG.convertirCadenaHoraEnTiempo(b.sesion.horaInicio)) {
 
-    if (codigosDiasSemana.indexOf(a.sesion.diaSemana) === codigosDiasSemana.indexOf(a.sesion.diaSemana)) {
+        if (HorarioG.convertirCadenaHoraEnTiempo(a.sesion.horaFin) < HorarioG.convertirCadenaHoraEnTiempo(b.sesion.horaFin)) return -1
+        else if (HorarioG.convertirCadenaHoraEnTiempo(a.sesion.horaFin) > HorarioG.convertirCadenaHoraEnTiempo(b.sesion.horaFin)) return 1
+        else return 0;
 
-      if (HorarioG.parser(a.sesion.horaInicio) < HorarioG.parser(b.sesion.horaInicio))
-        return -1;
-
-      if (HorarioG.parser(a.sesion.horaInicio) > HorarioG.parser(b.sesion.horaInicio))
-        return 1;
-
-      if (HorarioG.parser(a.sesion.horaInicio) === HorarioG.parser(b.sesion.horaInicio)) {
-
-        if (HorarioG.parser(a.sesion.horaFin) < HorarioG.parser(b.sesion.horaFin))
-          return -1;
-
-        if (HorarioG.parser(a.sesion.horaFin) > HorarioG.parser(b.sesion.horaFin))
-          return 1;
-
-        if (HorarioG.parser(a.sesion.horaFin) === HorarioG.parser(b.sesion.horaFin))
-          return 0;
-
-      }
-
-
+      } else return 0;
 
     }
+  } // Fin compare
 
 
+  public obtenerHorasInicionHorasFin(): Date[] {
+     return this.actividadesG.reduce(
+       function (colecAnterior: Date[], actividadActual) {
+         return colecAnterior.concat([actividadActual.horaInicio, actividadActual.horaFin]);
+      },
+      []
+      )
   }
+
+
 }

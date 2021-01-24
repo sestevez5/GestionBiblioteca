@@ -20,48 +20,48 @@ export class HorarioService {
   actividades: Actividad[] = [
     {
       idActividad: '1',
-      sesion: { diaSemana: 'L', horaInicio: '8:00', horaFin: '8:55' },
+      sesion: { diaSemana: 'L', horaInicio: '8:00am', horaFin: '8:55am' },
       contenido: { contenido:'t'}
     },
     {
       idActividad: '2',
-      sesion: { diaSemana: 'L', horaInicio: '8:55', horaFin: '9:50' },
+      sesion: { diaSemana: 'L', horaInicio: '08:55am', horaFin: '09:50am' },
       contenido: { contenido:'t'}
     },
     {
       idActividad: '3',
-      sesion: { diaSemana: 'L', horaInicio: '9:50', horaFin: '10:45' },
+      sesion: { diaSemana: 'L', horaInicio: '09:50am', horaFin: '10:45am' },
       contenido: { contenido:'t'}
     },
     {
       idActividad: '4',
-      sesion: { diaSemana: 'M', horaInicio: '8:00', horaFin: '8:55' },
+      sesion: { diaSemana: 'M', horaInicio: '08:00am', horaFin: '08:55am' },
       contenido: { contenido:'t'}
     },
     {
       idActividad: '5',
-      sesion: { diaSemana: 'M', horaInicio: '8:55', horaFin: '9:50' },
+      sesion: { diaSemana: 'M', horaInicio: '08:55am', horaFin: '09:50am' },
       contenido: { contenido:'t'}
     },
     {
       idActividad: '6',
-      sesion: { diaSemana: 'M', horaInicio: '9:50', horaFin: '10:45' },
+      sesion: { diaSemana: 'M', horaInicio: '07:00am', horaFin: '10:45pm' },
       contenido: { contenido:'t'}
     },
 
     {
       idActividad: '7',
-      sesion: { diaSemana: 'X', horaInicio: '8:00', horaFin: '8:55' },
+      sesion: { diaSemana: 'X', horaInicio: '08:01am', horaFin: '08:55am' },
       contenido: { contenido:'t'}
     },
     {
       idActividad: '8',
-      sesion: { diaSemana: 'J', horaInicio: '8:55', horaFin: '9:50' },
+      sesion: { diaSemana: 'J', horaInicio: '08:55am', horaFin: '09:50am' },
       contenido: { contenido:'t'}
     },
     {
       idActividad: '9',
-      sesion: { diaSemana: 'V', horaInicio: '9:50', horaFin: '10:45' },
+      sesion: { diaSemana: 'V', horaInicio: '09:50am', horaFin: '11:35am' },
       contenido: { contenido:'t'}
     },
 

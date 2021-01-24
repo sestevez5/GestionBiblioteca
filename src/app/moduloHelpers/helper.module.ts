@@ -35,7 +35,8 @@ import { HorarioComponent } from './components/horario/horario.component';
     WebcamModule,
     NgbModule,
     ModalModule,
-    DragDropModule
+    DragDropModule,
+    
   ],
   exports: [
     CargarImagenComponent,
@@ -43,7 +44,8 @@ import { HorarioComponent } from './components/horario/horario.component';
     CapturarImagenWebcamComponent,
     ObtenerImagenComponent,
     ConfirmacionAccionUsuarioComponent,
-    SelectorMultipleDobleListaComponent
+    SelectorMultipleDobleListaComponent,
+    HorarioComponent
   ]
 })
 export class HelperModule { }

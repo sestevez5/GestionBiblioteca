@@ -18,7 +18,8 @@ export const Approutes: Routes = [
     component: FullComponent,
 
     children: [
-      { path: '', redirectTo: '/index', pathMatch: "full" },
+      {
+        path: '', redirectTo: '/horario', pathMatch: "full" },
       { path: 'index', component: IndexComponent },
       { path: 'demo', component: DemoSelectorMultipleDobleListaComponent },
       { path: 'horario', component: DemoHorarioComponent },

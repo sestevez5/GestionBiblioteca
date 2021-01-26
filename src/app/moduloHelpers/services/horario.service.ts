@@ -71,8 +71,6 @@ export class HorarioService {
     return this.actividades;
   }
 
-
-
   obtenerDiasSemana(actividades: Actividad[]) {
 
     const x = Array.from(new Set(actividades.map(
@@ -80,8 +78,6 @@ export class HorarioService {
     )));
 
     return this.DiasSemana.filter((ds: DiaSemana) => x.includes(ds.codigo)).slice();
-
-
   }
 
 }

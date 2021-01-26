@@ -21,8 +21,7 @@ export class DemoHorarioComponent implements OnInit {
     this.actividades = horarioService.obtenerTodasLasActividades();
     var hg = new HorarioG(this.actividades);
 
-  
-    console.log(hg.obtenerDiasSemanaHorario());
+
 
    }
 

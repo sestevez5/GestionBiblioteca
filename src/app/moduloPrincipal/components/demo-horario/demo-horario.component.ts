@@ -16,13 +16,7 @@ export class DemoHorarioComponent implements OnInit {
 
   constructor(horarioService: HorarioService) {
 
-
-
     this.actividades = horarioService.obtenerTodasLasActividades();
-    var hg = new HorarioG(this.actividades);
-
-
-
    }
 
 

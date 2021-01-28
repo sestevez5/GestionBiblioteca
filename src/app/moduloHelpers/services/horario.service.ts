@@ -17,7 +17,7 @@ export class HorarioService {
 
   ]
 
-  actividades: Actividad[] = [
+  actividades: any = [
     {
       idActividad: '1',
       sesion: { diaSemana: 'L', horaInicio: '8:00am', horaFin: '8:55am' },

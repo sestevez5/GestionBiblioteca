@@ -1,10 +1,15 @@
 export interface IParametrosGrafico {
 
   // Parámetros del gráfico, en general.
+  parametrosHorario: {
+    horaMinima: string;
+    horaMaxima: string;
+    diasSemanaHabiles: string[];
+  }
   grafico: {
     colorGrafico: string;
-    anchoGrafico:     number;
-    altoGrafico: number;
+    anchoGrafico: number;
+    altoGrafico:  number;
     margenGrafico: {
       margenIzquierdoGrafico:  number;
       margenDerechoGrafico:    number;
@@ -14,11 +19,11 @@ export interface IParametrosGrafico {
   }
 
   panelHorario: {
-    anchoPanelHorario: number | undefined;
-    altoPanelHorario: number | undefined;
-    posXPanelHorario: number | undefined;
-    posYPanelHorario: number | undefined;
-    colorPanelHorario: string;
+    anchoPanelHorario:  number | undefined;
+    altoPanelHorario:   number | undefined;
+    posXPanelHorario:   number | undefined;
+    posYPanelHorario:   number | undefined;
+    colorPanelHorario:  string;
   }
 
   panelDiaSemana: {

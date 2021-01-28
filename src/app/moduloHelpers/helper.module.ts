@@ -15,7 +15,7 @@ import { SelectorMultipleDobleListaComponent } from './components/selector-multi
 import { ItemSelectorMultipleDobleListaComponent } from './components/selector-multiple-doble-lista/item-selector-multiple-doble-lista/item-selector-multiple-doble-lista.component';
 
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { HorarioComponent } from './components/horario/horario.component';
+import { VisorHorarioComponent } from './components/visorHorario/visorHorario.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +27,7 @@ import { HorarioComponent } from './components/horario/horario.component';
     ConfirmacionAccionUsuarioComponent,
     SelectorMultipleDobleListaComponent,
     ItemSelectorMultipleDobleListaComponent,
-    HorarioComponent
+    VisorHorarioComponent
   ],
   imports: [
     CommonModule,
@@ -36,7 +36,7 @@ import { HorarioComponent } from './components/horario/horario.component';
     NgbModule,
     ModalModule,
     DragDropModule,
-    
+
   ],
   exports: [
     CargarImagenComponent,
@@ -45,7 +45,7 @@ import { HorarioComponent } from './components/horario/horario.component';
     ObtenerImagenComponent,
     ConfirmacionAccionUsuarioComponent,
     SelectorMultipleDobleListaComponent,
-    HorarioComponent
+    VisorHorarioComponent
   ]
 })
 export class HelperModule { }

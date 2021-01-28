@@ -7,6 +7,7 @@ export class ActividadG extends Actividad{
   posX: number;
   poyY: number;
   nivelAncho: number;
+  estado: EstadoActividad;
 
   constructor(actividad: Actividad) {
     super();
@@ -15,4 +16,9 @@ export class ActividadG extends Actividad{
     this.sesion = actividad.sesion;
   }
 
+
+
 }
+
+export enum EstadoActividad { NUEVA, MODIFICADA, ELIMINADA, SINCAMBIOS}
+

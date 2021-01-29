@@ -3,6 +3,8 @@ import { DiaSemana } from '../models/diaSemana.model';
 import { ActividadG, EstadoActividad } from './actividadG.model';
 import { Actividad } from './actividad.model';
 import * as d3 from 'd3';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import { act } from '@ngrx/effects';
 
 export class HorarioG {
 
@@ -24,7 +26,7 @@ export class HorarioG {
 
     parametrosHorario: {
       horaMinima: '07:00am',
-      horaMaxima: '14:00am',
+      horaMaxima: '14:00pm',
       diasSemanaHabiles: ['L','M','X','V']
 
     },
@@ -71,40 +73,29 @@ export class HorarioG {
   constructor(elementoRaiz: string, actividades?: Actividad[]) {
 
     this.elementoRaiz = elementoRaiz;
-
-    if (actividades) this.procesarActividades(actividades);
     this.generarGrafico();
+    if (actividades) this.anyadirActualizarActividades(actividades);
+
 
   }
 
-    private procesarActividades(actividades: Actividad[]) {
+  anyadirActualizarActividades(actividades: Actividad[]) {
 
-    //categorizar(actividades);
-    // Localizamos las actividades que deben oncluirse, modificarse o eliminarse.
-      const ActividadesNuevas: Actividad[] = actividades.filter(act => !this.actividadesG.map(actG => actG.idActividad).includes(act.idActividad));
-
+    const ActividadesNuevas: Actividad[] = actividades.filter(act => !this.actividadesG.map(actG => actG.idActividad).includes(act.idActividad));
     const ActividadesModificadas: Actividad[] = actividades.filter(act => this.actividadesG.map(actG => actG.idActividad).includes(act.idActividad));
-      const ActividadesEliminadas: ActividadG[] = this.actividadesG.filter(actG => !actividades.map(act => act.idActividad).includes(actG.idActividad))
-
-      ActividadesEliminadas.map(actG => actG.estado = EstadoActividad.ELIMINADA);
-
 
     ActividadesNuevas.forEach(
       act => {
         const nuevaActividadG = new ActividadG(act);
-        nuevaActividadG.horaInicio = HorarioG.convertirCadenaHoraEnTiempo(act.sesion.horaInicio);
-        nuevaActividadG.horaFin = HorarioG.convertirCadenaHoraEnTiempo(act.sesion.horaFin);
         nuevaActividadG.estado = EstadoActividad.NUEVA
         this.actividadesG.push(nuevaActividadG)
       }
-      );
+    );
 
-
-    //Procedemos a modificar las actividades.
+        //Procedemos a modificar las actividades.
     ActividadesModificadas.forEach(
       act =>
-
-        this.actividadesG.filter(actG => actG.idActividad === act.idActividad)
+           this.actividadesG.filter(actG => actG.idActividad === act.idActividad)
           .map(actG => {
             actG.actualizarActividad(act);
             actG.estado = EstadoActividad.MODIFICADA
@@ -112,30 +103,38 @@ export class HorarioG {
           )
     );
 
-    // Ya tenemos la nueva lista de actividadesG
-    // Procedemos a calcular sus campos adicionales ( no incluidos en la clase actividades)
-    this.actividadesG.forEach(
+    const actividadesGNuevas = this.actividadesG.filter(actG => actG.estado === EstadoActividad.NUEVA);
+    const actividadesGModificadas = this.actividadesG.filter(actG => actG.estado === EstadoActividad.MODIFICADA);
+
+    // Calcula el ancho de la actifidad en función de las actividades que cubre.
+    this.calcularFactorAnchoActividadesG(this.actividadesG.filter(actG => (actG.estado === EstadoActividad.NUEVA) || this.actividadesG.filter(actG => actG.estado === EstadoActividad.ELIMINADA)));
+
+    this.actualizarPanelesActividades();
+  }
+
+  borrarActividades(idActividades: string[]) {
+
+    this.actividadesG.filter(actG => idActividades.includes(actG.idActividad)).
+    map(actG => actG.estado = EstadoActividad.ELIMINADA)
+    this.actualizarPanelesActividades();
+
+  }
+
+  calcularFactorAnchoActividadesG(actsG: ActividadG[]) {
+    actsG.forEach(
       actG => {
-        actG.horaInicio = HorarioG.convertirCadenaHoraEnTiempo(actG.sesion.horaInicio);
-        actG.horaFin = HorarioG.convertirCadenaHoraEnTiempo(actG.sesion.horaFin);
-      }
-    );
 
-    this.actividadesG.forEach(
-      act => {
+        const actividadesCubiertas = this.actividadesCubiertasPor(actG);
 
-        const actividadesCubiertas = this.actividadesCubiertasPor(act);
+        if (actividadesCubiertas && actG) {
 
-        if (actividadesCubiertas && act) {
-
-          act.nivelAncho = d3.max(actividadesCubiertas.map(act => act.nivelAncho)) as number + 1;
+          actG.nivelAncho = d3.max(actividadesCubiertas.map(act => act.nivelAncho)) as number + 1;
         }
 
       }
       )
 
   }
-
   public obtenerDiasSemanaHorario(): DiaSemana[] {
 
     return HorarioG.diasSemana.filter((ds: DiaSemana) => this.params.parametrosHorario.diasSemanaHabiles.includes(ds.codigo) );
@@ -187,7 +186,7 @@ export class HorarioG {
   public obtenerHorasInicionHorasFin(): Date[] {
      return this.actividadesG.reduce(
        function (colecAnterior: Date[], actividadActual) {
-         return colecAnterior.concat([actividadActual.horaInicio, actividadActual.horaFin]);
+         return colecAnterior.concat([HorarioG.convertirCadenaHoraEnTiempo(actividadActual.sesion.horaInicio), HorarioG.convertirCadenaHoraEnTiempo(actividadActual.sesion.horaFin)]);
       },
       []
       )
@@ -195,9 +194,9 @@ export class HorarioG {
 
 
 
-  // ---------------------------------------------------------------------
-  // MÉTODOS RELATIVOS AL RENDERIZADO
-  // ---------------------------------------------------------------------
+  //----------------------------------------------------------------------------------------------------------
+  // RENDERIZADO DEL HORARIO
+  //----------------------------------------------------------------------------------------------------------
   generarGrafico() {
 
     this.inicializarParametros();
@@ -208,14 +207,9 @@ export class HorarioG {
 
     this.anyadirPanelesDiasSemana();
 
-    this.actualizarPanelesActividades()
   }
 
-  actualizar(actividades?: Actividad[]) {
-    if (actividades) this.procesarActividades(actividades);
-  }
-
-  private inicializarParametros() {
+   private inicializarParametros() {
 
     const param = this.params;
 
@@ -357,77 +351,56 @@ export class HorarioG {
 
   private actualizarPanelesActividades() {
 
+    // GESTION DE CREACIÓN Y ACTUALIZACION DE ACTIVIDADES.
+    const panelesARenderizar: { panel: any, actividadG: ActividadG }[] = [];
+
+    // Nuevas actividades
     d3.selectAll('g.panelDiaSemana').nodes().forEach(
-      (nodo: any) => {
+      (nodo: any) => this.actividadesG
+        .filter(actG => actG.sesion.diaSemana === nodo['id'] && actG.estado === EstadoActividad.NUEVA)
+        .forEach(actG => panelesARenderizar.push({ panel: d3.select('g#' + nodo['id']).append('g').attr('class','panelActividad').attr('id', 'act'+actG.idActividad), actividadG: actG }))
+    );
+
+    // Actualizaciones de actividades
+    this.actividadesG
+      .filter(actG => actG.estado === EstadoActividad.MODIFICADA)
+      .forEach( actG => panelesARenderizar.push({ panel: d3.selectAll('g.panelActividad').select('g#act' + actG.idActividad), actividadG: actG }));
+
+    // Renderizado de actividades
+    this.renderizarActividades(panelesARenderizar);
 
 
-          const nuevasActividades = d3.select('g#' + nodo['id']).select('g#')
-            .data(this.actividadesG.filter(actG => actG.sesion.diaSemana === nodo['id'] && actG.estado === EstadoActividad.NUEVA)).enter()
-            .append('g')
-            //.attr('transform', (actG: ActividadG) => `translate(0,${this.params.escalas.escalaVertical(actG.sesion.horaInicio)})`);
-
-
-
+    // GESTION DE BORRADOS
+    this.actividadesG
+      .filter(actG => actG.estado === EstadoActividad.ELIMINADA)
+      .forEach(actG => {
+        this.svg.select('g#act' + actG.idActividad).select('rect').attr('height', 30).remove();
         }
+    );
 
-  )
+    this.actividadesG = this.actividadesG.filter(actG => actG.estado !== EstadoActividad.ELIMINADA);
 
-
-
-
-  }
-
-
-  // // d3.selectAll('g.panelDiaSemana').nodes().forEach(
-  // //   (nodo: any)  => this.anyadirPanelesActividadesDiaSemana(nodo['id'])
-  // // )
-  // anyadirActividades() {
-  //   this.actividadesG.forEach(
-
-  //     actG => {
-  //       const panelactividad = d3.select('g#' + actG.sesion.diaSemana).data(actG);
-
-  //     }
-
-  //   )
-  // }
-
-  // anyadirActividad(panelDiaSemana: any) {
-
-  //   //-------------------------------------------------
-  //   // Definición del panel
-  //   //-------------------------------------------------
-  //   const panelActividad=panelDiaSemana.
-  //   const aux = aux1.selectAll('g#panelActividad').data(this.obtenerActividadesDiaSemana(codigoDiaSemana));
-  //   const panelesActividad = aux.enter().append('g').merge(aux);
-  //   panelesActividad.exit().remove();
-
-
-
-
-  // }
-
-  private anyadirPanelesActividadesDiaSemana(codigoDiaSemana: string) {
-
-    //-------------------------------------------------
-    // Definición del panel
-    //-------------------------------------------------
-    const aux1: any = d3.select('g#' + codigoDiaSemana);
-    const aux = aux1.selectAll('g#panelActividad').data(this.obtenerActividadesDiaSemana(codigoDiaSemana));
-    const panelesActividad = aux.enter().append('g').merge(aux);
-    panelesActividad.exit().remove();
-
-    panelesActividad
-      .attr('id', (d: ActividadG) => d.idActividad)
-      .attr('class', 'panelActividad');
-
-    const actividadesDiaSemana = d3.select('g#' + codigoDiaSemana);
+    // Una vez procesados todos los cambios las desmarcamos
+    this.actividadesG.map(actG => actG.estado = EstadoActividad.SINCAMBIOS);
 
   }
 
 
+  //----------------------------------------------------------------------------------------------------------
+  // MANTENIMIENTO GRÁFICO DE ACTIVIDADES
+  //----------------------------------------------------------------------------------------------------------
+  renderizarActividades(panelesARenderizar: { panel: any, actividadG: ActividadG }[]) {
 
+    panelesARenderizar.forEach(
+      paa => {
+        paa.panel.attr('transform', `translate(0,${this.params.escalas.escalaVertical(HorarioG.convertirCadenaHoraEnTiempo(paa.actividadG.sesion.horaInicio))})`);
+        paa.panel.append('rect')
+       .attr('width', 10)
+       .attr('height', 10)
+       .attr('fill', 'red')
+      }
+    )
 
-
+  } // Fin renderizarActividades
 
 }

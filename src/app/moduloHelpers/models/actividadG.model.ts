@@ -2,10 +2,6 @@ import { Sesion } from './sesion';
 import { Actividad } from './actividad.model';
 export class ActividadG extends Actividad{
 
-  horaInicio: Date;
-  horaFin: Date;
-  posX: number;
-  poyY: number;
   nivelAncho: number;
   estado: EstadoActividad;
 

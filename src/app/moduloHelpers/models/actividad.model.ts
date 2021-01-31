@@ -19,7 +19,7 @@ export class Actividad {
   // }
 
 
-  actualizarActividad(act: Actividad): void {
+  public actualizarActividad(act: Actividad): void {
     this.sesion = act.sesion;
     this.contenido = act.contenido;
   }

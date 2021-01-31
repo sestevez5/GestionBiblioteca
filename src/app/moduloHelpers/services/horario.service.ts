@@ -40,12 +40,12 @@ export class HorarioService {
     },
     {
       idActividad: '5',
-      sesion: { diaSemana: 'M', horaInicio: '08:55am', horaFin: '09:50am' },
+      sesion: { diaSemana: 'M', horaInicio: '08:30am', horaFin: '09:50am' },
       contenido: { contenido:'t'}
     },
     {
       idActividad: '6',
-      sesion: { diaSemana: 'M', horaInicio: '07:00am', horaFin: '10:45pm' },
+      sesion: { diaSemana: 'M', horaInicio: '07:00am', horaFin: '10:45am' },
       contenido: { contenido:'t'}
     },
 

@@ -10,6 +10,7 @@ export class ActividadG extends Actividad{
     this.idActividad = actividad.idActividad;
     this.contenido = actividad.contenido;
     this.sesion = actividad.sesion;
+    this.nivelAncho = 0;
   }
 
 

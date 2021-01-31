@@ -1,15 +1,18 @@
+import { Subject } from 'rxjs';
 import { IParametrosGrafico } from './IParametrosGrafico.model';
 import { DiaSemana } from '../models/diaSemana.model';
 import { ActividadG, EstadoActividad } from './actividadG.model';
 import { Actividad } from './actividad.model';
 import * as d3 from 'd3';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
-import { act } from '@ngrx/effects';
+
 
 export class HorarioG {
 
   elementoRaiz: any;
   svg: any;
+  eventos$ = new Subject<ActividadG>();
+
+
 
   static diasSemana: DiaSemana[] = [
     { codigo: 'L', denominacionCorta: 'LUN', denominacionLarga: 'Lunes' },
@@ -87,7 +90,7 @@ export class HorarioG {
     ActividadesNuevas.forEach(
       act => {
         const nuevaActividadG = new ActividadG(act);
-        nuevaActividadG.estado = EstadoActividad.NUEVA
+        nuevaActividadG.estado = EstadoActividad.NUEVA;
         this.actividadesG.push(nuevaActividadG)
       }
     );
@@ -98,6 +101,7 @@ export class HorarioG {
            this.actividadesG.filter(actG => actG.idActividad === act.idActividad)
           .map(actG => {
             actG.actualizarActividad(act);
+            actG.nivelAncho = 0;
             actG.estado = EstadoActividad.MODIFICADA
           }
           )
@@ -107,16 +111,16 @@ export class HorarioG {
     const actividadesGModificadas = this.actividadesG.filter(actG => actG.estado === EstadoActividad.MODIFICADA);
 
     // Calcula el ancho de la actifidad en función de las actividades que cubre.
-    this.calcularFactorAnchoActividadesG(this.actividadesG.filter(actG => (actG.estado === EstadoActividad.NUEVA) || this.actividadesG.filter(actG => actG.estado === EstadoActividad.ELIMINADA)));
+    this.calcularFactorAnchoActividadesG(this.actividadesG.filter(actG => (actG.estado === EstadoActividad.NUEVA) || this.actividadesG.filter(actG => actG.estado === EstadoActividad.MODIFICADA)));
 
-    this.actualizarPanelesActividades();
+    this.actualizarPanelesActividades1();
   }
 
   borrarActividades(idActividades: string[]) {
 
     this.actividadesG.filter(actG => idActividades.includes(actG.idActividad)).
     map(actG => actG.estado = EstadoActividad.ELIMINADA)
-    this.actualizarPanelesActividades();
+    this.actualizarPanelesActividades1();
 
   }
 
@@ -124,9 +128,12 @@ export class HorarioG {
     actsG.forEach(
       actG => {
 
+
         const actividadesCubiertas = this.actividadesCubiertasPor(actG);
 
-        if (actividadesCubiertas && actG) {
+
+
+        if (actividadesCubiertas.length > 0 && actG) {
 
           actG.nivelAncho = d3.max(actividadesCubiertas.map(act => act.nivelAncho)) as number + 1;
         }
@@ -149,19 +156,22 @@ export class HorarioG {
 
     return this.actividadesG.filter(
       act =>
-        act.sesion.diaSemana === actividad.sesion.diaSemana
-        && HorarioG.convertirCadenaHoraEnTiempo(act.sesion.horaInicio) <= HorarioG.convertirCadenaHoraEnTiempo(actividad.sesion.horaInicio)
-        && HorarioG.convertirCadenaHoraEnTiempo(act.sesion.horaFin) >= HorarioG.convertirCadenaHoraEnTiempo(actividad.sesion.horaFin)
+        act.idActividad != actividad.idActividad
+        && act.sesion.diaSemana === actividad.sesion.diaSemana
+        && HorarioG.convertirCadenaHoraEnTiempo(act.sesion.horaInicio) >= HorarioG.convertirCadenaHoraEnTiempo(actividad.sesion.horaInicio)
+        && HorarioG.convertirCadenaHoraEnTiempo(act.sesion.horaFin) <= HorarioG.convertirCadenaHoraEnTiempo(actividad.sesion.horaFin)
     )
 
 
 
   }
   public minimoIntervaloTemporal(): Date {
-    return HorarioG.convertirCadenaHoraEnTiempo(this.params.parametrosHorario.horaMinima);
+    const horaMinima = HorarioG.convertirCadenaHoraEnTiempo(this.params.parametrosHorario.horaMinima);
+    return horaMinima.setMinutes(horaMinima.getMinutes()-5);
   }
   public maximoIntervaloTemporal() {
-    return HorarioG.convertirCadenaHoraEnTiempo(this.params.parametrosHorario.horaMaxima);
+    const horaMaxima = HorarioG.convertirCadenaHoraEnTiempo(this.params.parametrosHorario.horaMaxima);
+    return horaMaxima.setMinutes(horaMaxima.getMinutes()+5);
   }
   private compare(a: Actividad, b: Actividad): number {
 
@@ -209,7 +219,10 @@ export class HorarioG {
 
   }
 
-   private inicializarParametros() {
+  private inicializarParametros() {
+
+    // d3.select('body').on('keyup', function () { console.log(d3.event) });
+
 
     const param = this.params;
 
@@ -354,31 +367,59 @@ export class HorarioG {
     // GESTION DE CREACIÓN Y ACTUALIZACION DE ACTIVIDADES.
     const panelesARenderizar: { panel: any, actividadG: ActividadG }[] = [];
 
-    // Nuevas actividades
-    d3.selectAll('g.panelDiaSemana').nodes().forEach(
-      (nodo: any) => this.actividadesG
-        .filter(actG => actG.sesion.diaSemana === nodo['id'] && actG.estado === EstadoActividad.NUEVA)
-        .forEach(actG => panelesARenderizar.push({ panel: d3.select('g#' + nodo['id']).append('g').attr('class','panelActividad').attr('id', 'act'+actG.idActividad), actividadG: actG }))
-    );
-
-    // Actualizaciones de actividades
+    // GESTION DE BORRADOS
     this.actividadesG
-      .filter(actG => actG.estado === EstadoActividad.MODIFICADA)
-      .forEach( actG => panelesARenderizar.push({ panel: d3.selectAll('g.panelActividad').select('g#act' + actG.idActividad), actividadG: actG }));
+      .filter(actG => actG.estado === EstadoActividad.ELIMINADA || actG.estado === EstadoActividad.MODIFICADA)
+      .forEach(actG => {
+        this.svg.select('g#act' + actG.idActividad).remove();
+      }
+      );
 
-    // Renderizado de actividades
-    this.renderizarActividades(panelesARenderizar);
+    this.actividadesG = this.actividadesG.filter(actG => actG.estado !== EstadoActividad.ELIMINADA);
 
+
+
+
+    // GESTION DE CREACIÓN
+    d3.selectAll('g.panelDiaSemana').nodes().forEach(
+      (nodo: any) => {
+
+        this.actividadesG
+          .filter(actG => actG.sesion.diaSemana === nodo['id'] && (actG.estado === EstadoActividad.NUEVA || actG.estado === EstadoActividad.MODIFICADA))
+          .forEach(actG => panelesARenderizar.push({ panel: d3.select('g#' + nodo['id']).append('g').attr('class', 'panelActividadARenderizar').attr('id', 'act' + actG.idActividad), actividadG: actG }))
+      }
+    )
+
+
+    // Una vez procesados todos los cambios las desmarcamos
+    this.actividadesG.map(actG => actG.estado = EstadoActividad.SINCAMBIOS);
+
+  }
+
+   private actualizarPanelesActividades1() {
 
     // GESTION DE BORRADOS
     this.actividadesG
-      .filter(actG => actG.estado === EstadoActividad.ELIMINADA)
+      .filter(actG => actG.estado === EstadoActividad.ELIMINADA || actG.estado === EstadoActividad.MODIFICADA)
       .forEach(actG => {
-        this.svg.select('g#act' + actG.idActividad).select('rect').attr('height', 30).remove();
-        }
-    );
+        this.svg.select('g#act' + actG.idActividad).remove();
+      }
+      );
 
     this.actividadesG = this.actividadesG.filter(actG => actG.estado !== EstadoActividad.ELIMINADA);
+
+
+    // GESTION DE CREACIÓN
+     d3.selectAll('g.panelDiaSemana').nodes().forEach(
+       (nodo: any) => {
+
+
+         const actividadesACrear = this.actividadesG.filter(actG => actG.sesion.diaSemana === nodo['id'] && (actG.estado === EstadoActividad.NUEVA || actG.estado === EstadoActividad.MODIFICADA));
+
+         this.renderizarActividades('g#' + nodo['id'], actividadesACrear)
+
+       }
+     );
 
     // Una vez procesados todos los cambios las desmarcamos
     this.actividadesG.map(actG => actG.estado = EstadoActividad.SINCAMBIOS);
@@ -389,17 +430,51 @@ export class HorarioG {
   //----------------------------------------------------------------------------------------------------------
   // MANTENIMIENTO GRÁFICO DE ACTIVIDADES
   //----------------------------------------------------------------------------------------------------------
-  renderizarActividades(panelesARenderizar: { panel: any, actividadG: ActividadG }[]) {
+  renderizarActividades(panelDiaSemana: string, actividadesG: ActividadG[]) {
 
-    panelesARenderizar.forEach(
-      paa => {
-        paa.panel.attr('transform', `translate(0,${this.params.escalas.escalaVertical(HorarioG.convertirCadenaHoraEnTiempo(paa.actividadG.sesion.horaInicio))})`);
-        paa.panel.append('rect')
-       .attr('width', 10)
-       .attr('height', 10)
-       .attr('fill', 'red')
-      }
-    )
+    d3.select(panelDiaSemana).selectAll('g#act' + 'pp').data(actividadesG).enter().append('g')
+    .attr('transform', d => `translate(1,${this.params.escalas.escalaVertical(HorarioG.convertirCadenaHoraEnTiempo(d.sesion.horaInicio))})`)
+    .attr('class', 'panelActividad')
+    .attr('id', d => 'act' + d.idActividad)
+    .append('rect')
+      .attr('height', (d: ActividadG) => {
+
+
+
+
+        const coordenadaHoraInicio = this.params.escalas.escalaVertical(HorarioG.convertirCadenaHoraEnTiempo(d.sesion.horaInicio));
+        console.log(d.sesion.horaInicio);
+        console.log(d.sesion.horaFin);
+
+        const coordenadaHoraFin = this.params.escalas.escalaVertical(HorarioG.convertirCadenaHoraEnTiempo(d.sesion.horaFin));
+        console.log('height es ',coordenadaHoraFin - coordenadaHoraInicio);
+        return coordenadaHoraFin - coordenadaHoraInicio;
+      })
+    .attr('width', d=> this.params.escalas.escalaHorizontal.bandwidth()-2-d.nivelAncho*4)
+    .attr('fill', 'red')
+    .attr('opacity', '0.4')
+    .attr('rx', 2)
+    .attr('ry', 2)
+      .on('click', (d: any,i: any) => {
+        this.eventos$.next(d);
+
+        if (!d3.event.ctrlKey) {
+
+          d3.selectAll('g.panelActividad').attr('stroke-width', '0');
+
+        }
+
+        console.log('ctrlPulsada: ', d3.event.ctrlKey);
+
+
+        d3.select('g#act' + d.idActividad)
+          .attr('stroke', 'black')
+          .attr('stroke-width', '2');
+        console.log('tecla',d);
+
+
+      })
+
 
   } // Fin renderizarActividades
 

@@ -26,9 +26,6 @@ export class VisorHorarioComponent implements OnInit {
 
     this.horarioG = new HorarioG('div#horario', this.Actividades);
     this.evento$ = this.horarioG.eventos$;
-    this.evento$.subscribe(
-      evento => console.log('se ha seleccionado la actividad: ', evento.idActividad)
-    )
 
 
 

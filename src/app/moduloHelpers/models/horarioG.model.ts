@@ -4,6 +4,8 @@ import { DiaSemana } from '../models/diaSemana.model';
 import { ActividadG, EstadoActividad } from './actividadG.model';
 import { Actividad } from './actividad.model';
 import * as d3 from 'd3';
+import { act } from '@ngrx/effects';
+import { ConstantPool } from '@angular/compiler';
 
 
 export class HorarioG {
@@ -221,9 +223,6 @@ export class HorarioG {
 
   private inicializarParametros() {
 
-    // d3.select('body').on('keyup', function () { console.log(d3.event) });
-
-
     const param = this.params;
 
     // Establecer dimensiones del panel que contiene las barras.
@@ -438,16 +437,8 @@ export class HorarioG {
     .attr('id', d => 'act' + d.idActividad)
     .append('rect')
       .attr('height', (d: ActividadG) => {
-
-
-
-
         const coordenadaHoraInicio = this.params.escalas.escalaVertical(HorarioG.convertirCadenaHoraEnTiempo(d.sesion.horaInicio));
-        console.log(d.sesion.horaInicio);
-        console.log(d.sesion.horaFin);
-
         const coordenadaHoraFin = this.params.escalas.escalaVertical(HorarioG.convertirCadenaHoraEnTiempo(d.sesion.horaFin));
-        console.log('height es ',coordenadaHoraFin - coordenadaHoraInicio);
         return coordenadaHoraFin - coordenadaHoraInicio;
       })
     .attr('width', d=> this.params.escalas.escalaHorizontal.bandwidth()-2-d.nivelAncho*4)
@@ -455,27 +446,59 @@ export class HorarioG {
     .attr('opacity', '0.4')
     .attr('rx', 2)
     .attr('ry', 2)
-      .on('click', (d: any,i: any) => {
-        this.eventos$.next(d);
+    .on('click', (d: any,i: any) => {
+      this.eventos$.next(d);
 
-        if (!d3.event.ctrlKey) {
+      // Guardamos si está o no marcada la actividad en la que hemos pulsado.
+      const marcadaActividadActualComoSeleccionada = d3.select('g#act' + i.idActividad).attr('class').split(' ').includes('actividadSeleccionada');
 
-          d3.selectAll('g.panelActividad').attr('stroke-width', '0');
+      d.ctrlKey ? null : this.desmarcarActividadesComoSeleccionadas();
 
-        }
+      marcadaActividadActualComoSeleccionada ?
+        d3.selectAll('g#act' + i.idActividad).attr('class', 'panelActividad actividadSeleccionada'):
+        d3.select('g#act' + i.idActividad).attr('class', 'panelActividad');
 
-        console.log('ctrlPulsada: ', d3.event.ctrlKey);
+      d3.select('g#act' + i.idActividad).attr('class').split(' ').includes('actividadSeleccionada') ?
+        this.desmarcarActividadesComoSeleccionadas([i.idActividad]) :
+        this.marcarActividadesComoSeleccionadas([i.idActividad]);
 
-
-        d3.select('g#act' + d.idActividad)
-          .attr('stroke', 'black')
-          .attr('stroke-width', '2');
-        console.log('tecla',d);
-
-
-      })
+    })
 
 
   } // Fin renderizarActividades
 
+  marcarActividadesComoSeleccionadas(identificadoresActividades: string[]) {
+    identificadoresActividades.forEach(
+      iact => {
+        d3.select('g#act'+iact)
+        .attr('class', 'panelActividad actividadSeleccionada')
+        .attr('stroke', 'black')
+        .attr('stroke-width', '2');
+      }
+    )
+
+  }
+
+  desmarcarActividadesComoSeleccionadas(identificadoresActividades?: string[]) {
+
+    // console.log('identificadoresActividades', identificadoresActividades);
+    if (!identificadoresActividades) {
+      d3.selectAll('g.panelActividad')
+        .attr('stroke-width', '0')
+        .attr('class', 'panelActividad')
+
+    } else
+    {
+
+      this.actividadesG
+        .filter(actG => identificadoresActividades.includes(actG.idActividad))
+        .forEach(actG => d3.select('g#act' + actG.idActividad)
+          .attr('stroke-width', '0')
+          .attr('class', 'panelActividad'))
+    }
+  }
+
+
 }
+
+

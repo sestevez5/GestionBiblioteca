@@ -1,5 +1,4 @@
-import { Plantilla } from './plantilla.model';
-import { Sesion } from './sesion';
+import { Plantilla } from './../../moduloHelpers/models/plantilla.model';
 export interface IParametrosGrafico {
 
   // Parámetros del gráfico, en general.
@@ -8,7 +7,6 @@ export interface IParametrosGrafico {
     horaMaxima: string;
     diasSemanaHabiles: string[];
     plantillas: Plantilla[];
-
   }
   grafico: {
     colorGrafico: string;

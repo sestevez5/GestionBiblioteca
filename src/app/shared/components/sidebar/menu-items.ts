@@ -44,6 +44,28 @@ export const ROUTES: RouteInfo[] = [
             submenu: []
         }
     ]
+  },
+
+  {
+    path: 'dashboard',
+    title: 'HORARIOS',
+    icon: 'mdi mdi-share',
+    class: 'has-arrow',
+    extralink: false,
+    label: '10',
+    labelClass: 'badge badge-info sidebar-badge',
+    submenu: [
+        {
+            path: './horarios',
+            title: 'Visión general',
+            icon: '',
+            class: '',
+            extralink: false,
+            label: '',
+            labelClass: '',
+            submenu: []
+        }
+    ]
 },
 
   {

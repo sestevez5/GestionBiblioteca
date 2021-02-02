@@ -17,11 +17,10 @@ export const Approutes: Routes = [
     component: FullComponent,
 
     children: [
-      {
-        path: '', redirectTo: '/horario', pathMatch: "full" },
+      { path: '', redirectTo: '/index', pathMatch: "full" },
       { path: 'index', component: IndexComponent },
       { path: 'demo', component: DemoSelectorMultipleDobleListaComponent },
-      { path: 'horario', component: DemoHorarioComponent },
+      // { path: 'horario', component: DemoHorarioComponent },
 
 
       // -------------------------------------------
@@ -46,7 +45,8 @@ export const Approutes: Routes = [
       //-------------------------------------------
       { path: 'usuarios', loadChildren: () => import('./moduloAuth/auth.module').then(m => m.AuthModule)},
       { path: 'libros',   loadChildren: () => import('./moduloLibros/libros.module').then(m => m.LibrosModule)},
-      { path: 'lectores', loadChildren: () => import('./moduloLectores/lectores-routing.module').then(m => m.LectoresRoutingModule)}
+      { path: 'lectores', loadChildren: () => import('./moduloLectores/lectores.module').then(m => m.LectoresModule) },
+      { path: 'horarios', loadChildren: () => import('./moduloHorarios/horarios.module').then(m => m.HorariosModule) }
     ]
   },
 

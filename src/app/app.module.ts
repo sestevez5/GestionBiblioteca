@@ -44,6 +44,8 @@ import { HelperModule } from './moduloHelpers/helper.module';
 import { PrincipalModule } from './moduloPrincipal/principal.module';
 import { IndexSubsistemaComponent } from './shared/components/index-subsistema/index-subsistema.component';
 
+import { HorariosModule } from '../app/moduloHorarios/horarios.module';
+
 
 
 
@@ -70,7 +72,8 @@ const icons = {
     NavigationComponent,
     BreadcrumbComponent,
     SidebarComponent,
-    IndexSubsistemaComponent
+    IndexSubsistemaComponent,
+
 
   ],
   imports: [

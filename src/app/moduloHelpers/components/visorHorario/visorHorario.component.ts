@@ -35,7 +35,7 @@ export class VisorHorarioComponent implements OnInit {
 
     const a = new Actividad();
     a.idActividad = '3'
-    a.sesion = { horaInicio: '06:59am', horaFin: '12:30pm', diaSemana: 'M' }
+    a.sesion = { idSesion: '1', horaInicio: '06:59am', horaFin: '12:30pm', diaSemana: 'M' }
     a.contenido = { contenido: 'prueba' }
 
     const ar = [];

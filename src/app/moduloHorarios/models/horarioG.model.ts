@@ -33,7 +33,71 @@ export class HorarioG {
       horaMaxima: '14:00pm',
       diasSemanaHabiles: ['L', 'M', 'X', 'V'],
       plantillas: [
-        { idse<}]
+        {
+          idPlantilla: 'P1',
+          sesionesPlantilla: [
+
+            { idSesion: 'P1L1', diaSemana: 'L', horaInicio: '08:00', horaFin: '08:55' },
+            { idSesion: 'P1L2', diaSemana: 'L', horaInicio: '08:55', horaFin: '09:50' },
+            { idSesion: 'P1L3', diaSemana: 'L', horaInicio: '09:50', horaFin: '10:45' },
+            { idSesion: 'P1L4', diaSemana: 'L', horaInicio: '09:50', horaFin: '10:45' },
+            { idSesion: 'P1L5', diaSemana: 'L', horaInicio: '12:10', horaFin: '13:05' },
+            { idSesion: 'P1L6', diaSemana: 'L', horaInicio: '13:05', horaFin: '14:00' },
+
+            { idSesion: 'P1M1', diaSemana: 'M', horaInicio: '08:00', horaFin: '08:55' },
+            { idSesion: 'P1M2', diaSemana: 'M', horaInicio: '08:55', horaFin: '09:50' },
+            { idSesion: 'P1M3', diaSemana: 'M', horaInicio: '09:50', horaFin: '10:45' },
+            { idSesion: 'P1M4', diaSemana: 'M', horaInicio: '09:50', horaFin: '10:45' },
+            { idSesion: 'P1M5', diaSemana: 'M', horaInicio: '12:10', horaFin: '13:05' },
+            { idSesion: 'P1M6', diaSemana: 'M', horaInicio: '13:05', horaFin: '14:00' },
+
+            { idSesion: 'P1X1', diaSemana: 'X', horaInicio: '08:00', horaFin: '08:55' },
+            { idSesion: 'P1X2', diaSemana: 'X', horaInicio: '08:55', horaFin: '09:50' },
+            { idSesion: 'P1X3', diaSemana: 'X', horaInicio: '09:50', horaFin: '10:45' },
+            { idSesion: 'P1X4', diaSemana: 'X', horaInicio: '09:50', horaFin: '10:45' },
+            { idSesion: 'P1X5', diaSemana: 'X', horaInicio: '12:10', horaFin: '13:05' },
+            { idSesion: 'P1X6', diaSemana: 'X', horaInicio: '13:05', horaFin: '14:00' },
+
+            { idSesion: 'P1J1', diaSemana: 'J', horaInicio: '08:00', horaFin: '08:55' },
+            { idSesion: 'P1J2', diaSemana: 'J', horaInicio: '08:55', horaFin: '09:50' },
+            { idSesion: 'P1J3', diaSemana: 'J', horaInicio: '09:50', horaFin: '10:45' },
+            { idSesion: 'P1J4', diaSemana: 'J', horaInicio: '09:50', horaFin: '10:45' },
+            { idSesion: 'P1J5', diaSemana: 'J', horaInicio: '12:10', horaFin: '13:05' },
+            { idSesion: 'P1J6', diaSemana: 'J', horaInicio: '13:05', horaFin: '14:00' },
+
+            { idSesion: 'P1V1', diaSemana: 'V', horaInicio: '08:00', horaFin: '08:55' },
+            { idSesion: 'P1V2', diaSemana: 'V', horaInicio: '08:55', horaFin: '09:50' },
+            { idSesion: 'P1V3', diaSemana: 'V', horaInicio: '09:50', horaFin: '10:45' },
+            { idSesion: 'P1V4', diaSemana: 'V', horaInicio: '09:50', horaFin: '10:45' },
+            { idSesion: 'P1V5', diaSemana: 'V', horaInicio: '12:10', horaFin: '13:05' },
+            { idSesion: 'P1V6', diaSemana: 'V', horaInicio: '13:05', horaFin: '14:00' },
+
+          ]
+        },
+        {
+          idPlantilla: 'P2',
+          sesionesPlantilla: [
+            { idSesion: 'P2L1', diaSemana: 'L', horaInicio: '08:00', horaFin: '10:55' },
+            { idSesion: 'P2L2', diaSemana: 'L', horaInicio: '12:00', horaFin: '13:00' },
+            { idSesion: 'P2L3', diaSemana: 'L', horaInicio: '13:00', horaFin: '14:00' },
+
+
+            { idSesion: 'P2M1', diaSemana: 'M', horaInicio: '08:00', horaFin: '14:00' },
+
+
+
+            { idSesion: 'P2X1', diaSemana: 'X', horaInicio: '08:00', horaFin: '10:00' },
+            { idSesion: 'P2X2', diaSemana: 'X', horaInicio: '10:00', horaFin: '12:00' },
+            { idSesion: 'P2X3', diaSemana: 'X', horaInicio: '12:00', horaFin: '14:00' },
+
+
+
+
+            { idSesion: 'P2V1', diaSemana: 'V', horaInicio: '08:00', horaFin: '08:55' },
+
+          ]
+        }
+      ]
 
     },
 

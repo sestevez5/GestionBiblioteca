@@ -21,48 +21,48 @@ export class HorarioService {
   actividades: any = [
     {
       idActividad: '1',
-      sesion: { diaSemana: 'L', horaInicio: '8:00am', horaFin: '8:55am' },
+      sesion: { diaSemana: 'L', horaInicio: '8:00', horaFin: '8:55' },
       contenido: { contenido: 't' }
     },
     {
       idActividad: '2',
-      sesion: { diaSemana: 'L', horaInicio: '08:55am', horaFin: '09:50am' },
+      sesion: { diaSemana: 'L', horaInicio: '08:55', horaFin: '09:50' },
       contenido: { contenido: 't' }
     },
     {
       idActividad: '3',
-      sesion: { diaSemana: 'L', horaInicio: '09:50am', horaFin: '10:45am' },
+      sesion: { diaSemana: 'L', horaInicio: '09:50', horaFin: '10:45' },
       contenido: { contenido: 't' }
     },
     {
       idActividad: '4',
-      sesion: { diaSemana: 'M', horaInicio: '08:00am', horaFin: '08:55am' },
+      sesion: { diaSemana: 'M', horaInicio: '08:00', horaFin: '08:55' },
       contenido: { contenido: 't' }
     },
     {
       idActividad: '5',
-      sesion: { diaSemana: 'M', horaInicio: '08:30am', horaFin: '09:50am' },
+      sesion: { diaSemana: 'M', horaInicio: '08:30', horaFin: '09:50' },
       contenido: { contenido: 't' }
     },
     {
       idActividad: '6',
-      sesion: { diaSemana: 'M', horaInicio: '07:00am', horaFin: '10:45am' },
+      sesion: { diaSemana: 'M', horaInicio: '07:00', horaFin: '10:45' },
       contenido: { contenido: 't' }
     },
 
     {
       idActividad: '7',
-      sesion: { diaSemana: 'X', horaInicio: '08:01am', horaFin: '08:55am' },
+      sesion: { diaSemana: 'X', horaInicio: '08:01', horaFin: '08:55' },
       contenido: { contenido: 't' }
     },
     {
       idActividad: '8',
-      sesion: { diaSemana: 'J', horaInicio: '08:55am', horaFin: '09:50am' },
+      sesion: { diaSemana: 'J', horaInicio: '08:55', horaFin: '09:50' },
       contenido: { contenido: 't' }
     },
     {
       idActividad: '9',
-      sesion: { diaSemana: 'V', horaInicio: '09:50am', horaFin: '11:35am' },
+      sesion: { diaSemana: 'V', horaInicio: '09:50', horaFin: '11:35' },
       contenido: { contenido: 't' }
     },
 

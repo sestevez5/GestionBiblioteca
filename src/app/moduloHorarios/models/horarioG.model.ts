@@ -32,7 +32,8 @@ export class HorarioG {
       horaMinima: '07:00am',
       horaMaxima: '14:00pm',
       diasSemanaHabiles: ['L', 'M', 'X', 'V'],
-      plantillas: []
+      plantillas: [
+        { idse<}]
 
     },
 

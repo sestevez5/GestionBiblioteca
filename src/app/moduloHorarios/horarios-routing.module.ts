@@ -1,6 +1,5 @@
 import { GestionActividadesComponent } from './containers/gestion-actividades/gestion-actividades.component';
 import { IndexSubsistemaComponent } from './../shared/components/index-subsistema/index-subsistema.component';
-import { XComponent } from './components/x/x.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 

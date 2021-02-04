@@ -1,6 +1,6 @@
-import { ActividadG } from './../../../moduloHelpers/models/actividadG.model';
+import { ActividadG } from '../../models/actividadG.model';
 import { Observable } from 'rxjs';
-import { HorarioG } from './../../../moduloHelpers/models/horarioG.model';
+import { HorarioG } from '../../models/horarioG.model';
 import { Component, Input, OnInit } from '@angular/core';
 import { Actividad } from '../../models/actividad.model';
 

@@ -1,5 +1,5 @@
 import { AuthService } from './../../../moduloAuth/services/auth.service';
-import { HorarioService } from './../../../moduloHelpers/services/horario.service';
+import { HorarioService } from '../../services/horario.service';
 import { Component, OnInit } from '@angular/core';
 import { Actividad } from '../../models/actividad.model';
 
@@ -16,8 +16,9 @@ export class GestionActividadesComponent implements OnInit {
   constructor(horarioService: HorarioService, usuarios: AuthService) {
 
     this.actividades = horarioService.obtenerTodasLasActividades();
+    console.log(this.actividades);
     usuarios.ObtenerUsuarios(null)
-      .subscribe(usuario => console.log(usuario));
+      .subscribe(usuario => console.log('usuarios',usuario));
 
    }
 

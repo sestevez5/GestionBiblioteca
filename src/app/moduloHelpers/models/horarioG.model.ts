@@ -1,3 +1,5 @@
+import { Sesion } from './../../moduloHorarios/models/sesion';
+import { Plantilla } from './../../moduloHorarios/models/plantilla.model';
 import { Subject } from 'rxjs';
 import { IParametrosGrafico } from './IParametrosGrafico.model';
 import { DiaSemana } from '../models/diaSemana.model';
@@ -30,8 +32,8 @@ export class HorarioG {
   params: IParametrosGrafico = {
 
     parametrosHorario: {
-      horaMinima: '07:00am',
-      horaMaxima: '14:00pm',
+      horaMinima: '08:00',
+      horaMaxima: '14:00',
       diasSemanaHabiles: ['L', 'M', 'X', 'V'],
       plantillas: [
         {
@@ -41,35 +43,35 @@ export class HorarioG {
             { idSesion: 'P1L1', diaSemana: 'L', horaInicio: '08:00', horaFin: '08:55' },
             { idSesion: 'P1L2', diaSemana: 'L', horaInicio: '08:55', horaFin: '09:50' },
             { idSesion: 'P1L3', diaSemana: 'L', horaInicio: '09:50', horaFin: '10:45' },
-            { idSesion: 'P1L4', diaSemana: 'L', horaInicio: '09:50', horaFin: '10:45' },
+            { idSesion: 'P1L4', diaSemana: 'L', horaInicio: '11:15', horaFin: '12:10' },
             { idSesion: 'P1L5', diaSemana: 'L', horaInicio: '12:10', horaFin: '13:05' },
             { idSesion: 'P1L6', diaSemana: 'L', horaInicio: '13:05', horaFin: '14:00' },
 
             { idSesion: 'P1M1', diaSemana: 'M', horaInicio: '08:00', horaFin: '08:55' },
             { idSesion: 'P1M2', diaSemana: 'M', horaInicio: '08:55', horaFin: '09:50' },
             { idSesion: 'P1M3', diaSemana: 'M', horaInicio: '09:50', horaFin: '10:45' },
-            { idSesion: 'P1M4', diaSemana: 'M', horaInicio: '09:50', horaFin: '10:45' },
+            { idSesion: 'P1M4', diaSemana: 'M', horaInicio: '11:15', horaFin: '12:10' },
             { idSesion: 'P1M5', diaSemana: 'M', horaInicio: '12:10', horaFin: '13:05' },
             { idSesion: 'P1M6', diaSemana: 'M', horaInicio: '13:05', horaFin: '14:00' },
 
             { idSesion: 'P1X1', diaSemana: 'X', horaInicio: '08:00', horaFin: '08:55' },
             { idSesion: 'P1X2', diaSemana: 'X', horaInicio: '08:55', horaFin: '09:50' },
             { idSesion: 'P1X3', diaSemana: 'X', horaInicio: '09:50', horaFin: '10:45' },
-            { idSesion: 'P1X4', diaSemana: 'X', horaInicio: '09:50', horaFin: '10:45' },
+            { idSesion: 'P1X4', diaSemana: 'X', horaInicio: '11:15', horaFin: '12:10' },
             { idSesion: 'P1X5', diaSemana: 'X', horaInicio: '12:10', horaFin: '13:05' },
             { idSesion: 'P1X6', diaSemana: 'X', horaInicio: '13:05', horaFin: '14:00' },
 
             { idSesion: 'P1J1', diaSemana: 'J', horaInicio: '08:00', horaFin: '08:55' },
             { idSesion: 'P1J2', diaSemana: 'J', horaInicio: '08:55', horaFin: '09:50' },
             { idSesion: 'P1J3', diaSemana: 'J', horaInicio: '09:50', horaFin: '10:45' },
-            { idSesion: 'P1J4', diaSemana: 'J', horaInicio: '09:50', horaFin: '10:45' },
+            { idSesion: 'P1J4', diaSemana: 'J', horaInicio: '11:15', horaFin: '12:10' },
             { idSesion: 'P1J5', diaSemana: 'J', horaInicio: '12:10', horaFin: '13:05' },
             { idSesion: 'P1J6', diaSemana: 'J', horaInicio: '13:05', horaFin: '14:00' },
 
             { idSesion: 'P1V1', diaSemana: 'V', horaInicio: '08:00', horaFin: '08:55' },
             { idSesion: 'P1V2', diaSemana: 'V', horaInicio: '08:55', horaFin: '09:50' },
             { idSesion: 'P1V3', diaSemana: 'V', horaInicio: '09:50', horaFin: '10:45' },
-            { idSesion: 'P1V4', diaSemana: 'V', horaInicio: '09:50', horaFin: '10:45' },
+            { idSesion: 'P1V4', diaSemana: 'V', horaInicio: '11:15', horaFin: '12:10' },
             { idSesion: 'P1V5', diaSemana: 'V', horaInicio: '12:10', horaFin: '13:05' },
             { idSesion: 'P1V6', diaSemana: 'V', horaInicio: '13:05', horaFin: '14:00' },
 
@@ -135,8 +137,8 @@ export class HorarioG {
 
   }
 
-  public static convertirCadenaHoraEnTiempo: any = d3.timeParse("%I:%M%p");
-  public static convertirTiempoEnCadenaHora: any = d3.timeFormat("%I:%M%p")
+  public static convertirCadenaHoraEnTiempo: any = d3.timeParse("%I:%M");
+  public static convertirTiempoEnCadenaHora: any = d3.timeFormat("%I:%M")
 
   actividadesG: ActividadG[] = [];
 
@@ -191,84 +193,6 @@ export class HorarioG {
 
   }
 
-  calcularFactorAnchoActividadesG(actsG: ActividadG[]) {
-    actsG.forEach(
-      actG => {
-
-
-        const actividadesCubiertas = this.actividadesCubiertasPor(actG);
-
-
-
-        if (actividadesCubiertas.length > 0 && actG) {
-
-          actG.nivelAncho = d3.max(actividadesCubiertas.map(act => act.nivelAncho)) as number + 1;
-        }
-
-      }
-      )
-
-  }
-  public obtenerDiasSemanaHorario(): DiaSemana[] {
-
-    return HorarioG.diasSemana.filter((ds: DiaSemana) => this.params.parametrosHorario.diasSemanaHabiles.includes(ds.codigo) );
-
-  }
-  public obtenerActividadesDiaSemana(ds: string): ActividadG[] {
-
-    return this.actividadesG.filter(act => act.sesion.diaSemana === ds);
-
-  }
-  public actividadesCubiertasPor(actividad: ActividadG): ActividadG[] {
-
-    return this.actividadesG.filter(
-      act =>
-        act.idActividad != actividad.idActividad
-        && act.sesion.diaSemana === actividad.sesion.diaSemana
-        && HorarioG.convertirCadenaHoraEnTiempo(act.sesion.horaInicio) >= HorarioG.convertirCadenaHoraEnTiempo(actividad.sesion.horaInicio)
-        && HorarioG.convertirCadenaHoraEnTiempo(act.sesion.horaFin) <= HorarioG.convertirCadenaHoraEnTiempo(actividad.sesion.horaFin)
-    )
-
-
-
-  }
-  public minimoIntervaloTemporal(): Date {
-    const horaMinima = HorarioG.convertirCadenaHoraEnTiempo(this.params.parametrosHorario.horaMinima);
-    return horaMinima.setMinutes(horaMinima.getMinutes()-5);
-  }
-  public maximoIntervaloTemporal() {
-    const horaMaxima = HorarioG.convertirCadenaHoraEnTiempo(this.params.parametrosHorario.horaMaxima);
-    return horaMaxima.setMinutes(horaMaxima.getMinutes()+5);
-  }
-  private compare(a: Actividad, b: Actividad): number {
-
-    const codigosDiasSemana = HorarioG.diasSemana.map(ds => ds.codigo);
-
-    if (codigosDiasSemana.indexOf(a.sesion.diaSemana) < codigosDiasSemana.indexOf(b.sesion.diaSemana))      return -1
-    else if (codigosDiasSemana.indexOf(a.sesion.diaSemana) > codigosDiasSemana.indexOf(b.sesion.diaSemana)) return 1
-    else {
-
-      if (HorarioG.convertirCadenaHoraEnTiempo(a.sesion.horaInicio) < HorarioG.convertirCadenaHoraEnTiempo(b.sesion.horaInicio)) return -1
-      else if (HorarioG.convertirCadenaHoraEnTiempo(a.sesion.horaInicio) > HorarioG.convertirCadenaHoraEnTiempo(b.sesion.horaInicio)) return 1
-      else if (HorarioG.convertirCadenaHoraEnTiempo(a.sesion.horaInicio) == HorarioG.convertirCadenaHoraEnTiempo(b.sesion.horaInicio)) {
-
-        if (HorarioG.convertirCadenaHoraEnTiempo(a.sesion.horaFin) < HorarioG.convertirCadenaHoraEnTiempo(b.sesion.horaFin)) return -1
-        else if (HorarioG.convertirCadenaHoraEnTiempo(a.sesion.horaFin) > HorarioG.convertirCadenaHoraEnTiempo(b.sesion.horaFin)) return 1
-        else return 0;
-
-      } else return 0;
-
-    }
-  } // Fin compare
-  public obtenerHorasInicionHorasFin(): Date[] {
-     return this.actividadesG.reduce(
-       function (colecAnterior: Date[], actividadActual) {
-         return colecAnterior.concat([HorarioG.convertirCadenaHoraEnTiempo(actividadActual.sesion.horaInicio), HorarioG.convertirCadenaHoraEnTiempo(actividadActual.sesion.horaFin)]);
-      },
-      []
-      )
-  }
-
 
 
   //----------------------------------------------------------------------------------------------------------
@@ -283,6 +207,8 @@ export class HorarioG {
     this.anyadirPanelHorario();
 
     this.anyadirPanelesDiasSemana();
+
+    this.anyadirPlantilla(this.params.parametrosHorario.plantillas[0]);
 
   }
 
@@ -426,6 +352,19 @@ export class HorarioG {
 
   }
 
+  private anyadirPlantilla(pl: Plantilla) {
+
+    d3.selectAll('g.panelDiaSemana').nodes().forEach(
+      (nodo: any) => {
+        const sesionesACrear = this.params.parametrosHorario.plantillas[0]
+          .sesionesPlantilla
+          .filter(sesion => sesion.diaSemana === nodo['id']);
+        this.renderizarSesiones('g#' + nodo['id'], sesionesACrear)
+      }
+    );
+  }
+
+
   private actualizarPanelesActividades() {
 
     // GESTION DE CREACIÓN Y ACTUALIZACION DE ACTIVIDADES.
@@ -494,6 +433,27 @@ export class HorarioG {
   //----------------------------------------------------------------------------------------------------------
   // MANTENIMIENTO GRÁFICO DE ACTIVIDADES
   //----------------------------------------------------------------------------------------------------------
+  renderizarSesiones(panelDiaSemana: string, sesiones: Sesion[]) {
+
+    d3.select(panelDiaSemana).selectAll('g#sesion' + 'pp').data(sesiones).enter().append('g')
+      .attr('transform', d => `translate(1,${this.params.escalas.escalaVertical(HorarioG.convertirCadenaHoraEnTiempo(d.horaInicio))})`)
+      .attr('class', 'panelSesion')
+      .attr('id', d => 'act' + d.idSesion)
+      .append('rect')
+      .attr('height', (d: Sesion) => {
+        const coordenadaHoraInicio = this.params.escalas.escalaVertical(HorarioG.convertirCadenaHoraEnTiempo(d.horaInicio));
+        const coordenadaHoraFin = this.params.escalas.escalaVertical(HorarioG.convertirCadenaHoraEnTiempo(d.horaFin));
+        return coordenadaHoraFin - coordenadaHoraInicio;
+      })
+      .attr('width', d => this.params.escalas.escalaHorizontal.bandwidth() - 2)
+      .attr('fill', 'red')
+      .attr('opacity', '0.4')
+      .attr('rx', 2)
+      .attr('ry', 3);
+
+
+  } // Fin renderizarActividades
+
   renderizarActividades(panelDiaSemana: string, actividadesG: ActividadG[]) {
 
     d3.select(panelDiaSemana).selectAll('g#act' + 'pp').data(actividadesG).enter().append('g')
@@ -562,6 +522,89 @@ export class HorarioG {
           .attr('class', 'panelActividad'))
     }
   }
+
+    //----------------------------------------------------------------------------------------------------------
+  // utilidades
+  //----------------------------------------------------------------------------------------------------------
+
+  calcularFactorAnchoActividadesG(actsG: ActividadG[]) {
+    actsG.forEach(
+      actG => {
+
+
+        const actividadesCubiertas = this.actividadesCubiertasPor(actG);
+
+
+
+        if (actividadesCubiertas.length > 0 && actG) {
+
+          actG.nivelAncho = d3.max(actividadesCubiertas.map(act => act.nivelAncho)) as number + 1;
+        }
+
+      }
+      )
+
+  }
+  public obtenerDiasSemanaHorario(): DiaSemana[] {
+
+    return HorarioG.diasSemana.filter((ds: DiaSemana) => this.params.parametrosHorario.diasSemanaHabiles.includes(ds.codigo) );
+
+  }
+  public obtenerActividadesDiaSemana(ds: string): ActividadG[] {
+
+    return this.actividadesG.filter(act => act.sesion.diaSemana === ds);
+
+  }
+  public actividadesCubiertasPor(actividad: ActividadG): ActividadG[] {
+
+    return this.actividadesG.filter(
+      act =>
+        act.idActividad != actividad.idActividad
+        && act.sesion.diaSemana === actividad.sesion.diaSemana
+        && HorarioG.convertirCadenaHoraEnTiempo(act.sesion.horaInicio) >= HorarioG.convertirCadenaHoraEnTiempo(actividad.sesion.horaInicio)
+        && HorarioG.convertirCadenaHoraEnTiempo(act.sesion.horaFin) <= HorarioG.convertirCadenaHoraEnTiempo(actividad.sesion.horaFin)
+    )
+
+
+
+  }
+  public minimoIntervaloTemporal(): Date {
+    const horaMinima = HorarioG.convertirCadenaHoraEnTiempo(this.params.parametrosHorario.horaMinima);
+    return horaMinima.setMinutes(horaMinima.getMinutes()-5);
+  }
+  public maximoIntervaloTemporal() {
+    const horaMaxima = HorarioG.convertirCadenaHoraEnTiempo(this.params.parametrosHorario.horaMaxima);
+    return horaMaxima.setMinutes(horaMaxima.getMinutes()+5);
+  }
+  private compare(a: Actividad, b: Actividad): number {
+
+    const codigosDiasSemana = HorarioG.diasSemana.map(ds => ds.codigo);
+
+    if (codigosDiasSemana.indexOf(a.sesion.diaSemana) < codigosDiasSemana.indexOf(b.sesion.diaSemana))      return -1
+    else if (codigosDiasSemana.indexOf(a.sesion.diaSemana) > codigosDiasSemana.indexOf(b.sesion.diaSemana)) return 1
+    else {
+
+      if (HorarioG.convertirCadenaHoraEnTiempo(a.sesion.horaInicio) < HorarioG.convertirCadenaHoraEnTiempo(b.sesion.horaInicio)) return -1
+      else if (HorarioG.convertirCadenaHoraEnTiempo(a.sesion.horaInicio) > HorarioG.convertirCadenaHoraEnTiempo(b.sesion.horaInicio)) return 1
+      else if (HorarioG.convertirCadenaHoraEnTiempo(a.sesion.horaInicio) == HorarioG.convertirCadenaHoraEnTiempo(b.sesion.horaInicio)) {
+
+        if (HorarioG.convertirCadenaHoraEnTiempo(a.sesion.horaFin) < HorarioG.convertirCadenaHoraEnTiempo(b.sesion.horaFin)) return -1
+        else if (HorarioG.convertirCadenaHoraEnTiempo(a.sesion.horaFin) > HorarioG.convertirCadenaHoraEnTiempo(b.sesion.horaFin)) return 1
+        else return 0;
+
+      } else return 0;
+
+    }
+  } // Fin compare
+  public obtenerHorasInicionHorasFin(): Date[] {
+     return this.actividadesG.reduce(
+       function (colecAnterior: Date[], actividadActual) {
+         return colecAnterior.concat([HorarioG.convertirCadenaHoraEnTiempo(actividadActual.sesion.horaInicio), HorarioG.convertirCadenaHoraEnTiempo(actividadActual.sesion.horaFin)]);
+      },
+      []
+      )
+  }
+
 
 
 }

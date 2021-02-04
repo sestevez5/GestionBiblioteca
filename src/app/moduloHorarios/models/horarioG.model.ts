@@ -1,12 +1,13 @@
-import { Sesion } from './../../moduloHelpers/models/sesion';
-import { Plantilla } from './../../moduloHelpers/models/plantilla.model';
+import { Sesion } from './../../moduloHorarios/models/sesion';
+import { Plantilla } from './../../moduloHorarios/models/plantilla.model';
 import { Subject } from 'rxjs';
 import { IParametrosGrafico } from './IParametrosGrafico.model';
 import { DiaSemana } from '../models/diaSemana.model';
 import { ActividadG, EstadoActividad } from './actividadG.model';
 import { Actividad } from './actividad.model';
 import * as d3 from 'd3';
-
+import { act } from '@ngrx/effects';
+import { ConstantPool } from '@angular/compiler';
 
 
 export class HorarioG {
@@ -18,7 +19,7 @@ export class HorarioG {
 
 
   static diasSemana: DiaSemana[] = [
-    { codigo: 'L', denominacionCorta: 'LUN', denominacionLarga: 'Lun' },
+    { codigo: 'L', denominacionCorta: 'LUN', denominacionLarga: 'Lunes' },
     { codigo: 'M', denominacionCorta: 'MAR', denominacionLarga: 'Martes' },
     { codigo: 'X', denominacionCorta: 'MIE', denominacionLarga: 'Miércoles' },
     { codigo: 'J', denominacionCorta: 'JUE', denominacionLarga: 'Jueves' },
@@ -31,8 +32,8 @@ export class HorarioG {
   params: IParametrosGrafico = {
 
     parametrosHorario: {
-      horaMinima: '07:00am',
-      horaMaxima: '14:00pm',
+      horaMinima: '07:00',
+      horaMaxima: '14:00',
       diasSemanaHabiles: ['L', 'M', 'X', 'V'],
       plantillas: [
         {
@@ -42,35 +43,35 @@ export class HorarioG {
             { idSesion: 'P1L1', diaSemana: 'L', horaInicio: '08:00', horaFin: '08:55' },
             { idSesion: 'P1L2', diaSemana: 'L', horaInicio: '08:55', horaFin: '09:50' },
             { idSesion: 'P1L3', diaSemana: 'L', horaInicio: '09:50', horaFin: '10:45' },
-            { idSesion: 'P1L4', diaSemana: 'L', horaInicio: '09:50', horaFin: '10:45' },
+            { idSesion: 'P1L4', diaSemana: 'L', horaInicio: '11:15', horaFin: '12:10' },
             { idSesion: 'P1L5', diaSemana: 'L', horaInicio: '12:10', horaFin: '13:05' },
             { idSesion: 'P1L6', diaSemana: 'L', horaInicio: '13:05', horaFin: '14:00' },
 
             { idSesion: 'P1M1', diaSemana: 'M', horaInicio: '08:00', horaFin: '08:55' },
             { idSesion: 'P1M2', diaSemana: 'M', horaInicio: '08:55', horaFin: '09:50' },
             { idSesion: 'P1M3', diaSemana: 'M', horaInicio: '09:50', horaFin: '10:45' },
-            { idSesion: 'P1M4', diaSemana: 'M', horaInicio: '09:50', horaFin: '10:45' },
+            { idSesion: 'P1M4', diaSemana: 'M', horaInicio: '11:15', horaFin: '12:10' },
             { idSesion: 'P1M5', diaSemana: 'M', horaInicio: '12:10', horaFin: '13:05' },
             { idSesion: 'P1M6', diaSemana: 'M', horaInicio: '13:05', horaFin: '14:00' },
 
             { idSesion: 'P1X1', diaSemana: 'X', horaInicio: '08:00', horaFin: '08:55' },
             { idSesion: 'P1X2', diaSemana: 'X', horaInicio: '08:55', horaFin: '09:50' },
             { idSesion: 'P1X3', diaSemana: 'X', horaInicio: '09:50', horaFin: '10:45' },
-            { idSesion: 'P1X4', diaSemana: 'X', horaInicio: '09:50', horaFin: '10:45' },
+            { idSesion: 'P1X4', diaSemana: 'X', horaInicio: '11:15', horaFin: '12:10' },
             { idSesion: 'P1X5', diaSemana: 'X', horaInicio: '12:10', horaFin: '13:05' },
             { idSesion: 'P1X6', diaSemana: 'X', horaInicio: '13:05', horaFin: '14:00' },
 
             { idSesion: 'P1J1', diaSemana: 'J', horaInicio: '08:00', horaFin: '08:55' },
             { idSesion: 'P1J2', diaSemana: 'J', horaInicio: '08:55', horaFin: '09:50' },
             { idSesion: 'P1J3', diaSemana: 'J', horaInicio: '09:50', horaFin: '10:45' },
-            { idSesion: 'P1J4', diaSemana: 'J', horaInicio: '09:50', horaFin: '10:45' },
+            { idSesion: 'P1J4', diaSemana: 'J', horaInicio: '11:15', horaFin: '12:10' },
             { idSesion: 'P1J5', diaSemana: 'J', horaInicio: '12:10', horaFin: '13:05' },
             { idSesion: 'P1J6', diaSemana: 'J', horaInicio: '13:05', horaFin: '14:00' },
 
             { idSesion: 'P1V1', diaSemana: 'V', horaInicio: '08:00', horaFin: '08:55' },
             { idSesion: 'P1V2', diaSemana: 'V', horaInicio: '08:55', horaFin: '09:50' },
             { idSesion: 'P1V3', diaSemana: 'V', horaInicio: '09:50', horaFin: '10:45' },
-            { idSesion: 'P1V4', diaSemana: 'V', horaInicio: '09:50', horaFin: '10:45' },
+            { idSesion: 'P1V4', diaSemana: 'V', horaInicio: '11:15', horaFin: '12:10' },
             { idSesion: 'P1V5', diaSemana: 'V', horaInicio: '12:10', horaFin: '13:05' },
             { idSesion: 'P1V6', diaSemana: 'V', horaInicio: '13:05', horaFin: '14:00' },
 
@@ -80,15 +81,14 @@ export class HorarioG {
           idPlantilla: 'P2',
           sesionesPlantilla: [
             { idSesion: 'P2L1', diaSemana: 'L', horaInicio: '08:00', horaFin: '10:55' },
-            { idSesion: 'P2L2', diaSemana: 'L', horaInicio: '12:00', horaFin: '13:00' },
-            { idSesion: 'P2L3', diaSemana: 'L', horaInicio: '13:00', horaFin: '14:00' },
-
-
-            { idSesion: 'P2M1', diaSemana: 'M', horaInicio: '08:00', horaFin: '14:00' },
 
 
 
-            { idSesion: 'P2X1', diaSemana: 'X', horaInicio: '08:00', horaFin: '10:00' },
+            { idSesion: 'P2M1', diaSemana: 'M', horaInicio: '10:00', horaFin: '14:00' },
+
+
+
+            { idSesion: 'P2X1', diaSemana: 'X', horaInicio: '09:00', horaFin: '9:30' },
             { idSesion: 'P2X2', diaSemana: 'X', horaInicio: '10:00', horaFin: '12:00' },
             { idSesion: 'P2X3', diaSemana: 'X', horaInicio: '12:00', horaFin: '14:00' },
 
@@ -100,7 +100,6 @@ export class HorarioG {
           ]
         }
       ]
-
     },
 
     // Parámetros generales
@@ -127,7 +126,7 @@ export class HorarioG {
     },
 
     panelDiaSemana: {
-      colorPanelDiaSemana: '#F2F3F4',
+      colorPanelDiaSemana: '#dfdfdf',
     },
 
     escalas: {
@@ -146,7 +145,7 @@ export class HorarioG {
 
     this.elementoRaiz = elementoRaiz;
     this.generarGrafico();
-    if (actividades) this.anyadirActualizarActividades(actividades);
+    //if (actividades) this.anyadirActualizarActividades(actividades);
 
 
   }
@@ -182,16 +181,17 @@ export class HorarioG {
     // Calcula el ancho de la actifidad en función de las actividades que cubre.
     this.calcularFactorAnchoActividadesG(this.actividadesG.filter(actG => (actG.estado === EstadoActividad.NUEVA) || this.actividadesG.filter(actG => actG.estado === EstadoActividad.MODIFICADA)));
 
-    this.actualizarPanelesActividades();
+    this.actualizarPanelesActividades1();
   }
 
   borrarActividades(idActividades: string[]) {
 
     this.actividadesG.filter(actG => idActividades.includes(actG.idActividad)).
     map(actG => actG.estado = EstadoActividad.ELIMINADA)
-    this.actualizarPanelesActividades();
+    this.actualizarPanelesActividades1();
 
   }
+
 
 
   //----------------------------------------------------------------------------------------------------------
@@ -207,7 +207,7 @@ export class HorarioG {
 
     this.anyadirPanelesDiasSemana();
 
-    this.anyadirPlantilla(this.params.parametrosHorario.plantillas[0]);
+    this.anyadirPlantilla(this.params.parametrosHorario.plantillas[1]);
 
   }
 
@@ -225,8 +225,8 @@ export class HorarioG {
     param.escalas.escalaHorizontal = d3.scaleBand()
       .domain(this.obtenerDiasSemanaHorario().map(ds=> ds.denominacionLarga))
       .range([0, param.panelHorario.anchoPanelHorario])
-      .paddingInner(0.01)
-      .paddingOuter(0.01);
+      .paddingInner(0.0)
+      .paddingOuter(0.0);
 
     // Establecer escala vertical:
     param.escalas.escalaVertical = d3.scaleTime()
@@ -314,6 +314,7 @@ export class HorarioG {
     return panelHorario;
 
   }
+
   private anyadirPanelesDiasSemana() {
 
     //-------------------------------------------------
@@ -339,8 +340,23 @@ export class HorarioG {
       .attr('id', (d: DiaSemana) => 'fondDiaSemana_' + d.codigo)
       .attr('class', 'fondoDiaSemana')
       .attr('fill', this.params.panelDiaSemana.colorPanelDiaSemana)
-      .attr('width', this.params.escalas.escalaHorizontal?.bandwidth)
+      .attr('width', this.params.escalas.escalaHorizontal?.bandwidth-0.1)
       .attr('height', this.params.panelHorario.altoPanelHorario as number)
+
+    panelesDiasSemana
+      .append('line')
+      .attr('x1', this.params.escalas.escalaHorizontal?.bandwidth)
+      .attr('y1', 0)
+      .attr('x2', this.params.escalas.escalaHorizontal?.bandwidth)
+      .attr('y2', this.params.panelHorario.altoPanelHorario as number)
+      .attr('stroke-width', '0.1')
+      .attr('stroke', 'black')
+    .attr('stroke-dasharray','1')
+
+
+
+
+
 
 
     //-------------------------------------------------
@@ -354,15 +370,18 @@ export class HorarioG {
 
     d3.selectAll('g.panelDiaSemana').nodes().forEach(
       (nodo: any) => {
-        const sesionesACrear = this.params.parametrosHorario.plantillas[0]
-          .sesionesPlantilla
+        const sesionesACrear = pl.sesionesPlantilla
           .filter(sesion => sesion.diaSemana === nodo['id']);
         this.renderizarSesiones('g#' + nodo['id'], sesionesACrear)
       }
     );
   }
 
+
   private actualizarPanelesActividades() {
+
+    // GESTION DE CREACIÓN Y ACTUALIZACION DE ACTIVIDADES.
+    const panelesARenderizar: { panel: any, actividadG: ActividadG }[] = [];
 
     // GESTION DE BORRADOS
     this.actividadesG
@@ -374,10 +393,45 @@ export class HorarioG {
 
     this.actividadesG = this.actividadesG.filter(actG => actG.estado !== EstadoActividad.ELIMINADA);
 
+
+
+
+    // GESTION DE CREACIÓN
+    d3.selectAll('g.panelDiaSemana').nodes().forEach(
+      (nodo: any) => {
+
+        this.actividadesG
+          .filter(actG => actG.sesion.diaSemana === nodo['id'] && (actG.estado === EstadoActividad.NUEVA || actG.estado === EstadoActividad.MODIFICADA))
+          .forEach(actG => panelesARenderizar.push({ panel: d3.select('g#' + nodo['id']).append('g').attr('class', 'panelActividadARenderizar').attr('id', 'act' + actG.idActividad), actividadG: actG }))
+      }
+    )
+
+
+    // Una vez procesados todos los cambios las desmarcamos
+    this.actividadesG.map(actG => actG.estado = EstadoActividad.SINCAMBIOS);
+
+  }
+
+   private actualizarPanelesActividades1() {
+
+    // GESTION DE BORRADOS
+    this.actividadesG
+      .filter(actG => actG.estado === EstadoActividad.ELIMINADA || actG.estado === EstadoActividad.MODIFICADA)
+      .forEach(actG => {
+        this.svg.select('g#act' + actG.idActividad).remove();
+      }
+      );
+
+    this.actividadesG = this.actividadesG.filter(actG => actG.estado !== EstadoActividad.ELIMINADA);
+
+
     // GESTION DE CREACIÓN
      d3.selectAll('g.panelDiaSemana').nodes().forEach(
        (nodo: any) => {
+
+
          const actividadesACrear = this.actividadesG.filter(actG => actG.sesion.diaSemana === nodo['id'] && (actG.estado === EstadoActividad.NUEVA || actG.estado === EstadoActividad.MODIFICADA));
+
          this.renderizarActividades('g#' + nodo['id'], actividadesACrear)
 
        }
@@ -394,24 +448,39 @@ export class HorarioG {
   //----------------------------------------------------------------------------------------------------------
   renderizarSesiones(panelDiaSemana: string, sesiones: Sesion[]) {
 
-    d3.select(panelDiaSemana).selectAll('g#sesion' + 'pp').data(sesiones).enter().append('g')
-      .attr('transform', d => `translate(1,${this.params.escalas.escalaVertical(HorarioG.convertirCadenaHoraEnTiempo(d.horaInicio))})`)
+    const panelSesion = d3.select(panelDiaSemana).selectAll('g#sesion' + 'pp').data(sesiones).enter().append('g')
+      .attr('transform', d => `translate(0.1,${this.params.escalas.escalaVertical(HorarioG.convertirCadenaHoraEnTiempo(d.horaInicio))})`)
       .attr('class', 'panelSesion')
-      .attr('id', d => 'act' + d.idSesion)
-      .append('rect')
+      .attr('id', d => 'act' + d.idSesion);
+
+    panelSesion.append('rect')
+      .attr('class', 'fondoPanelSesion')
+      .attr('id', d => 'fondoPanelSesion' + d.idSesion)
+      .attr('x', '0.2')
       .attr('height', (d: Sesion) => {
         const coordenadaHoraInicio = this.params.escalas.escalaVertical(HorarioG.convertirCadenaHoraEnTiempo(d.horaInicio));
         const coordenadaHoraFin = this.params.escalas.escalaVertical(HorarioG.convertirCadenaHoraEnTiempo(d.horaFin));
         return coordenadaHoraFin - coordenadaHoraInicio;
       })
-      .attr('width', d => this.params.escalas.escalaHorizontal.bandwidth() - 2)
-      .attr('fill', 'red')
-      .attr('opacity', '0.4')
-      .attr('rx', 2)
-      .attr('ry', 3);
+      .attr('width', d => this.params.escalas.escalaHorizontal.bandwidth()-0.6)
+      .attr('fill', '#eeeeee')
+      // .attr('stroke', 'black')
+      // .attr('stroke-width', '1');
+
+    panelSesion.append('rect')
+      .attr('class', 'fondoPanelSesionCabecera')
+      .attr('id', d => 'fondoPanelSesionCabecera' + d.idSesion)
+      .attr('x', '0.2')
+      .attr('height','10px')
+      .attr('width', d => this.params.escalas.escalaHorizontal.bandwidth()-0.6)
+      .attr('fill', '#ffffff');
+
+
+
 
 
   } // Fin renderizarActividades
+
   renderizarActividades(panelDiaSemana: string, actividadesG: ActividadG[]) {
 
     d3.select(panelDiaSemana).selectAll('g#act' + 'pp').data(actividadesG).enter().append('g')
@@ -461,6 +530,7 @@ export class HorarioG {
     )
 
   }
+
   desmarcarActividadesComoSeleccionadas(identificadoresActividades?: string[]) {
 
     // console.log('identificadoresActividades', identificadoresActividades);
@@ -480,12 +550,11 @@ export class HorarioG {
     }
   }
 
-
-
-  //----------------------------------------------------------------------------------------------------------
+    //----------------------------------------------------------------------------------------------------------
   // utilidades
   //----------------------------------------------------------------------------------------------------------
-  private calcularFactorAnchoActividadesG(actsG: ActividadG[]) {
+
+  calcularFactorAnchoActividadesG(actsG: ActividadG[]) {
     actsG.forEach(
       actG => {
 
@@ -503,17 +572,17 @@ export class HorarioG {
       )
 
   }
-  private obtenerDiasSemanaHorario(): DiaSemana[] {
+  public obtenerDiasSemanaHorario(): DiaSemana[] {
 
     return HorarioG.diasSemana.filter((ds: DiaSemana) => this.params.parametrosHorario.diasSemanaHabiles.includes(ds.codigo) );
 
   }
-  private obtenerActividadesDiaSemana(ds: string): ActividadG[] {
+  public obtenerActividadesDiaSemana(ds: string): ActividadG[] {
 
     return this.actividadesG.filter(act => act.sesion.diaSemana === ds);
 
   }
-  private actividadesCubiertasPor(actividad: ActividadG): ActividadG[] {
+  public actividadesCubiertasPor(actividad: ActividadG): ActividadG[] {
 
     return this.actividadesG.filter(
       act =>
@@ -526,13 +595,13 @@ export class HorarioG {
 
 
   }
-  private minimoIntervaloTemporal(): Date {
+  public minimoIntervaloTemporal(): Date {
     const horaMinima = HorarioG.convertirCadenaHoraEnTiempo(this.params.parametrosHorario.horaMinima);
-    return horaMinima.setMinutes(horaMinima.getMinutes()-5);
+    return horaMinima.setMinutes(horaMinima.getMinutes());
   }
-  private maximoIntervaloTemporal() {
+  public maximoIntervaloTemporal() {
     const horaMaxima = HorarioG.convertirCadenaHoraEnTiempo(this.params.parametrosHorario.horaMaxima);
-    return horaMaxima.setMinutes(horaMaxima.getMinutes()+5);
+    return horaMaxima.setMinutes(horaMaxima.getMinutes());
   }
   private compare(a: Actividad, b: Actividad): number {
 
@@ -554,7 +623,7 @@ export class HorarioG {
 
     }
   } // Fin compare
-  private obtenerHorasInicionHorasFin(): Date[] {
+  public obtenerHorasInicionHorasFin(): Date[] {
      return this.actividadesG.reduce(
        function (colecAnterior: Date[], actividadActual) {
          return colecAnterior.concat([HorarioG.convertirCadenaHoraEnTiempo(actividadActual.sesion.horaInicio), HorarioG.convertirCadenaHoraEnTiempo(actividadActual.sesion.horaFin)]);
@@ -562,7 +631,6 @@ export class HorarioG {
       []
       )
   }
-
 
 
 

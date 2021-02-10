@@ -31,7 +31,6 @@ export class SelectorMultipleDobleListaComponent implements OnInit {
   }
 
   onSeleccionar(item: any) {
-    console.log("Seleccionado elemento: ", item.nombre);
     const id = this.items.indexOf(item);
     this.items[id].seleccionado = true;
     this.items[id].marcado = false;
@@ -102,8 +101,6 @@ export class SelectorMultipleDobleListaComponent implements OnInit {
   hayItemsNoSeleccionadosMarcados() {
     return this.items.filter(item => !item.seleccionado && !!item.marcado).length != 0;
   }
-
-
 
   onDrop(event: CdkDragDrop<string[]>) {
     if (event.previousContainer === event.container) {

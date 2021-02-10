@@ -10,26 +10,33 @@ export interface IParametrosGrafico {
   }
   grafico: {
     colorGrafico: string;
-    anchoGrafico: number;
-    altoGrafico:  number;
     margenGrafico: {
       margenIzquierdoGrafico:  number;
       margenDerechoGrafico:    number;
       margenSuperiorGrafico:   number;
       margenInferiorGrafico:   number;
     };
+    anchoGrafico:  number | undefined;
+    altoGrafico:   number | undefined;
   }
 
   panelHorario: {
     anchoPanelHorario:  number | undefined;
     altoPanelHorario:   number | undefined;
-    posXPanelHorario:   number | undefined;
-    posYPanelHorario:   number | undefined;
     colorPanelHorario:  string;
   }
 
   panelDiaSemana: {
-    colorPanelDiaSemana: string;
+    //colorPanelDiaSemana: string;
+  }
+
+  panelSesiones: {
+    margenLateral: number; // porcentaje
+    anchoSesion: number | undefined;
+    altoCabecera: number;
+    colorCabecera: string;
+    colorCuerpo: string;
+
   }
   escalas: {
     escalaVertical: any;

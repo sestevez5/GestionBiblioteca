@@ -19,24 +19,19 @@ export class PanelHorarioComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-
     this.horarioG = new HorarioG('div#horario', this.Actividades);
     this.evento$ = this.horarioG.eventos$;
-
-
-
   }
 
   onActualizar() {
+    // const a = new Actividad();
+    // a.idActividad = '3'
+    // a.idSesion = 'P1M2'
+    // a.contenido = { contenido: 'prueba'}
 
-    const a = new Actividad();
-    a.idActividad = '3'
-    a.sesion = { idSesion:'1', horaInicio: '06:59am', horaFin: '12:30pm', diaSemana: 'M' }
-    a.contenido = { contenido: 'prueba' }
-
-    const ar = [];
-    ar.push(a);
-    this.horarioG.anyadirActualizarActividades(ar);
+    // const ar = [];
+    // ar.push(a);
+    // this.horarioG.anyadirActualizarActividades(ar);
 
 
   }

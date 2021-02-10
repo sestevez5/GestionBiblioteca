@@ -16,10 +16,8 @@ export class GestionActividadesComponent implements OnInit {
   constructor(horarioService: HorarioService, usuarios: AuthService) {
 
     this.actividades = horarioService.obtenerTodasLasActividades();
-    console.log(this.actividades);
     usuarios.ObtenerUsuarios(null)
       .subscribe(usuario => console.log('usuarios',usuario));
-
    }
 
 

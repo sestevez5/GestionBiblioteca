@@ -1,13 +1,10 @@
-import { Plantilla } from './../../moduloHelpers/models/plantilla.model';
-export interface IParametrosGrafico {
+import { parametrosHorario } from './parametrosHorario.model';
+import { Plantilla } from '../../moduloHelpers/models/plantilla.model';
+export interface parametrosGrafico {
 
   // Parámetros del gráfico, en general.
-  parametrosHorario: {
-    horaMinima: string;
-    horaMaxima: string;
-    diasSemanaHabiles: string[];
-    plantillas: Plantilla[];
-  }
+  parametrosHorario: parametrosHorario | undefined;
+
   grafico: {
     colorGrafico: string;
     margenGrafico: {

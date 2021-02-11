@@ -1,3 +1,5 @@
+import { parametrosHorario } from './../../models/parametrosHorario.model';
+import { Plantilla } from './../../models/plantilla.model';
 import { ActividadG } from '../../models/actividadG.model';
 import { Observable } from 'rxjs';
 import { HorarioG } from '../../models/horarioG.model';
@@ -13,13 +15,15 @@ export class PanelHorarioComponent implements OnInit {
 
 
   @Input() Actividades: Actividad[];
+  @Input() ParametrosHorario: parametrosHorario;
+
   horarioG: HorarioG;
   evento$: Observable<ActividadG>;
 
   constructor() { }
 
   ngOnInit(): void {
-    this.horarioG = new HorarioG('div#horario', this.Actividades);
+    this.horarioG = new HorarioG('div#horario', this.ParametrosHorario, this.Actividades);
     this.evento$ = this.horarioG.eventos$;
   }
 

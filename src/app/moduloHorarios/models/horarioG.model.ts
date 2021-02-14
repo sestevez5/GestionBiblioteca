@@ -1,12 +1,12 @@
 import { IActividadesSesion } from './actividadesSesion.model';
 import { parametrosHorario } from './parametrosHorario.model';
-import { HorarioService } from './../../moduloHelpers/services/horario.service';
+import { HorarioService } from '../../moduloHelpers/services/horario.service';
 import { select } from '@ngrx/store';
-import { Sesion } from './../../moduloHorarios/models/sesion';
-import { Plantilla } from './../../moduloHorarios/models/plantilla.model';
+import { Sesion } from './sesion';
+import { Plantilla } from './plantilla.model';
 import { Subject } from 'rxjs';
 import { parametrosGrafico } from './parametrosGrafico.model';
-import { DiaSemana } from '../models/diaSemana.model';
+import { DiaSemana } from './diaSemana.model';
 import { ActividadG, EstadoActividad } from './actividadG.model';
 import { Actividad } from './actividad.model';
 import * as d3 from 'd3';
@@ -61,7 +61,7 @@ export class HorarioG {
     panelSesiones: {
 
       margenLateral: 0,
-      altoCabecera: 10,
+      altoCabecera: 11,
       anchoSesion: undefined,
       colorCabecera:'#ffffff',
       colorCuerpo:'#eeeeee'
@@ -88,7 +88,6 @@ export class HorarioG {
     this.generarGrafico(parametrosHorario);
     if (actividades) this.anyadirActualizarActividades(actividades);
   }
-
   anyadirActualizarActividades(actividades: Actividad[]) {
 
     const ActividadesNuevas: Actividad[] = actividades.filter(act => !this.actividadesG.map(actG => actG.idActividad).includes(act.idActividad));
@@ -99,11 +98,8 @@ export class HorarioG {
     ActividadesNuevas.forEach(
       act => {
         const nuevaActividadG = new ActividadG(act);
-
         nuevaActividadG.estado = EstadoActividad.NUEVA
         this.actividadesG.push(nuevaActividadG);
-
-
       }
     );
 
@@ -125,14 +121,13 @@ export class HorarioG {
     // Calcula el ancho de la actifidad en función de las actividades que cubre.
     this.calcularFactorAnchoActividadesG(this.actividadesG.filter(actG => (actG.estado === EstadoActividad.NUEVA) || this.actividadesG.filter(actG => actG.estado === EstadoActividad.MODIFICADA)));
 
-    this.actualizarPanelesActividades1();
+    this.actualizarPanelesActividades();
   }
-
   borrarActividades(idActividades: string[]) {
 
     this.actividadesG.filter(actG => idActividades.includes(actG.idActividad)).
     map(actG => actG.estado = EstadoActividad.ELIMINADA)
-    this.actualizarPanelesActividades1();
+    this.actualizarPanelesActividades();
 
   }
 
@@ -151,7 +146,6 @@ export class HorarioG {
     this.params.parametrosHorario ? this.anyadirPlantilla(this.params.parametrosHorario.plantillas[0]) : null;
 
   }
-
   private configurarSvg()
   {
     //-------------------------------------------------
@@ -177,7 +171,6 @@ export class HorarioG {
     this.anyadirDefs(this.svg);
 
   }
-
   private inicializarParametros(parametrosHorario: parametrosHorario) {
 
     this.params.parametrosHorario = parametrosHorario;
@@ -214,7 +207,6 @@ export class HorarioG {
     this.params.panelSesiones.anchoSesion = parseFloat(this.params.escalas.escalaHorizontal.bandwidth()) * (100-this.params.panelSesiones.margenLateral * 2)*0.01;
 
   }
-
   private anyadirPanelHorario() {
 
     //-------------------------------------------------
@@ -263,9 +255,7 @@ export class HorarioG {
     // Devolución
     //-------------------------------------------------
     return panelHorario;
-
   }
-
   private anyadirPanelesDiasSemana() {
 
     //-------------------------------------------------
@@ -303,42 +293,11 @@ export class HorarioG {
       (nodo: any) => {
         const sesionesACrear = pl.sesionesPlantilla
           .filter(sesion => sesion.diaSemana === nodo['id']);
-        this.renderizarSesiones('g#' + nodo['id'], sesionesACrear)
+        //this.renderizarSesiones('g#' + nodo['id'], sesionesACrear)
       }
     );
   }
   private actualizarPanelesActividades() {
-
-    // GESTION DE CREACIÓN Y ACTUALIZACION DE ACTIVIDADES.
-    const panelesARenderizar: { panel: any, actividadG: ActividadG }[] = [];
-
-    // GESTION DE BORRADOS
-    this.actividadesG
-      .filter(actG => actG.estado === EstadoActividad.ELIMINADA || actG.estado === EstadoActividad.MODIFICADA)
-      .forEach(actG => {
-        this.svg.select('g#act' + actG.idActividad).remove();
-      }
-      );
-
-    this.actividadesG = this.actividadesG.filter(actG => actG.estado !== EstadoActividad.ELIMINADA);
-
-    // GESTION DE CREACIÓN
-    d3.selectAll('g.panelDiaSemana').nodes().forEach(
-      (nodo: any) => {
-
-        this.actividadesG
-          .filter(actG => actG.sesion.diaSemana === nodo['id'] && (actG.estado === EstadoActividad.NUEVA || actG.estado === EstadoActividad.MODIFICADA))
-          .forEach(actG => panelesARenderizar.push({ panel: d3.select('g#' + nodo['id']).append('g').attr('class', 'panelActividadARenderizar').attr('id', 'act' + actG.idActividad), actividadG: actG }))
-      }
-    )
-
-
-    // Una vez procesados todos los cambios las desmarcamos
-    this.actividadesG.map(actG => actG.estado = EstadoActividad.SINCAMBIOS);
-
-  }
-  private actualizarPanelesActividades1() {
-
 
     // GESTION DE BORRADOS
     this.actividadesG
@@ -419,62 +378,246 @@ export class HorarioG {
 
   renderizarActividades(panelDiaSemana: string, actividadesG: ActividadG[]) {
 
+    // Paso 0: Transformamos la colección de actividades agrupándolas por sesiones.
+    const actividadesSesion: IActividadesSesion[] = this.obtenerActividadesSesiones(actividadesG);
 
-    // Construimos una estructura para agrupar actividades por sesión.
-    const actividadesSesion: IActividadesSesion[] = [];
+    // Paso 1:  Crear los paneles que representarán a las actividades de una sesión
+    const panelesSesionActividades = this.crearPanelesSesionActividades(panelDiaSemana, actividadesSesion);
 
-    // tenemos todas las sesiones afectadas de forma única.
-    const sesionesConActividad = [... new Set(actividadesG.map(actg => actg.sesion))];
+    // Paso 2: Crear la cabecera de los paneles anteriores.
+    const panelCabeceraSesionActividades = this.crearPanelCabeceraSesionConActividades(panelesSesionActividades);
 
-    sesionesConActividad.forEach(ses => {
-      const actividadesSesionActual: ActividadG[] = [];
-      actividadesG.filter(actg => actg.sesion === ses).forEach(act => actividadesSesionActual.push(act))
-      actividadesSesion.push({ sesion: ses, actividades: actividadesSesionActual })
-    });
+    // Paso 3: Añadir los botones a la cabecera anterior.
+    this.anyadirBotonesPanelCabeceraSesionesActividades(panelCabeceraSesionActividades);
 
-    const panelSesionConSusActividades = this.CrearPanelesSesionConSusActividades(panelDiaSemana, actividadesSesion);
+    // Paso 4: añadir el panel que contendrá a todas las actividades de la sesion "cuerpo de la sesión actividad".
+    this.crearPanelCuerpoSesionConActividades(panelesSesionActividades);
 
-    const panelCabeceraSesionConActividades = this.CrearPanelCabeceraSesionConActividades(panelSesionConSusActividades);
-
-
+    this.añyadirPanelesActividades(actividadesSesion)
 
 
-
-
-
-
-    // d3.select(panelDiaSemana).selectAll('g#act' + 'pp').data(actividadesG).enter().append('g').data(actividadesG).enter().append('g')
-    // .attr('transform', d => `translate(1,${this.params.escalas.escalaVertical(HorarioG.convertirCadenaHoraEnTiempo(d.sesion.horaInicio))})`)
-    // .attr('class', 'panelActividad')
-    // .attr('id', d => 'act' + d.idActividad)
-    // .append('rect')
-    //   .attr('height', (d: ActividadG) => {
-    //     const coordenadaHoraInicio = this.params.escalas.escalaVertical(HorarioG.convertirCadenaHoraEnTiempo(d.sesion.horaInicio));
-    //     const coordenadaHoraFin = this.params.escalas.escalaVertical(HorarioG.convertirCadenaHoraEnTiempo(d.sesion.horaFin));
-    //     return coordenadaHoraFin - coordenadaHoraInicio;
-    //   })
-    // .attr('width', d=> this.params.escalas.escalaHorizontal.bandwidth()-2-d.nivelAncho*4)
-    // .attr('fill', 'red')
-    // .attr('opacity', '0.4')
-    // .attr('rx', 2)
-    // .attr('ry', 2)
-    // .on('click', (d: any,i: any) => {
-    //   this.eventos$.next(d);
-    //   // Guardamos si está o no marcada la actividad en la que hemos pulsado.
-    //   const marcadaActividadActualComoSeleccionada = d3.select('g#act' + i.idActividad).attr('class').split(' ').includes('actividadSeleccionada');
-    //   d.ctrlKey ? null : this.desmarcarActividadesComoSeleccionadas();
-    //   marcadaActividadActualComoSeleccionada ?
-    //     d3.selectAll('g#act' + i.idActividad).attr('class', 'panelActividad actividadSeleccionada'):
-    //     d3.select('g#act' + i.idActividad).attr('class', 'panelActividad');
-    //   d3.select('g#act' + i.idActividad).attr('class').split(' ').includes('actividadSeleccionada') ?
-    //     this.desmarcarActividadesComoSeleccionadas([i.idActividad]) :
-    //     this.marcarActividadesComoSeleccionadas([i.idActividad]);
-
-    // })
-
+    // Paso 5: añadir los paneles que representarán a cada una de las actividades.
 
   } // Fin renderizarActividades
 
+  crearPanelesSesionActividades(panelDiaSemana: string, actividadesSesion: IActividadesSesion[]) {
+    const panelSesionActividades = d3.select(panelDiaSemana)
+    .selectAll('g#act' + 'xx')
+    .data(actividadesSesion)
+    .enter()
+    .append('g')
+    .attr('transform', d => `translate(1,${this.params.escalas.escalaVertical(HorarioG.convertirCadenaHoraEnTiempo(d.sesion.horaInicio))})`)
+    .attr('class', 'panelSesionActividades')
+    .attr('id', d => 'panelSesionActividades' + d.sesion.idSesion);
+
+    panelSesionActividades.append('rect')
+      .attr('height', d => {
+        const coordenadaHoraInicio = this.params.escalas.escalaVertical(HorarioG.convertirCadenaHoraEnTiempo(d.sesion.horaInicio));
+        const coordenadaHoraFin = this.params.escalas.escalaVertical(HorarioG.convertirCadenaHoraEnTiempo(d.sesion.horaFin));
+        return coordenadaHoraFin - coordenadaHoraInicio;
+      })
+      .attr('width', d => this.params.escalas.escalaHorizontal.bandwidth())
+      .attr('fill', 'red')
+      .attr('opacity', '0.4')
+      .attr('rx', 2)
+      .attr('ry', 2);
+
+    return panelSesionActividades;
+
+  }
+  crearPanelCabeceraSesionConActividades(panelSesionActividades: any) {
+    const anchoSesion = this.params.panelSesiones.anchoSesion ? this.params.panelSesiones.anchoSesion.toString() : '0';
+    const altoCabeceraSesion = this.params.panelSesiones.altoCabecera;
+
+    //---------------------------------------------------------------------------------
+    // Paso1: Añadimos el panel cabecera para la sesión que representa con sus actividades.
+    // Su identificador será el texto 'panelCabeceraSesionConSusActividades' con el id de la
+    // sesión.
+    //---------------------------------------------------------------------------------
+    const panelCabeceraSesionConActividades = panelSesionActividades.append('g')
+      .attr('class', 'panelCabeceraSesionConSusActividades')
+      .attr('id', (d: IActividadesSesion) => 'panelCabeceraSesionConSusActividades' + d.sesion.idSesion);
+
+    //---------------------------------------------------------------------------------
+    // Definicion del rectángulo que representa a la cabecera de la sesión.
+    //---------------------------------------------------------------------------------
+    panelCabeceraSesionConActividades.append('rect')
+      .attr('class', 'rectPanelCabeceraSesionConSusActividades')
+      .attr('height', altoCabeceraSesion)
+      .attr('width', anchoSesion)
+      .attr('fill', 'grey');
+
+    // Se añade el texto de la cabecera: hora inicio-fin
+    panelCabeceraSesionConActividades.append('text')
+      .attr('x', parseInt(anchoSesion) / 2)
+      .text((d: IActividadesSesion) => d.sesion.horaInicio + ' - ' + d.sesion.horaFin)
+      .attr('y', altoCabeceraSesion / 2)
+      .attr('font-size', '.8em')
+      .attr('fill', 'white')
+      .attr('dominant-baseline', 'central')
+      .attr('text-anchor', 'middle');
+
+     return panelCabeceraSesionConActividades;
+  }
+  anyadirBotonesPanelCabeceraSesionesActividades(pcca: any) {
+    const anchoSesion = this.params.panelSesiones.anchoSesion ? this.params.panelSesiones.anchoSesion.toString() : '0';
+    const altoCabeceraSesion = this.params.panelSesiones.altoCabecera;
+    const desplazamientoHorizontal = parseFloat(anchoSesion) / 2 - 15;
+    const desplHorizontal2 = desplazamientoHorizontal+10
+    const desplVertical1 = altoCabeceraSesion / 18;
+    const desplVertical2 = altoCabeceraSesion / 2;
+    const desplVertical3 = altoCabeceraSesion * 17 / 18;
+
+    const coordenadasTrianguloIzquierdo = [
+      { 'x': parseFloat(anchoSesion) / 2 - desplazamientoHorizontal, 'y': desplVertical1 },
+      { 'x': parseFloat(anchoSesion) / 2 - desplHorizontal2, 'y': desplVertical2 },
+      { 'x': parseFloat(anchoSesion) / 2  -desplazamientoHorizontal, 'y': desplVertical3 },
+    ];
+
+    const coordenadasTrianguloDerecho = [
+      { 'x': parseFloat(anchoSesion) / 2 + desplazamientoHorizontal, 'y': desplVertical1 },
+      { 'x': parseFloat(anchoSesion) / 2 + desplHorizontal2, 'y': desplVertical2 },
+      { 'x': parseFloat(anchoSesion) / 2 + desplazamientoHorizontal, 'y': desplVertical3 },
+    ];
+
+
+    // Obtener actividad
+
+
+    pcca.append("polygon")
+    .attr("points", coordenadasTrianguloIzquierdo.map(function (d: any) { return [d.x, d.y].join(","); }).join(" "))
+    .attr("fill", "white")
+    .on("click", (d: any) => console.log('hola'))
+    .on("mouseout", (d: any) => d3.select('body').style("cursor", "default"))
+      .on("mouseover", (d: any) => d3.select('body').style("cursor", "pointer"));
+
+
+
+
+    pcca.append("polygon")
+      .attr("points", coordenadasTrianguloDerecho.map(function (d: any) { return [d.x, d.y].join(","); }).join(" "))
+      .attr("fill", "white")
+      .on("click", function (d: any, i: IActividadesSesion, e: any) {
+
+
+
+        const panelCuerpoSesionActividadesActual = d3.select('#panelCuerpoSesionActividades' + i.sesion.idSesion);
+
+        // obtener la actividad visible.
+        const idActividadVisible = panelCuerpoSesionActividadesActual.select('.visible').attr('id').replace('panelActividad', '');
+
+        const idActividadesEnSesion: string[] = [];
+
+        panelCuerpoSesionActividadesActual.selectAll('.panelActividad').nodes().forEach((x: any) => idActividadesEnSesion.push(x['id'].replace('panelActividad', '')));
+        console.log(idActividadesEnSesion);
+
+        const posActual = idActividadesEnSesion.indexOf(idActividadVisible);
+        console.log(idActividadesEnSesion.indexOf(idActividadVisible));
+
+
+        // Obtenemos todos los paneles de actividad contenidos en el cuerpo
+        // de la entidad Actividades-sesion
+        panelCuerpoSesionActividadesActual
+          .selectAll('.panelActividad')
+          .attr('transform', function (d, i, n) {
+
+            return `translate(${(i-(posActual+1))*parseFloat(anchoSesion)},0)`
+          })
+
+
+
+      })
+      .on("mouseout", (d: any) => d3.select('body').style("cursor", "default"))
+      .on("mouseover", (d: any) => d3.select('body').style("cursor", "pointer") );
+
+  }
+  crearPanelCuerpoSesionConActividades(panelSesionActividades: any) {
+    const anchoSesion = this.params.panelSesiones.anchoSesion ? this.params.panelSesiones.anchoSesion.toString() : '0';
+    const altoCabeceraSesion = this.params.panelSesiones.altoCabecera;
+
+    //---------------------------------------------------------------------------------
+    // Paso1: Añadimos el panel cabecera para la sesión que representa con sus actividades.
+    // Su identificador será el texto 'panelCabeceraSesionConSusActividades' con el id de la
+    // sesión.
+    //---------------------------------------------------------------------------------
+    const panelCuerpoSesionConActividades = panelSesionActividades.append('g')
+      .attr('class', 'panelCuerpoSesionActividades')
+      .attr('id', (d: IActividadesSesion) => 'panelCuerpoSesionActividades' + d.sesion.idSesion)
+      .attr('transform',`translate(0,${altoCabeceraSesion})` )
+
+    //---------------------------------------------------------------------------------
+    // Definicion del rectángulo que representa a la cabecera de la sesión.
+    //---------------------------------------------------------------------------------
+    panelCuerpoSesionConActividades.append('rect')
+      .attr('height', (d:any) => {
+        const coordenadaHoraInicio = this.params.escalas.escalaVertical(HorarioG.convertirCadenaHoraEnTiempo(d.sesion.horaInicio));
+        const coordenadaHoraFin = this.params.escalas.escalaVertical(HorarioG.convertirCadenaHoraEnTiempo(d.sesion.horaFin));
+        return coordenadaHoraFin - coordenadaHoraInicio-altoCabeceraSesion;
+      })
+      .attr('width', (d: any) => this.params.escalas.escalaHorizontal.bandwidth())
+      .attr('fill', 'yellow')
+      .attr('opacity', '0.4')
+      .attr('rx', 2)
+      .attr('ry', 2);
+
+
+    panelCuerpoSesionConActividades.append('clipPath')
+      .attr('id', (d: any) => 'rectanguloRecortador' + d.sesion.idSesion)
+      .append('rect')
+      .attr('height', (d: any) => {
+      const coordenadaHoraInicio = this.params.escalas.escalaVertical(HorarioG.convertirCadenaHoraEnTiempo(d.sesion.horaInicio));
+      const coordenadaHoraFin = this.params.escalas.escalaVertical(HorarioG.convertirCadenaHoraEnTiempo(d.sesion.horaFin));
+      return coordenadaHoraFin - coordenadaHoraInicio-altoCabeceraSesion;
+    })
+      .attr('width', (d: any) => this.params.escalas.escalaHorizontal.bandwidth())
+
+
+    panelCuerpoSesionConActividades
+      .attr("clip-path", (d: any) => {
+        console.log('rectangulo recortador: ', 'rectanguloRecortador' + d.sesion.idSesion);
+        return `url(#${'rectanguloRecortador' + d.sesion.idSesion})`
+      })
+
+
+     return panelCuerpoSesionConActividades;
+  }
+  añyadirPanelesActividades(actividadesSesiones: IActividadesSesion[]) {
+
+    const anchoSesion = this.params.panelSesiones.anchoSesion ? this.params.panelSesiones.anchoSesion.toString() : '0';
+
+    actividadesSesiones.forEach(as => {
+      const idPanel = '#panelCuerpoSesionActividades' + as.sesion.idSesion;
+      const panelesActividades = d3.select(idPanel).selectAll('act' + 'xx').data(as.actividades).enter().append('g');
+
+      panelesActividades
+        .attr('class', (d, i, n) => {
+          if (i == 0) return 'panelActividad visible'
+          else return 'panelActividad'
+        })
+        .attr('id', d => 'panelActividad' + d.idActividad)
+        .attr('transform', (d, i, n) => `translate(${(i) * parseFloat(anchoSesion)},0)`);
+
+      // Añadimos el rectángulo
+      panelesActividades.append('rect')
+        .attr('width', anchoSesion)
+        .attr('fill', 'blue')
+        .attr('height', 40)
+        .attr('stroke', 'white');
+
+      // Añadimos el texto al panel
+      panelesActividades.append('text')
+        .attr('x', parseInt(anchoSesion) / 2)
+        .text((d, i, n) =>d.idActividad )
+        .attr('y', 30 / 2)
+        .attr('font-size', '.8em')
+        .attr('fill', 'white')
+        .attr('dominant-baseline', 'central')
+        .attr('text-anchor', 'middle');
+
+
+    });
+
+  }
   //----------------------------------------------------------------------------------------------------------
   // Utilidades
   //----------------------------------------------------------------------------------------------------------
@@ -507,22 +650,7 @@ export class HorarioG {
           .attr('class', 'panelActividad'))
     }
   }
-
   calcularFactorAnchoActividadesG(actsG: ActividadG[]) {
-
-    // // paso 1: Construimos un único array con todas las sesiones de todas las plantillas.
-    // // Necesitamoas un único array con todas las sesiones para el punto 2.
-    // var todasLasSesiones: Sesion[] = [];
-    // this.params.parametrosHorario.plantillas.forEach(pl => {
-    //   console.log('pl', pl.sesionesPlantilla);
-    //   todasLasSesiones = todasLasSesiones.concat(pl.sesionesPlantilla);
-    // });
-
-    // // paso 2: Asignamos a cada actividadG su objeto sesión.
-    // actsG.forEach(actG => {
-    //   const sesionLocalizada = todasLasSesiones.find(s => s.idSesion === actG.idSesion);
-    //   if (sesionLocalizada) actG.sesion = sesionLocalizada
-    // });
 
     // paso 3: Asignamos todas las materias
 
@@ -536,19 +664,16 @@ export class HorarioG {
       });
 
   }
-
   public obtenerDiasSemanaHorario(): DiaSemana[] {
 
     return HorarioG.diasSemana.filter((ds: DiaSemana) => this.params.parametrosHorario?.diasSemanaHabiles.includes(ds.codigo) );
 
   }
-
   public obtenerActividadesDiaSemana(ds: string): ActividadG[] {
 
     return this.actividadesG.filter(act => act.sesion.diaSemana === ds);
 
   }
-
   public actividadesCubiertasPor(actividad: ActividadG): ActividadG[] {
 
     return this.actividadesG.filter(
@@ -559,20 +684,15 @@ export class HorarioG {
         && HorarioG.convertirCadenaHoraEnTiempo(act.sesion.horaFin) <= HorarioG.convertirCadenaHoraEnTiempo(actividad.sesion.horaFin)
     )
 
-
-
   }
-
   public minimoIntervaloTemporal(): Date {
     const horaMinima = HorarioG.convertirCadenaHoraEnTiempo(this.params.parametrosHorario?.horaMinima);
     return horaMinima.setMinutes(horaMinima.getMinutes());
   }
-
   public maximoIntervaloTemporal(): Date {
     const horaMaxima = HorarioG.convertirCadenaHoraEnTiempo(this.params.parametrosHorario?.horaMaxima);
     return horaMaxima.setMinutes(horaMaxima.getMinutes());
   }
-
   private compare(a: ActividadG, b: ActividadG): number {
 
     const codigosDiasSemana = HorarioG.diasSemana.map(ds => ds.codigo);
@@ -587,10 +707,12 @@ export class HorarioG {
 
         if (HorarioG.convertirCadenaHoraEnTiempo(a.sesion.horaFin) < HorarioG.convertirCadenaHoraEnTiempo(b.sesion.horaFin)) return -1
         else if (HorarioG.convertirCadenaHoraEnTiempo(a.sesion.horaFin) > HorarioG.convertirCadenaHoraEnTiempo(b.sesion.horaFin)) return 1
-        else return 0;
-
+        else if (HorarioG.convertirCadenaHoraEnTiempo(a.sesion.horaFin) == HorarioG.convertirCadenaHoraEnTiempo(b.sesion.horaFin)) {
+          if (a.sesion.idSesion < b.sesion.idSesion) return -1
+          else if (a.sesion.idSesion > b.sesion.idSesion) return 1
+          else return 0;
+        } else return 0;
       } else return 0;
-
     }
   } // Fin compare
   private obtenerHorasInicionHorasFin(): Date[] {
@@ -601,7 +723,6 @@ export class HorarioG {
       []
       )
   }
-
   private anyadirDefs(element: any) {
     const defs = element.append('defs');
 
@@ -618,62 +739,23 @@ export class HorarioG {
 
 
   }
+  private obtenerActividadesSesiones(actividadesG: ActividadG[]): IActividadesSesion[]{
 
-  CrearPanelesSesionConSusActividades(panelDiaSemana: string, actividadesSesion: IActividadesSesion[]) {
-    const panelSesionConSusActividades = d3.select(panelDiaSemana)
-    .selectAll('g#act' + 'xx')
-    .data(actividadesSesion)
-    .enter()
-    .append('g')
-    .attr('transform', d => `translate(1,${this.params.escalas.escalaVertical(HorarioG.convertirCadenaHoraEnTiempo(d.sesion.horaInicio))})`)
-    .attr('class', 'panelSesionConActividades')
-    .attr('id', d => 'sesActs' + d.sesion.idSesion);
+      // Construimos una estructura para agrupar actividades por sesión.
+      const actividadesSesion: IActividadesSesion[] = [];
 
-    panelSesionConSusActividades.append('rect')
-      .attr('height', d => {
-        const coordenadaHoraInicio = this.params.escalas.escalaVertical(HorarioG.convertirCadenaHoraEnTiempo(d.sesion.horaInicio));
-        const coordenadaHoraFin = this.params.escalas.escalaVertical(HorarioG.convertirCadenaHoraEnTiempo(d.sesion.horaFin));
-        return coordenadaHoraFin - coordenadaHoraInicio;
-      })
-      .attr('width', d => this.params.escalas.escalaHorizontal.bandwidth())
-      .attr('fill', 'red')
-      .attr('opacity', '0.4')
-      .attr('rx', 2)
-      .attr('ry', 2);
+      // tenemos todas las sesiones afectadas de forma única.
+      const sesionesConActividad = [... new Set(actividadesG.map(actg => actg.sesion))];
 
-    return panelSesionConSusActividades;
+      sesionesConActividad.forEach(ses => {
+        const actividadesSesionActual: ActividadG[] = [];
+        actividadesG.filter(actg => actg.sesion === ses).sort(this.compare).forEach(act => actividadesSesionActual.push(act))
+        actividadesSesion.push({ sesion: ses, actividades: actividadesSesionActual })
+      });
 
-  }
-
-  CrearPanelCabeceraSesionConActividades(panelSesionConSusActividades: any) {
-    const anchoSesion = this.params.panelSesiones.anchoSesion ? this.params.panelSesiones.anchoSesion.toString() : '0';
-
-    // Paso2: Añadimos la cabecera
-    const panelCabeceraSesionConActividades = panelSesionConSusActividades.append('g')
-    .attr('class', 'panelCabeceraSesionConSusActividades');
-
-  // Definicion del rectángulo que representa a la cabecera de la sesión.
-    panelCabeceraSesionConActividades.append('rect')
-    .attr('class', 'panelCabeceraSesionConSusActividades')
-    .attr('id', (d: IActividadesSesion) => 'panelCabeceraSesionConSusActividades' + d.sesion.idSesion)
-    .attr('height',this.params.panelSesiones.altoCabecera)
-    .attr('width', anchoSesion)
-      .attr('fill', 'grey');
-
-    panelCabeceraSesionConActividades.append('text')
-      .attr('x', parseInt(anchoSesion) / 2)
-      .text((d: IActividadesSesion) => d.sesion.horaInicio + ' - ' + d.sesion.horaFin)
-      .attr('y', this.params.panelSesiones.altoCabecera / 2)
-      .attr('font-size', '.5em')
-      .attr('fill','white')
-      .attr('dominant-baseline', 'central')
-      .attr('text-anchor', 'middle')
-
-    return panelCabeceraSesionConActividades;
+    return actividadesSesion;
 
 
   }
 
 }
-
-

@@ -29,7 +29,7 @@ export class HorarioService {
     {
       horaMinima: '07:00',
       horaMaxima: '15:00',
-      diasSemanaHabiles: ['L', 'M', 'X', 'J', 'V', 'S'],
+      diasSemanaHabiles: ['L','M','X'],
       plantillas: [
         {
           idPlantilla: 'P1',
@@ -115,7 +115,7 @@ export class HorarioService {
     },
     {
       idActividad: '3',
-      idSesion: 'P1L3',
+      idSesion: 'P1L4',
       detalleActividad: '',
       grupos: ['2'],
       docentes: [],
@@ -133,33 +133,43 @@ export class HorarioService {
 
     },
     {
-      idActividad: '5',
-      idSesion: 'P1M3',
+      idActividad: '14',
+      idSesion: 'P1M1',
       detalleActividad: '',
       grupos: ['2'],
       docentes: [],
-      asignaturas: ['1','3','4'],
-      dependencia:'3'
-    },
-
-    {
-      idActividad: '7',
-      idSesion: 'P1X1',
-      detalleActividad: '',
-      grupos: ['3'],
-      docentes: [],
-      asignaturas: ['2','4'],
-      dependencia:'1'
-    },
-    {
-      idActividad: '8',
-      idSesion: 'P1J2',
-      detalleActividad: '',
-      grupos: ['2'],
-      docentes: [],
-      asignaturas: ['2','3','1'],
+      asignaturas: ['1','3'],
       dependencia:'2'
-    }
+
+     },
+    // {
+    //   idActividad: '5',
+    //   idSesion: 'P1M3',
+    //   detalleActividad: '',
+    //   grupos: ['2'],
+    //   docentes: [],
+    //   asignaturas: ['1','3','4'],
+    //   dependencia:'3'
+    // },
+
+    // {
+    //   idActividad: '7',
+    //   idSesion: 'P1X1',
+    //   detalleActividad: '',
+    //   grupos: ['3'],
+    //   docentes: [],
+    //   asignaturas: ['2','4'],
+    //   dependencia:'1'
+    // },
+    // {
+    //   idActividad: '8',
+    //   idSesion: 'P1J2',
+    //   detalleActividad: '',
+    //   grupos: ['2'],
+    //   docentes: [],
+    //   asignaturas: ['2','3','1'],
+    //   dependencia:'2'
+     //}
 
   ];
 

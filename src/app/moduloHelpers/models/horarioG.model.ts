@@ -182,14 +182,14 @@ export class HorarioG {
     // Calcula el ancho de la actifidad en función de las actividades que cubre.
     this.calcularFactorAnchoActividadesG(this.actividadesG.filter(actG => (actG.estado === EstadoActividad.NUEVA) || this.actividadesG.filter(actG => actG.estado === EstadoActividad.MODIFICADA)));
 
-    this.actualizarPanelesActividades1();
+    this.actualizarPanelesActividades();
   }
 
   borrarActividades(idActividades: string[]) {
 
     this.actividadesG.filter(actG => idActividades.includes(actG.idActividad)).
     map(actG => actG.estado = EstadoActividad.ELIMINADA)
-    this.actualizarPanelesActividades1();
+    this.actualizarPanelesActividades();
 
   }
 
@@ -365,41 +365,7 @@ export class HorarioG {
   }
 
 
-  private actualizarPanelesActividades() {
-
-    // GESTION DE CREACIÓN Y ACTUALIZACION DE ACTIVIDADES.
-    const panelesARenderizar: { panel: any, actividadG: ActividadG }[] = [];
-
-    // GESTION DE BORRADOS
-    this.actividadesG
-      .filter(actG => actG.estado === EstadoActividad.ELIMINADA || actG.estado === EstadoActividad.MODIFICADA)
-      .forEach(actG => {
-        this.svg.select('g#act' + actG.idActividad).remove();
-      }
-      );
-
-    this.actividadesG = this.actividadesG.filter(actG => actG.estado !== EstadoActividad.ELIMINADA);
-
-
-
-
-    // GESTION DE CREACIÓN
-    d3.selectAll('g.panelDiaSemana').nodes().forEach(
-      (nodo: any) => {
-
-        this.actividadesG
-          .filter(actG => actG.sesion.diaSemana === nodo['id'] && (actG.estado === EstadoActividad.NUEVA || actG.estado === EstadoActividad.MODIFICADA))
-          .forEach(actG => panelesARenderizar.push({ panel: d3.select('g#' + nodo['id']).append('g').attr('class', 'panelActividadARenderizar').attr('id', 'act' + actG.idActividad), actividadG: actG }))
-      }
-    )
-
-
-    // Una vez procesados todos los cambios las desmarcamos
-    this.actividadesG.map(actG => actG.estado = EstadoActividad.SINCAMBIOS);
-
-  }
-
-   private actualizarPanelesActividades1() {
+   private actualizarPanelesActividades() {
 
     // GESTION DE BORRADOS
     this.actividadesG
@@ -459,7 +425,7 @@ export class HorarioG {
     d3.select(panelDiaSemana).selectAll('g#act' + 'pp').data(actividadesG).enter().append('g')
     .attr('transform', d => `translate(1,${this.params.escalas.escalaVertical(HorarioG.convertirCadenaHoraEnTiempo(d.sesion.horaInicio))})`)
     .attr('class', 'panelActividad')
-    .attr('id', d => 'act' + d.idActividad)
+    .attr('id', d => 'panelActividad' + d.idActividad)
     .append('rect')
       .attr('height', (d: ActividadG) => {
         const coordenadaHoraInicio = this.params.escalas.escalaVertical(HorarioG.convertirCadenaHoraEnTiempo(d.sesion.horaInicio));
@@ -468,22 +434,22 @@ export class HorarioG {
       })
     .attr('width', d=> this.params.escalas.escalaHorizontal.bandwidth()-2-d.nivelAncho*4)
     .attr('fill', 'red')
-    .attr('opacity', '0.4')
+    .attr('opacity', '1')
     .attr('rx', 2)
     .attr('ry', 2)
     .on('click', (d: any,i: any) => {
       this.eventos$.next(d);
 
       // Guardamos si está o no marcada la actividad en la que hemos pulsado.
-      const marcadaActividadActualComoSeleccionada = d3.select('g#act' + i.idActividad).attr('class').split(' ').includes('actividadSeleccionada');
+      const marcadaActividadActualComoSeleccionada = d3.select('g#panelActividad' + i.idActividad).attr('class').split(' ').includes('actividadSeleccionada');
 
       d.ctrlKey ? null : this.desmarcarActividadesComoSeleccionadas();
 
       marcadaActividadActualComoSeleccionada ?
-        d3.selectAll('g#act' + i.idActividad).attr('class', 'panelActividad actividadSeleccionada'):
-        d3.select('g#act' + i.idActividad).attr('class', 'panelActividad');
+        d3.selectAll('g#panelActividad' + i.idActividad).attr('class', 'panelActividad actividadSeleccionada'):
+        d3.select('g#panelActividad' + i.idActividad).attr('class', 'panelActividad');
 
-      d3.select('g#act' + i.idActividad).attr('class').split(' ').includes('actividadSeleccionada') ?
+      d3.select('g#panelActividad' + i.idActividad).attr('class').split(' ').includes('actividadSeleccionada') ?
         this.desmarcarActividadesComoSeleccionadas([i.idActividad]) :
         this.marcarActividadesComoSeleccionadas([i.idActividad]);
 
@@ -495,7 +461,7 @@ export class HorarioG {
   marcarActividadesComoSeleccionadas(identificadoresActividades: string[]) {
     identificadoresActividades.forEach(
       iact => {
-        d3.select('g#act'+iact)
+        d3.select('g#panelActividad'+iact)
         .attr('class', 'panelActividad actividadSeleccionada')
         .attr('stroke', 'black')
         .attr('stroke-width', '2');
@@ -526,7 +492,6 @@ export class HorarioG {
     //----------------------------------------------------------------------------------------------------------
   // utilidades
   //----------------------------------------------------------------------------------------------------------
-
   calcularFactorAnchoActividadesG(actsG: ActividadG[]) {
     actsG.forEach(
       actG => {

@@ -142,6 +142,16 @@ export class HorarioService {
       dependencia:'2'
 
      },
+     {
+       idActividad: '23',
+       idSesion: 'P1M1',
+       detalleActividad: '',
+       grupos: ['2'],
+       docentes: [],
+       asignaturas: ['1','3'],
+       dependencia:'2'
+
+      },
     // {
     //   idActividad: '5',
     //   idSesion: 'P1M3',

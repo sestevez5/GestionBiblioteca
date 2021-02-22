@@ -491,12 +491,12 @@ export class HorarioG {
 
     pcca.append("polygon")
     .attr("points", coordenadasTrianguloIzquierdo.map(function (d: any) { return [d.x, d.y].join(","); }).join(" "))
-    .attr("fill", "white")
-    .on("click", (d: any) => console.log('hola'))
+      .attr("fill", "white")
+      .attr('class', 'botonCabeceraSesionActividades botonIzquierdoCabeceraSesionActividades')
+      .attr('id', (d: IActividadesSesion) => 'botonIzquierdoCabeceraSesionActividades'+d.sesion.idSesion)
+    .on("click", this.actualizarActividadVisible.bind(this))
     .on("mouseout", (d: any) => d3.select('body').style("cursor", "default"))
       .on("mouseover", (d: any) => d3.select('body').style("cursor", "pointer"));
-
-
 
 
     pcca.append("polygon")
@@ -561,32 +561,49 @@ export class HorarioG {
      return panelCuerpoSesionConActividades;
   }
   añyadirPanelesActividades(actividadesSesiones: IActividadesSesion[]) {
+
     d3.selectAll('#panelSesionActividadesP1M1').nodes().forEach((x: any) => console.log(x.dataset.actividades));
     const anchoSesion = this.params.panelSesiones.anchoSesion ? this.params.panelSesiones.anchoSesion.toString() : '0';
 
     actividadesSesiones.forEach(as => {
       const idPanel = '#panelCuerpoSesionActividades' + as.sesion.idSesion;
-      const panelesActividades = d3.select(idPanel).selectAll('act' + 'xx').data(as.actividades).enter().append('g');
+      const panelesActividades: any  = d3.select(idPanel).selectAll('act' + 'xx').data(as.actividades).enter().append('g');
 
       panelesActividades
-        .attr('class', (d, i, n) => {
+        .attr('class', (d:any, i:any, n:any) => {
           if (i == 0) return 'panelActividad visible'
           else return 'panelActividad'
         })
-        .attr('id', d => 'panelActividad' + d.idActividad)
-        .attr('transform', (d, i, n) => `translate(${(i) * parseFloat(anchoSesion)},0)`);
+        .attr('id', (d:any) => 'panelActividad' + d.idActividad)
+        .attr('transform', (d:any, i:any, n:any) => `translate(${(i) * parseFloat(anchoSesion)},0)`);
 
       // Añadimos el rectángulo
       panelesActividades.append('rect')
+        .attr('class', 'rectActividad')
         .attr('width', anchoSesion)
-        .attr('fill', 'blue')
+        .attr('fill', 'white')
         .attr('height', 40)
-        .attr('stroke', 'white');
+        .attr('stroke', 'white')
+        .on("click", (d: any, i: any, e: any) => {
+          console.log(i)
+
+          const marcadaActividadActualComoSeleccionada = d3.select('g#panelActividad' + i.idActividad).attr('class').split(' ').includes('actividadSeleccionada');
+
+          d.ctrlKey ? null : this.desmarcarActividadesComoSeleccionadas();
+
+          marcadaActividadActualComoSeleccionada ?
+            d3.selectAll('g#panelActividad' + i.idActividad).attr('class', 'panelActividad actividadSeleccionada'):
+            d3.select('g#panelActividad' + i.idActividad).attr('class', 'panelActividad');
+
+          d3.select('g#panelActividad' + i.idActividad).attr('class').split(' ').includes('actividadSeleccionada') ?
+            this.desmarcarActividadesComoSeleccionadas([i.idActividad]) :
+            this.marcarActividadesComoSeleccionadas([i.idActividad]);
+        });
 
       // Añadimos el texto al panel
       panelesActividades.append('text')
         .attr('x', parseInt(anchoSesion) / 2)
-        .text((d, i, n) =>d.idActividad )
+        .text((d:any, i:any, n:any) =>d.idActividad )
         .attr('y', 30 / 2)
         .attr('font-size', '.8em')
         .attr('fill', 'white')
@@ -595,6 +612,8 @@ export class HorarioG {
 
 
     });
+
+
 
 
   }
@@ -607,19 +626,24 @@ export class HorarioG {
     const panelSesionActividadesActual = d3.select('#panelSesionActividades' + i.sesion.idSesion);
     const idActividadesEnSesion: string[] = panelSesionActividadesActual.attr('data-actividades').split(',');
     const idActividadVisible = panelSesionActividadesActual.attr('data-actividadVisible')
-    const posActual = idActividadesEnSesion.indexOf(idActividadVisible);
+    var posActual = idActividadesEnSesion.indexOf(idActividadVisible);
+    if (botonDerechoPulsado && posActual < idActividadesEnSesion.length - 1) posActual++;
+    if (!botonDerechoPulsado && posActual > 0) posActual--;
 
+    const colorBotonDerecho = posActual === idActividadesEnSesion.length - 1 ? 'grey' : 'white';
+    const colorBotonizquierdo = posActual === 0 ? 'grey' : 'white';
 
+    panelSesionActividadesActual.select('.botonIzquierdoCabeceraSesionActividades').attr('fill', colorBotonizquierdo);
+    panelSesionActividadesActual.select('.botonDerechoCabeceraSesionActividades').attr('fill', colorBotonDerecho);
 
-    console.log(posActual);
+    panelSesionActividadesActual.attr('data-actividadVisible', idActividadesEnSesion[posActual]);
 
     // Obtenemos todos los paneles de actividad contenidos en el cuerpo
     // de la entidad Actividades-sesion
     panelSesionActividadesActual
       .selectAll('.panelActividad')
       .attr('transform', function (d, i, n) {
-
-        return `translate(${(i-(posActual+1))*parseFloat(anchoSesion)},0)`
+        return `translate(${(i-(posActual))*parseFloat(anchoSesion)},0)`
       })
 
   }
@@ -629,30 +653,29 @@ export class HorarioG {
   marcarActividadesComoSeleccionadas(identificadoresActividades: string[]) {
     identificadoresActividades.forEach(
       iact => {
-        d3.select('g#act'+iact)
-        .attr('class', 'panelActividad')
-        .attr('stroke', 'black')
-        .attr('stroke-width', '2');
+        const x = d3.select('g#panelActividad' + iact)
+
+        const y: any = x.select('.rectActividad');
+
+        x.append('rect')
+          .attr('width', y.attr('width'))
+          .attr('height', y.attr('height'))
+          .attr('class', 'rectActividadSeleccionada').attr('fill', 'url(#x)')
+
       }
     )
 
   }
   desmarcarActividadesComoSeleccionadas(identificadoresActividades?: string[]) {
 
-    // console.log('identificadoresActividades', identificadoresActividades);
     if (!identificadoresActividades) {
-      d3.selectAll('g.panelActividad')
-        .attr('stroke-width', '0')
-        .attr('class', 'panelActividad')
-
+      d3.selectAll('g.panelActividad').select('.rectActividadSeleccionada').remove()
     } else
     {
-
       this.actividadesG
         .filter(actG => identificadoresActividades.includes(actG.idActividad))
-        .forEach(actG => d3.select('g#act' + actG.idActividad)
-          .attr('stroke-width', '0')
-          .attr('class', 'panelActividad'))
+        .forEach(actG => d3.select('g#panelActividad' + actG.idActividad).select('.rectActividadSeleccionada').remove()
+        )
     }
   }
   calcularFactorAnchoActividadesG(actsG: ActividadG[]) {
@@ -731,16 +754,27 @@ export class HorarioG {
   private anyadirDefs(element: any) {
     const defs = element.append('defs');
 
+
     const patronFondoPanelHorario = 	defs.append('pattern')
     .attr('id','smallGrid')
-    .attr('width',2)
-    .attr('height',2)
-    .attr('patternUnits','userSpaceOnUse')
-    .append('path')
-    .attr('fill','none')
-    .attr('stroke','gray')
-    .attr('stroke-width',0.6)
-    .attr('d','M 5 0 L 0 0 0 5');
+    .attr('width',1 )
+    .attr('height',1)
+      .attr('patternUnits', 'userSpaceOnUse')
+      .append('rect')
+      .attr('width',10)
+      .attr('height', 10)
+
+      var g = defs.append("pattern")
+      .attr('id', 'x')
+      .attr('patternUnits', 'userSpaceOnUse')
+      .attr('width', '4')
+        .attr('height', '4')
+
+
+      .attr("x", 0).attr("y", 0)
+      .append("g").style("fill", "white").style("stroke", "black").style("stroke-width", 0.5);
+  g.append("path").attr("d", "M0,0 l25,25");
+  g.append("path").attr("d", "M25,0 l-25,25");
 
 
   }

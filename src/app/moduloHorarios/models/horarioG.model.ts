@@ -80,12 +80,12 @@ export class HorarioG {
 
   actividadesG: ActividadG[] = [];
 
-  constructor(elementoRaiz: string, parametrosHorario: parametrosHorario, actividades?: Actividad[]) {
+  constructor(elementoRaiz: string, parametrosHorario: parametrosHorario, actividades: Actividad[], idPlantillaActual: number) {
 
 
     this.elementoRaiz = elementoRaiz;
-    window.addEventListener('resize', this.generarGrafico.bind(this,parametrosHorario));
-    this.generarGrafico(parametrosHorario);
+    window.addEventListener('resize', this.generarGrafico.bind(this,parametrosHorario, idPlantillaActual));
+    this.generarGrafico(parametrosHorario, idPlantillaActual);
     if (actividades) this.anyadirActualizarActividades(actividades);
   }
   anyadirActualizarActividades(actividades: Actividad[]) {
@@ -131,10 +131,14 @@ export class HorarioG {
 
   }
 
+  CambiarPlantilla(idPlantilla: string) {
+
+  }
+
   //----------------------------------------------------------------------------------------------------------
   // RENDERIZADO DEL HORARIO
   //----------------------------------------------------------------------------------------------------------
-  generarGrafico(parametrosHorario: parametrosHorario) {
+  generarGrafico(parametrosHorario: parametrosHorario, idPlantillaActual: number) {
 
     if (this.svg) d3.select('svg').remove();
     this.svg = d3.select(this.elementoRaiz).append('svg');
@@ -143,7 +147,7 @@ export class HorarioG {
     this.configurarSvg();
     this.anyadirPanelHorario();
     this.anyadirPanelesDiasSemana();
-    this.params.parametrosHorario ? this.anyadirPlantilla(this.params.parametrosHorario.plantillas[0]) : null;
+    this.params.parametrosHorario ? this.anyadirPlantilla(this.params.parametrosHorario.plantillas[idPlantillaActual]) : null;
 
   }
   private configurarSvg()
@@ -289,11 +293,13 @@ export class HorarioG {
   }
   private anyadirPlantilla(pl: Plantilla) {
 
+    d3.selectAll('g.panelSesiones').remove();
+
     d3.selectAll('g.panelDiaSemana').nodes().forEach(
       (nodo: any) => {
         const sesionesACrear = pl.sesionesPlantilla
           .filter(sesion => sesion.diaSemana === nodo['id']);
-        //this.renderizarSesiones('g#' + nodo['id'], sesionesACrear)
+        this.renderizarSesiones('g#' + nodo['id'], sesionesACrear)
       }
     );
   }

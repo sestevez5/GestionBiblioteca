@@ -20,7 +20,7 @@ export class LibrosService {
     return this.fireBaseDB.collection('libros')
       .get()
       .pipe(
-             map(
+          map(
           value => {
             const libros: Libro[] = [];
 

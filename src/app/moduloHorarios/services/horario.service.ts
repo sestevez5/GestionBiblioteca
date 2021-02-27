@@ -1,10 +1,11 @@
-import { IGrupo } from './../models/grupo.model';
+import { Observable,from, Subject, Observer, BehaviorSubject } from 'rxjs'
+import { IGrupo } from '../models/grupo.model';
 import { filter } from 'rxjs/operators';
-import { parametrosHorario } from './../models/parametrosHorario.model';
-import { Plantilla } from './../models/plantilla.model';
-import { Sesion } from './../../moduloHelpers/models/sesion';
-import { IAsignatura } from './../models/asignatura.model';
-import { IDependencia } from './../models/dependencia.model';
+import { parametrosHorario } from '../models/parametrosHorario.model';
+import { Plantilla } from '../models/plantilla.model';
+import { Sesion } from '../../moduloHelpers/models/sesion';
+import { IAsignatura } from '../models/asignatura.model';
+import { IDependencia } from '../models/dependencia.model';
 import { DiaSemana } from '../models/diaSemana.model';
 
 import { Actividad } from '../models/actividad.model';
@@ -270,8 +271,9 @@ export class HorarioService {
     }
   ];
 
+  obtenerTodasLasActividades(): Observable<Actividad[]> {
 
-  obtenerTodasLasActividades(): Actividad[] {
+    const actividades$ = new BehaviorSubject<Actividad[]>([]);
 
     // paso 1: Construimos un único array con todas las sesiones de todas las plantillas.
     // Necesitamoas un único array con todas las sesiones para el punto 2.
@@ -295,7 +297,11 @@ export class HorarioService {
       }
     );
 
-    return actividades;
+
+    actividades$.next(actividades)
+
+
+    return actividades$;
 
 
   }
@@ -311,6 +317,8 @@ export class HorarioService {
   obtenerParametrosHorario(): parametrosHorario{
     return this.parametrosHorario;
   }
+
+
 
 }
 

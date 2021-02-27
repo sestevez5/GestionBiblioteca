@@ -58,8 +58,6 @@ export class gestionLibrosComponent implements OnInit {
           };
 
           this.libros = libros;
-
-
       }
     )
 

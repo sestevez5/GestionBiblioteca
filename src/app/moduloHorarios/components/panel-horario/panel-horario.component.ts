@@ -16,6 +16,8 @@ export class PanelHorarioComponent implements OnInit {
 
   @Input() Actividades: Actividad[];
   @Input() ParametrosHorario: parametrosHorario;
+  @Input() idPlantillaActual: number = 0;
+
 
   horarioG: HorarioG;
   evento$: Observable<ActividadG>;
@@ -23,7 +25,7 @@ export class PanelHorarioComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    this.horarioG = new HorarioG('div#horario', this.ParametrosHorario, this.Actividades);
+    this.horarioG = new HorarioG('div#horario', this.ParametrosHorario, this.Actividades, this.idPlantillaActual);
     this.evento$ = this.horarioG.eventos$;
   }
 

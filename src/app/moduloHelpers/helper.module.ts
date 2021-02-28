@@ -1,3 +1,4 @@
+import { ItemSelectorListaSimpleComponent } from './components/selector-lista-simple/item-selector-lista-simple/item-selector-lista-simple.component';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -16,6 +17,7 @@ import { ItemSelectorMultipleDobleListaComponent } from './components/selector-m
 
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { VisorHorarioComponent } from './components/visorHorario/visorHorario.component';
+import { SelectorListaSimpleComponent } from './components/selector-lista-simple/selector-lista-simple.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +29,9 @@ import { VisorHorarioComponent } from './components/visorHorario/visorHorario.co
     ConfirmacionAccionUsuarioComponent,
     SelectorMultipleDobleListaComponent,
     ItemSelectorMultipleDobleListaComponent,
-    VisorHorarioComponent
+    ItemSelectorListaSimpleComponent,
+    VisorHorarioComponent,
+    SelectorListaSimpleComponent
   ],
   imports: [
     CommonModule,
@@ -45,7 +49,8 @@ import { VisorHorarioComponent } from './components/visorHorario/visorHorario.co
     ObtenerImagenComponent,
     ConfirmacionAccionUsuarioComponent,
     SelectorMultipleDobleListaComponent,
-    VisorHorarioComponent
+    VisorHorarioComponent,
+    SelectorListaSimpleComponent
   ]
 })
 export class HelperModule { }

@@ -1,0 +1,12 @@
+      <div class="panelListaSeleccion h-100">
+        <ul class="list-group m-0 p-0">
+          <div class="item" *ngFor="let item of this.items" (click)="onSeleccionar(item)" >
+            <app-item-selector-lista-simple [marcado]="item.seleccionado" [camposConfig]=this.camposConfig [item]=item></app-item-selector-lista-simple>
+          </div>
+        </ul>
+      </div>
+
+
+
+
+

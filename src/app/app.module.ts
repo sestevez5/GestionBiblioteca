@@ -51,6 +51,7 @@ import { HorariosModule } from '../app/moduloHorarios/horarios.module';
 
 
 
+
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true,
   wheelSpeed: 1,
@@ -73,7 +74,6 @@ const icons = {
     BreadcrumbComponent,
     SidebarComponent,
     IndexSubsistemaComponent,
-
 
   ],
   imports: [

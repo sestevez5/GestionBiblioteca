@@ -30,6 +30,7 @@ export const Approutes: Routes = [
         path: 'login',
         component: IndexSubsistemaComponent,
         data: { nombreSubsistema: 'Autenticación' },
+        
         children: [
           { path: '', redirectTo: 'login', pathMatch: "full" },
          // { path: 'index', component: ListaUsuariosComponent, canActivate: [UsuarioAutenticadoGuard]},

@@ -12,18 +12,32 @@ import { ModuloActividadesFeaturekey, ModuloActividadesReducers } from './store'
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 
+
+import { HelperModule } from '../moduloHelpers/helper.module';
+
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { SelectorEntidadesComponent, EnumToArrayPipe } from './containers/selector-entidades/selector-entidades.component';
+import { MostrarActividadComponent } from './containers/mostrar-actividad/mostrar-actividad.component';
+
+
 @NgModule({
   imports: [
     CommonModule,
     HorariosRoutingModule,
     StoreModule.forFeature(ModuloActividadesFeaturekey, ModuloActividadesReducers),
-    EffectsModule.forFeature([actividadesEffects])
+    EffectsModule.forFeature([actividadesEffects]),
+    HelperModule,
+    NgbModule
 
   ],
   declarations: [
 
     GestionActividadesComponent,
-    PanelHorarioComponent
+    PanelHorarioComponent,
+    SelectorEntidadesComponent,
+    EnumToArrayPipe,
+    MostrarActividadComponent
+
   ],
 })
 export class HorariosModule { }

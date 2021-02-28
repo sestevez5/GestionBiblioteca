@@ -1,3 +1,4 @@
+import { Usuario } from './../../../moduloAuth/models/usuario.model';
 import { cargarActividades } from './../../store/actividades.actions';
 import { Store, select } from '@ngrx/store';
 import { ModuloActividadesRootState } from './../../store/index';
@@ -6,7 +7,7 @@ import { parametrosGrafico } from './../../models/parametrosGrafico.model';
 import { Plantilla } from './../../models/plantilla.model';
 import { AuthService } from './../../../moduloAuth/services/auth.service';
 import { HorarioService } from '../../services/horario.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Pipe, PipeTransform } from '@angular/core';
 import { Actividad } from '../../models/actividad.model';
 
 import * as ActividadesActions from '../../store/actividades.actions';
@@ -23,16 +24,17 @@ export class GestionActividadesComponent implements OnInit {
   actividades: Actividad[];
   parametrosHorario: parametrosHorario;
 
+
+
+
+
   constructor(horarioService: HorarioService, usuarios: AuthService, private store: Store<ModuloActividadesRootState>) {
 
     this.store.dispatch(ActividadesActions.cargarActividades())
 
     this.parametrosHorario = horarioService.obtenerParametrosHorario();
-    usuarios.ObtenerUsuarios(null)
-      .subscribe(usuario => console.log('usuarios',usuario));
+
    }
-
-
 
   ngOnInit(): void {
 
@@ -52,4 +54,13 @@ export class GestionActividadesComponent implements OnInit {
 
 
   }
+
+
+
 }
+
+
+
+
+
+

@@ -1,8 +1,16 @@
-<p>gestion-actividades works!</p>
+  <div class="row">
+    <div class="col-2">
+      <app-selector-entidades></app-selector-entidades>
+    </div>
+    <div class="col-10">
+      <app-panel-horario [ParametrosHorario]="this.parametrosHorario" [Actividades]="this.actividades" [idPlantillaActual]=1></app-panel-horario>
+    </div>
+  </div>
+  <app-mostrar-actividad>
 
-<!-- <div class="navbar-collapse collapse" id="navbarSupportedContent" [attr.data-navbarbg]="options.navbarbg">
-<app-navigation (toggleSidebar)="toggleSidebarType()" class="w-100"></app-navigation>
-</div> -->
+  </app-mostrar-actividad>
 
 
-<app-panel-horario [ParametrosHorario]="this.parametrosHorario" [Actividades]="this.actividades" [idPlantillaActual]=1></app-panel-horario>
+
+
+

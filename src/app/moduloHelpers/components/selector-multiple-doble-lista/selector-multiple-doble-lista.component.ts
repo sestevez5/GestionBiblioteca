@@ -37,9 +37,6 @@ export class SelectorMultipleDobleListaComponent implements OnInit {
 
     this.SeleccionItems.emit(this.itemsSeleccionados());
 
-
-
-
   }
 
   onDeseleccionar(item: any) {

@@ -1,0 +1,29 @@
+
+
+.item {
+  background-color:rgb(255, 245, 214);
+  border-radius: 4px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+  padding-top: 2px;
+  padding-bottom: 2px;
+
+}
+
+.marcado {
+  border: 2px;
+  background-color:rgb(158, 207, 248);
+}
+
+div {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+img {
+  width: 30px;
+  height: 45px;
+  border-radius: 3px;
+}

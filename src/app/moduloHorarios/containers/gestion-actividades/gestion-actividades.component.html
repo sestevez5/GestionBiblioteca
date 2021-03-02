@@ -1,14 +1,32 @@
-  <div class="row">
-    <div class="col-2">
+  <div class="row f1">
+
+    <div class="col-2 c1-f1">
+
+
       <app-selector-entidades></app-selector-entidades>
     </div>
-    <div class="col-10">
-      <app-panel-horario [ParametrosHorario]="this.parametrosHorario" [Actividades]="this.actividades" [idPlantillaActual]=1></app-panel-horario>
+
+    <div class="col-10 c2-f1">
+
+      <div class="row f1-c2-f1">
+        <div class="c1-f1-c2-f1 col-12">
+          soy c1-f1-c2-f1
+        </div>
+      </div>
+
+      <!-- <app-panel-horario [ParametrosHorario]="this.parametrosHorario" [Actividades]="this.actividades" [idPlantillaActual]=1></app-panel-horario> -->
+      <div class="row f2-c2-f1">
+        <div class="c1-f2-c2-f1 col-12">
+          <app-mostrar-actividad></app-mostrar-actividad>
+        </div>
+      </div>
+
+
     </div>
   </div>
-  <app-mostrar-actividad>
 
-  </app-mostrar-actividad>
+
+
 
 
 

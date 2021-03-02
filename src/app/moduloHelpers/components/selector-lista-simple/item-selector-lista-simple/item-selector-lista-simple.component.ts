@@ -1,3 +1,4 @@
+
 import { Component, Input, OnInit } from '@angular/core';
 import { camposSelectorSimple } from '../selector-lista-simple.component';
 
@@ -11,9 +12,13 @@ export class ItemSelectorListaSimpleComponent implements OnInit {
   @Input() camposConfig: camposSelectorSimple;
   @Input() marcado = false;
   @Input() item: any;
+
+
   constructor() { }
 
   ngOnInit(): void {
+
+
   }
 
 }

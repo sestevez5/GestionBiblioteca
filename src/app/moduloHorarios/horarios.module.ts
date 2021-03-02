@@ -16,7 +16,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { HelperModule } from '../moduloHelpers/helper.module';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { SelectorEntidadesComponent, EnumToArrayPipe } from './containers/selector-entidades/selector-entidades.component';
+import { SelectorEntidadesComponent } from './containers/selector-entidades/selector-entidades.component';
 import { MostrarActividadComponent } from './containers/mostrar-actividad/mostrar-actividad.component';
 
 
@@ -35,7 +35,6 @@ import { MostrarActividadComponent } from './containers/mostrar-actividad/mostra
     GestionActividadesComponent,
     PanelHorarioComponent,
     SelectorEntidadesComponent,
-    EnumToArrayPipe,
     MostrarActividadComponent
 
   ],

@@ -1,0 +1,72 @@
+.f1
+{
+  height: 85vh;
+}
+
+.c1-f1 {
+  overflow-y:scroll;
+
+
+
+}
+
+.c2-f1{
+  background-color: rgb(66, 241, 212);
+
+
+
+}
+
+.f1-c2-f1{
+  background-color: rgb(236, 245, 236);
+  border: rgb(191, 224, 68);
+  border-width: 6px;
+  border-style: solid;
+
+}
+
+.c1-f1-c2-f1 {
+  background-color: rgb(236, 245, 236);
+  border: rgb(224, 68, 159);
+  border-width: 6px;
+  border-style: solid;
+
+}
+
+.c1-f2-c2-f1 {
+  background-color: rgb(236, 245, 236);
+  border: rgb(224, 68, 159);
+  border-width: 6px;
+  border-style: solid;
+
+}
+
+
+div::-webkit-scrollbar {
+  width: 10px;
+}
+
+ /* Estilos barra (thumb) de scroll */
+ div::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+div::-webkit-scrollbar-thumb:active {
+  background-color: #999999;
+}
+
+div::-webkit-scrollbar-thumb:hover {
+  background: #b3b3b3;
+  box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.2);
+}
+
+ /* Estilos track de scroll */
+ div::-webkit-scrollbar-track {
+  background: #e1e1e1;
+  border-radius: 4px;
+}
+
+.panelListaSeleccion::-webkit-scrollbar-track:hover,
+.panelListaSeleccion::-webkit-scrollbar-track:active {
+  background: #d4d4d4;
+}

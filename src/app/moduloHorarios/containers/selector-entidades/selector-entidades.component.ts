@@ -1,5 +1,5 @@
 import { AuthService } from './../../../moduloAuth/services/auth.service';
-import { Component, OnInit, Pipe, PipeTransform } from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 
 @Component({
   selector: 'app-selector-entidades',
@@ -8,13 +8,17 @@ import { Component, OnInit, Pipe, PipeTransform } from '@angular/core';
 })
 export class SelectorEntidadesComponent implements OnInit {
 
-  tipoEntidad: TipoEntidad = TipoEntidad.docentes;
-  tiposEntidades = TipoEntidad;
-  entidades: entidadHorario[] = []
+  tipoEntidadesHorario = ['docentes', 'grupos', 'dependencias']
+
+  tipoEntidadSeleccionada: string = 'docentes'
+
+
+  entidades: entidadHorario[] = [];
+
 
 
   constructor(usuarios: AuthService) {
-    
+
     usuarios.ObtenerUsuarios(null)
     .subscribe(
       usuarios => {
@@ -40,21 +44,14 @@ export class SelectorEntidadesComponent implements OnInit {
 
   }
 
-
-}
-
-export enum TipoEntidad { docentes, grupos, dependencias }
-
-
-@Pipe({
-  name: 'enumToArray'
-})
-export class EnumToArrayPipe implements PipeTransform {
-  transform(data: Object) {
-    const keys = Object.keys(data);
-    return keys.slice(keys.length / 2);
+  onSeleccionarEntidad(item: string) {
+      this.tipoEntidadSeleccionada = item;
   }
+
+
 }
+
+
 
 export interface entidadHorario {
   id: string;

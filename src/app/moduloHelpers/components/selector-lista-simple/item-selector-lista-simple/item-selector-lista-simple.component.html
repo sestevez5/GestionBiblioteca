@@ -1,14 +1,16 @@
-
 <li [class]="{marcado: this.marcado}" class="list-group-item item" >
 
-  <div class="row">
-    <div class="col-2 p-0">
+  <div class="row d-flex flex-nowrap">
+    <div class="imagen p-0">
 
-      <img class="p-0 img-form" [src]='this.item[this.camposConfig.imagen]' alt="user">
+
+      <img *ngIf="!this.item[this.camposConfig.imagen]" class="p-0 img-form" src='assets/images/users/1.jpg' alt="user">
+      <img *ngIf="this.item[this.camposConfig.imagen]" class="p-0 img-form" [src]='this.item[this.camposConfig.imagen]' alt="user">
+
 
     </div>
 
-    <div class="col-10 pl-2">
+    <div class="pl-2 flex-grow-1">
       <div class="mb-1">{{ this.item[this.camposConfig.texto] }}</div>
       <div class="small font-italic">{{ this.item[this.camposConfig.leyenda] }}</div>
     </div>

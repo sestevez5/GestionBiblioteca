@@ -18,6 +18,7 @@ import { ItemSelectorMultipleDobleListaComponent } from './components/selector-m
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { VisorHorarioComponent } from './components/visorHorario/visorHorario.component';
 import { SelectorListaSimpleComponent } from './components/selector-lista-simple/selector-lista-simple.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -40,6 +41,7 @@ import { SelectorListaSimpleComponent } from './components/selector-lista-simple
     NgbModule,
     ModalModule,
     DragDropModule,
+    FormsModule
 
   ],
   exports: [

@@ -1,7 +1,7 @@
+import { ModuloHorarioRootState } from './../../store/index';
 import { Usuario } from './../../../moduloAuth/models/usuario.model';
-import { cargarActividades } from './../../store/actividades.actions';
+import { cargarActividades } from './../../store/actividades/actividades.actions';
 import { Store, select } from '@ngrx/store';
-import { ModuloActividadesRootState } from './../../store/index';
 import { parametrosHorario } from './../../models/parametrosHorario.model';
 import { parametrosGrafico } from './../../models/parametrosGrafico.model';
 import { Plantilla } from './../../models/plantilla.model';
@@ -10,8 +10,9 @@ import { HorarioService } from '../../services/horario.service';
 import { Component, OnInit, Pipe, PipeTransform } from '@angular/core';
 import { Actividad } from '../../models/actividad.model';
 
-import * as ActividadesActions from '../../store/actividades.actions';
-import * as FromActividadesSelector from '../../store/actividades.selectors';
+import * as ActividadesActions from '../../store/actividades/actividades.actions';
+import * as FromActividadesSelector from '../../store/actividades/actividades.selectors';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector: 'app-gestion-actividades',
@@ -25,12 +26,10 @@ export class GestionActividadesComponent implements OnInit {
   parametrosHorario: parametrosHorario;
 
 
-
-
-
-  constructor(horarioService: HorarioService, usuarios: AuthService, private store: Store<ModuloActividadesRootState>) {
+  constructor(horarioService: HorarioService, usuarios: AuthService, private store: Store<ModuloHorarioRootState>) {
 
     this.store.dispatch(ActividadesActions.cargarActividades())
+    
 
     this.parametrosHorario = horarioService.obtenerParametrosHorario();
 

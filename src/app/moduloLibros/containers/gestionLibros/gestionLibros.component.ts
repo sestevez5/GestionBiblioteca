@@ -29,10 +29,6 @@ export class gestionLibrosComponent implements OnInit {
   libroActual: Libro;
   solicitudConfirmacion: boolean = false;
 
-  // Gestionamos el cambio de la subcadena para filtrar a través de un observable que emite un valor cada vez que cambia.
-  _textoFiltro: BehaviorSubject<string>= new BehaviorSubject('');
-  get textoFiltro(): string { return this._textoFiltro.getValue(); }
-  set textoFiltro(val: string) { this._textoFiltro.next(val); }
 
   @ViewChild("panelModal") panelModal: ElementRef;
   private modalRef: any;
@@ -54,24 +50,29 @@ export class gestionLibrosComponent implements OnInit {
        libros => {
           if (libros.length == 0) {
 
-            this.store.dispatch(LibrosActions.cargarLibros({ fol: { contieneSubcadena: this.textoFiltro, SoloLibrosDeAlta: false } }));
+            this.store.dispatch(LibrosActions.cargarLibros({ fol: { contieneSubcadena: undefined, SoloLibrosDeAlta: false } }));
           };
 
           this.libros = libros;
       }
     )
 
-    this._textoFiltro
-      .pipe(
-        skip(1), // El primer valor del cuadro de texto queremos omitirlo.
-        debounceTime(700),
-        distinctUntilChanged()
-      )
-      .subscribe(
-        val => this.store.dispatch(LibrosActions.cargarLibros({ fol: { contieneSubcadena: this.textoFiltro, SoloLibrosDeAlta: false } }))
-    )
+    // this._textoFiltro
+    //   .pipe(
+    //     skip(1), // El primer valor del cuadro de texto queremos omitirlo.
+    //     debounceTime(700),
+    //     distinctUntilChanged()
+    //   )
+    //   .subscribe(
+
+    //     val => this.store.dispatch(LibrosActions.cargarLibros({ fol: { contieneSubcadena: this.textoFiltro, SoloLibrosDeAlta: false } }))
+    // )
 
 
+  }
+
+  OnChangeCadenaBusqueda(cadena: string) {
+    this.store.dispatch(LibrosActions.cargarLibros({ fol: { contieneSubcadena: cadena, SoloLibrosDeAlta: false } }))
   }
 
 

@@ -1,15 +1,16 @@
+import { selectHorario } from './../index';
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import * as FromModuloActividades from './index';
+import * as FromModuloHorario from '../index';
 import * as actividadesReducers from './actividades.reducer';
 
 export const selectActividades = createSelector(
-  FromModuloActividades.selectFeature,
+  FromModuloHorario.selectHorario,
   ({actividades}) => actividades
 )
 
 export const selectActividadActiva = createSelector(
   selectActividades,
-  actividades => actividades.actividadActiva
+  actividadesState => actividadesState.actividadActiva
 )
 
 
@@ -25,6 +26,6 @@ export const selectTotalActividades = createSelector(
 );
 
 export const selectProcesandoAccion = createSelector(
-  FromModuloActividades.selectFeature,
+  FromModuloHorario.selectHorario,
   ({actividades}) => actividades.procesandoAccion
 );

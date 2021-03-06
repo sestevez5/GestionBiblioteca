@@ -1,5 +1,5 @@
-export interface IDependencia {
-  id: string;
+export interface Dependencia {
+  idDependencia: string;
   codigo: string;
   denominacionLarga: string;
 }

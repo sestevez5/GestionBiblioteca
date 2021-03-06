@@ -1,7 +1,8 @@
-export interface IDocente {
-  id: string;
+export interface Docente {
+  idDocente: string;
   nombre: string;
-  apellidos: string;
+  apellido1: string;
+  apellido2: string;
   foto: string;
   alias: string;
 }

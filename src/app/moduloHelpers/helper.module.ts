@@ -19,6 +19,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { VisorHorarioComponent } from './components/visorHorario/visorHorario.component';
 import { SelectorListaSimpleComponent } from './components/selector-lista-simple/selector-lista-simple.component';
 import { FormsModule } from '@angular/forms';
+import { CadenabusquedaComponent } from './components/cadenabusqueda/cadenabusqueda.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { FormsModule } from '@angular/forms';
     ItemSelectorMultipleDobleListaComponent,
     ItemSelectorListaSimpleComponent,
     VisorHorarioComponent,
-    SelectorListaSimpleComponent
+    SelectorListaSimpleComponent,
+    CadenabusquedaComponent
   ],
   imports: [
     CommonModule,
@@ -52,7 +54,8 @@ import { FormsModule } from '@angular/forms';
     ConfirmacionAccionUsuarioComponent,
     SelectorMultipleDobleListaComponent,
     VisorHorarioComponent,
-    SelectorListaSimpleComponent
+    SelectorListaSimpleComponent,
+    CadenabusquedaComponent
   ]
 })
 export class HelperModule { }

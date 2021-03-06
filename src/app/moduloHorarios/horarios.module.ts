@@ -1,4 +1,7 @@
-import { actividadesEffects } from './store/actividades.effects';
+import { entidadesHorarioEffects } from './store/entidadesHorario/entidadesHorario.effects';
+
+
+import { actividadesEffects } from './store/actividades/actividades.effects';
 import { HorariosRoutingModule } from './horarios-routing.module';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -8,7 +11,7 @@ import { GestionActividadesComponent } from './containers/gestion-actividades/ge
 import { PanelHorarioComponent } from './components/panel-horario/panel-horario.component';
 
 // NGRX
-import { ModuloActividadesFeaturekey, ModuloActividadesReducers } from './store';
+import { ModuloHorarioFeaturekey, ModuloHorarioReducers } from './store/index';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 
@@ -24,8 +27,8 @@ import { MostrarActividadComponent } from './containers/mostrar-actividad/mostra
   imports: [
     CommonModule,
     HorariosRoutingModule,
-    StoreModule.forFeature(ModuloActividadesFeaturekey, ModuloActividadesReducers),
-    EffectsModule.forFeature([actividadesEffects]),
+    StoreModule.forFeature(ModuloHorarioFeaturekey, ModuloHorarioReducers),
+    EffectsModule.forFeature([actividadesEffects, entidadesHorarioEffects]),
     HelperModule,
     NgbModule
 

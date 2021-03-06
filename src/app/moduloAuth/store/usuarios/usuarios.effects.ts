@@ -101,6 +101,7 @@ export class UsuariosEffects {
 
         switchMap(
           action => {
+
             this.store.dispatch(PrincipalActions.cargandoDatos({ mensaje: "cargando" }));
             return this.authService.ObtenerUsuarios(action.fou)
               .pipe(
@@ -108,7 +109,6 @@ export class UsuariosEffects {
                 map(
 
                   usuarios => {
-
                     this.store.dispatch(PrincipalActions.cargadoDatos());
                     return AuthActions.cargarUsuariosOK({ usuarios: usuarios });
                   }

@@ -9,12 +9,9 @@
       <!------------------------------------------------------->
       <!----------------------- Buscador ---------------------->
       <!------------------------------------------------------->
-      <div class="d-flex mb-3 mt-3">
-        <input  type="text"
-                class="form-control w-50"
-                placeholder="Buscar por título, isbn, autor, ..."
-                [(ngModel)]='textoFiltro'>
-        <button class="btn btn-sm btn-secondary ml-auto" (click)="onAnyadirLibro()" >Añadir libro</button>
+      <div class="d-flex flex-row-reverse mb-3 mt-3">
+        <button class="btn btn-sm btn-secondary ml-2" (click)="onAnyadirLibro()" >Añadir libro</button>
+        <app-cadenabusqueda class='flex-grow-1' [tiempoEspera]=700 [textoIndicativo]="'Buscar en apellidos, nombre, email,...'" (cadenaBusqueda)="OnChangeCadenaBusqueda($event)"></app-cadenabusqueda>
       </div>
 
 

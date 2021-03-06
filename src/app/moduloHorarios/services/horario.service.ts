@@ -1,19 +1,28 @@
+import { EntidadHorario } from './../models/entidadHorario.model';
+import { Docente } from './../models/docente.model';
+import { AuthService } from './../../moduloAuth/services/auth.service';
+import { EnumTipoEntidadHorario } from './../models/tipoEntidadHorario.model';
 import { Observable,from, Subject, Observer, BehaviorSubject } from 'rxjs'
-import { IGrupo } from '../models/grupo.model';
-import { filter } from 'rxjs/operators';
+import { Grupo } from '../models/grupo.model';
+import { filter, map } from 'rxjs/operators';
 import { parametrosHorario } from '../models/parametrosHorario.model';
 import { Plantilla } from '../models/plantilla.model';
 import { Sesion } from '../../moduloHelpers/models/sesion';
-import { IAsignatura } from '../models/asignatura.model';
-import { IDependencia } from '../models/dependencia.model';
+import { Asignatura } from '../models/asignatura.model';
+import { Dependencia } from '../models/dependencia.model';
 import { DiaSemana } from '../models/diaSemana.model';
 
 import { Actividad } from '../models/actividad.model';
 import { Injectable } from '@angular/core';
+import { Usuario } from 'src/app/moduloAuth/models/usuario.model';
 @Injectable({
   providedIn: 'root'
 })
 export class HorarioService {
+
+  constructor(private authService: AuthService) {
+
+  }
 
   diasSemana: DiaSemana[] = [
     { codigo: 'L', denominacionCorta: 'LUN', denominacionLarga: 'Lunes' },
@@ -223,49 +232,49 @@ export class HorarioService {
     },
   ];
 
-  dependencias: any = [
+  dependencias: Dependencia[] = [
 
     {
-      id: '1',
+      idDependencia: '1',
       codigo: 'AU1',
       denominacionLarga: 'Aula 1'
     },
     {
-      id: '2',
+      idDependencia: '2',
       codigo: 'AU2',
       denominacionLarga: 'Aula 2'
     },
     {
-      id: '3',
+      idDependencia: '3',
       codigo: 'CAN',
       denominacionLarga: 'Cancha'
     },
     {
-      id: '4',
+      idDependencia: '4',
       codigo: 'LAB',
       denominacionLarga: 'Laboratorio de Biología'
     },
     {
-      id: '5',
+      idDependencia: '5',
       codigo: 'SAA',
       denominacionLarga: 'Salón de actos'
     }
 
   ];
 
-  grupos: IGrupo[] = [
+  grupos: Grupo[] = [
     {
-      id: '1',
+      idGrupo: '1',
       codigo: 'ESO1A',
       denominacionLarga: 'Aula 1'
     },
     {
-      id: '2',
+      idGrupo: '2',
       codigo: 'ESO1A',
       denominacionLarga: 'Aula 1'
     },
     {
-      id: '3',
+      idGrupo: '3',
       codigo: 'BCN1A',
       denominacionLarga: '1ª Bachillerato CCNN A'
     }
@@ -287,7 +296,7 @@ export class HorarioService {
         const nuevaActividad: Actividad = new Actividad();
         nuevaActividad.idActividad = act.idActividad;
         nuevaActividad.detalleActividad = act.detalleActividad;
-        nuevaActividad.grupos = act.grupos.map(g => this.grupos.filter(gr => gr.id === g)[0]);
+        nuevaActividad.grupos = act.grupos.map(g => this.grupos.filter(gr => gr.idGrupo === g)[0]);
 
         // paso 2: Asignamos a cada actividadG su objeto sesión.
         const sesionLocalizada = todasLasSesiones.find(s => s.idSesion === act.idSesion);
@@ -306,11 +315,11 @@ export class HorarioService {
 
   }
 
-  obtenerTodasLasDependencias(): IDependencia[]{
+  obtenerTodasLasDependencias(): Dependencia[]{
     return this.dependencias;
   }
 
-  obtenerTodasLasAsignaturas(): IAsignatura[]{
+  obtenerTodasLasAsignaturas(): Asignatura[]{
     return this.asignaturas;
   }
 
@@ -318,7 +327,35 @@ export class HorarioService {
     return this.parametrosHorario;
   }
 
+  obtenerTodasLasEntidadesHorarios(tipoEntidad: EnumTipoEntidadHorario): Observable<EntidadHorario[]> {
 
+    const usuarios$: Observable<Usuario[]> = this.authService.ObtenerUsuarios(null);
+
+    // Convertimos usuarios en entidadesHorario, pasando por Docente.
+    const entidadHorario$ = usuarios$
+        .pipe(
+          map(usuarios => {
+
+            return usuarios.map(
+              usuario => {
+                const docente: Docente =
+                {
+                  idDocente: usuario.uid,
+                  nombre: usuario.nombre,
+                  apellido1: usuario.primerApellido,
+                  apellido2: usuario.segundoApellido,
+                  foto: usuario.foto,
+                  alias: usuario.nombre.slice(0, 2) + usuario.primerApellido.slice(0, 2) + usuario.segundoApellido.slice(0, 2)
+                };
+
+                return new EntidadHorario(docente);
+              })
+          }) // Fin map
+    )  // fin pipe
+
+    return entidadHorario$;
+
+  } // Fin obtenerTodasLasEntidadesHorarios
 
 }
 

@@ -1,6 +1,6 @@
 import { Update } from '@ngrx/entity/src/models';
 
-import { Actividad } from '../models/actividad.model';
+import { Actividad } from '../../models/actividad.model';
 import { createAction, props } from '@ngrx/store';
 
 export const loadActividades = createAction(

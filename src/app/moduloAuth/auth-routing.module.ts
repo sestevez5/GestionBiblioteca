@@ -14,11 +14,11 @@ const routes: Routes = [
     data: { nombreSubsistema: 'Gestión de usuarios' },
     children: [
       { path: '', redirectTo: 'index', pathMatch: "full" },
-      { path: 'index', component: gestionUsuariosComponent, canActivate: [UsuarioAutenticadoGuard] },
-           // { path: 'index', component: ListaUsuariosComponent, canActivate: [UsuarioAutenticadoGuard]},
-           { path: 'crearUsuario', component: RegistroComponent },
-            { path: 'editarUsuario/:id', component: RegistroComponent },
-           // { path: 'visualizarUsuario/:id', component: RegistroComponent },
+      // { path: 'index', component: gestionUsuariosComponent, canActivate: [UsuarioAutenticadoGuard] },
+      { path: 'index', component: gestionUsuariosComponent},
+      { path: 'crearUsuario', component: RegistroComponent },
+      { path: 'editarUsuario/:id', component: RegistroComponent },
+
     ]
   },
 

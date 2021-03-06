@@ -1,20 +1,17 @@
-<li [class]="{marcado: this.marcado}" class="list-group-item item" >
+<li [class]="{'marcado': this.marcado}" class="list-group-item item" >
 
   <div class="row d-flex flex-nowrap">
     <div class="imagen p-0">
-
-
-      <img *ngIf="!this.item[this.camposConfig.imagen]" class="p-0 img-form" src='assets/images/users/1.jpg' alt="user">
+      <img *ngIf="!this.item[this.camposConfig.imagen]" class="p-0 img-form" src='assets/images/general/NoPhoto.png' alt="user">
       <img *ngIf="this.item[this.camposConfig.imagen]" class="p-0 img-form" [src]='this.item[this.camposConfig.imagen]' alt="user">
-
-
     </div>
 
     <div class="pl-2 flex-grow-1">
-      <div class="mb-1">{{ this.item[this.camposConfig.texto] }}</div>
+      <div class="mb-1 leyenda">{{ this.item[this.camposConfig.texto] }}</div>
       <div class="small font-italic">{{ this.item[this.camposConfig.leyenda] }}</div>
     </div>
 
   </div>
 </li>
 
+ <!-- p-3 mb-5 bg-white rounded -->

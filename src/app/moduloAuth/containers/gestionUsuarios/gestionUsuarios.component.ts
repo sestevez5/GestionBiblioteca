@@ -29,10 +29,7 @@ export class gestionUsuariosComponent implements OnInit {
   usuarioActual: Usuario;
   solicitudConfirmacion: boolean = false;
 
-  // Gestionamos el cambio de la subcadena para filtrar a través de un observable que emite un valor cada vez que cambia.
-  _textoFiltro: BehaviorSubject<string>= new BehaviorSubject('');
-  get textoFiltro(): string { return this._textoFiltro.getValue(); }
-  set textoFiltro(val: string) { this._textoFiltro.next(val); }
+
 
   @ViewChild("panelModal") panelModal: ElementRef;
   private modalRef: any;
@@ -53,7 +50,7 @@ export class gestionUsuariosComponent implements OnInit {
       .subscribe(
        usuarios => {
               if (usuarios.length == 0) {
-                 this.store.dispatch(AuthActions.cargarUsuarios({ fou: { contieneSubcadena: this.textoFiltro , SoloUsuariosDeAlta: false }}))
+                 this.store.dispatch(AuthActions.cargarUsuarios({ fou: { contieneSubcadena: undefined , SoloUsuariosDeAlta: false }}))
           };
 
             this.usuarios = usuarios;
@@ -61,19 +58,12 @@ export class gestionUsuariosComponent implements OnInit {
       }
     )
 
-    this._textoFiltro
-      .pipe(
-        skip(1), // El primer valor del cuadro de texto queremos omitirlo.
-        debounceTime(700),
-        distinctUntilChanged()
-      )
-      .subscribe(
-        val => this.store.dispatch(AuthActions.cargarUsuarios({ fou: { contieneSubcadena: this.textoFiltro, SoloUsuariosDeAlta: false } }))
-    )
-
-
   }
 
+
+  OnChangeCadenaBusqueda(cadena: string) {
+    this.store.dispatch(AuthActions.cargarUsuarios({ fou: { contieneSubcadena: cadena, SoloUsuariosDeAlta: false } }))
+  }
 
   filtrarPor(val: string) {
 

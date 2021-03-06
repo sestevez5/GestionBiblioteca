@@ -1,16 +1,15 @@
 <div class="row">
   <div class="col-12">
     <div class="card card-body">
- 
+
+
+
       <!------------------------------------------------------->
       <!----------------------- Buscador ---------------------->
       <!------------------------------------------------------->
-      <div class="d-flex mb-3 mt-3">
-        <input  type="text"
-                class="form-control w-50"
-                placeholder="Buscar en apellidos, nombre, email,... "
-                [(ngModel)]='textoFiltro'>
-        <button class="btn btn-sm btn-secondary ml-auto" (click)="onAnyadirUsuario()" >Add User</button>
+      <div class="d-flex flex-row-reverse mb-3 mt-3">
+        <button class="btn btn-sm btn-secondary ml-2" (click)="onAnyadirUsuario()" >Add User</button>
+        <app-cadenabusqueda class='flex-grow-1' [tiempoEspera]=700 [textoIndicativo]="'Buscar en apellidos, nombre, email,...'" (cadenaBusqueda)="OnChangeCadenaBusqueda($event)"></app-cadenabusqueda>
       </div>
 
 

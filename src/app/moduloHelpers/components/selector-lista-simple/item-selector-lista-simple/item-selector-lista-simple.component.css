@@ -5,6 +5,7 @@
   text-overflow: ellipsis;
   word-wrap: break-word;
   border-style:solid;
+  border-width: 1px;
   padding-top: 3px;
   padding-bottom: 1px;
   margin-top: 5px;
@@ -12,8 +13,12 @@
 }
 
 .marcado {
-  border: 2px;
-  background-color:rgb(158, 207, 248);
+  -webkit-box-shadow: inset -4px -5px 6px -17px rgba(0,0,0,0.68);
+  -moz-box-shadow: inset -4px -5px 6px -17px rgba(0,0,0,0.68);
+  box-shadow: inset -4px -5px 6px -17px rgba(0,0,0,0.68);
+  border-left:red;
+  border-left-style: solid;
+  border-left-width: 7px;
 }
 
 div {
@@ -25,8 +30,12 @@ div {
 
 img {
 
-
   width: 40px;
   height: 45px;
-  border-radius: 5px;
+  /* border-radius: 5px; */
+}
+
+.leyenda {
+  font-weight: bold;
+  font-size: medium;
 }

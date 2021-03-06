@@ -1,4 +1,13 @@
+import { entidadesHorarioState } from './../../store/entidadesHorario/entidadesHorario.state';
+import { EnumTipoEntidadHorario } from './../../models/tipoEntidadHorario.model';
+import { ModuloHorarioRootState } from './../../store/index';
+import { Store, select } from '@ngrx/store';
+import { EntidadHorario } from './../../models/entidadHorario.model';
+import { Observable } from 'rxjs';
+import { Docente } from './../../models/docente.model';
 import { AuthService } from './../../../moduloAuth/services/auth.service';
+import * as FromEntidadesHorarioActions from '../../store/entidadesHorario/entidadesHorario.actions';
+import * as FromEntidadesHorarioSelectors from '../../store/entidadesHorario/entidadesHorario.selectors';
 import { Component, OnInit} from '@angular/core';
 
 @Component({
@@ -13,28 +22,50 @@ export class SelectorEntidadesComponent implements OnInit {
   tipoEntidadSeleccionada: string = 'docentes'
 
 
-  entidades: entidadHorario[] = [];
+  entidades: EntidadHorario[] = [];
 
 
 
-  constructor(usuarios: AuthService) {
+  constructor(usuarios: AuthService, private store: Store<ModuloHorarioRootState>) {
 
-    usuarios.ObtenerUsuarios(null)
-    .subscribe(
-      usuarios => {
-        this.entidades = usuarios.map(
-          usuario => {
-            return {
-              id: usuario.uid,
-              texto: usuario.primerApellido + ' ' + usuario.segundoApellido + ', ' + usuario.nombre,
-              leyenda: 'hola',
-              imagen: usuario.foto
-            }
-          }) // Fin map
-      }); // Fin subscribe
+    // usuarios.ObtenerUsuarios(null)
+
+    // .subscribe(
+    //   usuarios => {
+
+
+    //     this.entidades = usuarios.map(
+    //       usuario => {
+
+    //         const docente: Docente =
+    //          {
+    //           idDocente: usuario.uid,
+    //           nombre: usuario.nombre,
+    //           apellido1: usuario.primerApellido,
+    //           apellido2: usuario.segundoApellido,
+    //           foto: usuario.foto,
+    //           alias: usuario.nombre.slice(0, 2) + usuario.primerApellido.slice(0, 2) + usuario.segundoApellido.slice(0, 2)
+    //         }
+
+    //         return new EntidadHorario(docente);
+
+
+    //       });
+
+    //       // Fin map
+    //   }); // Fin subscribe
+
+    this.store.dispatch(FromEntidadesHorarioActions.cargarEntidadesHorario({ tipoEntidad: EnumTipoEntidadHorario.DOCENTE }))
+
    }
 
   ngOnInit(): void {
+
+    this.store.pipe(
+      select(FromEntidadesHorarioSelectors.selectTodasLasEntidadesHorario)
+    )
+    .subscribe( entidadesHorario =>  this.entidades = entidadesHorario )
+
   }
 
 
@@ -45,17 +76,11 @@ export class SelectorEntidadesComponent implements OnInit {
   }
 
   onSeleccionarEntidad(item: string) {
-      this.tipoEntidadSeleccionada = item;
+    this.tipoEntidadSeleccionada = item;
+
   }
 
 
 }
 
 
-
-export interface entidadHorario {
-  id: string;
-  texto: string;
-  leyenda: string;
-  imagen: string;
-}

@@ -1,44 +1,41 @@
-import { TipoMensaje } from './../../shared/models/mensajeUsuario.model';
-import { Actividad } from './../models/actividad.model';
+import { EnumTipoEntidadHorario } from './../../models/tipoEntidadHorario.model';
+import { TipoMensaje } from '../../../shared/models/mensajeUsuario.model';
+import { Actividad } from '../../models/actividad.model';
 import { Router } from '@angular/router';
-import { RootState } from './../../reducers/app.reducer';
-import { HorarioService } from '../services/horario.service';
+import { RootState } from '../../../reducers/app.reducer';
+import { HorarioService } from '../../services/horario.service';
 import { Action, Store } from '@ngrx/store';
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, concatMap, switchMap, tap, mergeMap } from 'rxjs/operators';
 import { EMPTY, of, Observable } from 'rxjs';
-import * as PrincipalActions from '../../moduloPrincipal/store/comunicaciones/comunicaciones.actions';
-import * as actividadesActions from './actividades.actions';
-
-
-
+import * as PrincipalActions from '../../../moduloPrincipal/store/comunicaciones/comunicaciones.actions';
+import * as entidadesHorarioActions from './entidadesHorario.actions';
 
 
 @Injectable()
-export class actividadesEffects {
+export class entidadesHorarioEffects {
 
   // ---------------------------------------------------------------------
-  // Cargar actividades
+  // Cargar entidadesHorario
   // ---------------------------------------------------------------------
-  cargarActividades$: Observable<Action> = createEffect(
+  cargarEntidadesHorario$: Observable<Action> = createEffect(
     () =>
       this.action$.pipe(
-        ofType(actividadesActions.cargarActividades),
+        ofType(entidadesHorarioActions.cargarEntidadesHorario),
 
         switchMap(
           action => {
 
             this.store.dispatch(PrincipalActions.cargandoDatos({ mensaje: "cargando" }));
-            return this.horarioService.obtenerTodasLasActividades()
+            return this.horarioService.obtenerTodasLasEntidadesHorarios(EnumTipoEntidadHorario.DOCENTE)
               .pipe(
 
                 map(
 
-                  actividades => {
-
+                  entidadesHorario => {
                     this.store.dispatch(PrincipalActions.cargadoDatos());
-                    return actividadesActions.cargarActividadesOK({ actividades: actividades });
+                    return entidadesHorarioActions.cargarEntidadesHorarioOK({ entidadesHorario: entidadesHorario });
                   }
 
                 ), // Fin map
@@ -46,7 +43,7 @@ export class actividadesEffects {
                 catchError(
                   error => {
                     this.store.dispatch(PrincipalActions.cargadoDatos());
-                    return of(actividadesActions.cargarActividadesError({ error: 'error' }))
+                    return of(entidadesHorarioActions.cargarEntidadesHorarioError({ error: 'error' }))
                   }
 
                 )

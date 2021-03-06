@@ -1,5 +1,5 @@
 import { BehaviorSubject } from 'rxjs';
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, AfterViewInit, OnChanges } from '@angular/core';
 import { debounceTime, distinctUntilChanged, filter, first, skip } from 'rxjs/operators';
 
 
@@ -8,29 +8,29 @@ import { debounceTime, distinctUntilChanged, filter, first, skip } from 'rxjs/op
   templateUrl: './selector-lista-simple.component.html',
   styleUrls: ['./selector-lista-simple.component.css']
 })
-export class SelectorListaSimpleComponent implements OnInit {
+export class SelectorListaSimpleComponent implements OnInit, OnChanges {
 
   @Input() items: any[];
   @Input() camposConfig: camposSelectorSimple;
   @Output() SeleccionItems: EventEmitter<any> = new EventEmitter();
 
-  // Gestionamos el cambio de la subcadena para filtrar a través de un observable que emite un valor cada vez que cambia.
-  _textoFiltro: BehaviorSubject<string>= new BehaviorSubject('');
-  get textoFiltro(): string { return this._textoFiltro.getValue(); }
-  set textoFiltro(val: string) { this._textoFiltro.next(val); }
-  constructor() { }
+  cadenaFiltro: string = '';
+
+  itemsFiltrados: any[];
+
+
+  constructor() {
+
+  }
+
+  ngOnChanges() {
+
+     this.filtrarItems('');
+  }
+
 
   ngOnInit(): void {
 
-    this._textoFiltro
-      .pipe(
-        skip(1), // El primer valor del cuadro de texto queremos omitirlo.
-        debounceTime(700),
-        distinctUntilChanged()
-      )
-      .subscribe(
-        val => console.log(val)
-    )
 
   }
 
@@ -49,6 +49,26 @@ export class SelectorListaSimpleComponent implements OnInit {
     return this.items.filter(item => !!item.seleccionado);
   }
 
+  OnChangeCadenaBusqueda(cadena: string) {
+    this.filtrarItems(cadena);
+
+
+  }
+
+
+  private filtrarItems(cadena: string) {
+    if (cadena && cadena.length > 0) {
+
+      this.itemsFiltrados = this.items.filter(
+        item => {
+          const cadenaParaFiltro = item[this.camposConfig.texto] + '~' + item[this.camposConfig.leyenda];
+          return (cadenaParaFiltro.indexOf(cadena) !== -1);
+        }
+      )
+    } else this.itemsFiltrados = this.items;
+
+
+  }
 }
 
 export interface camposSelectorSimple {
@@ -57,3 +77,26 @@ export interface camposSelectorSimple {
   imagen: string;
   color: string;
 }
+
+// var cadenaParaFiltro = nuevoUsuario.nombre +
+// '~' + nuevoUsuario.primerApellido +
+// '~' + nuevoUsuario.segundoApellido +
+// '~' + nuevoUsuario.email;
+
+
+
+
+// let incluirRegistro = true;
+
+// var subcadena;
+
+// if (fou && fou.contieneSubcadena) subcadena = this.normalizarCadena(fou.contieneSubcadena)
+
+
+// // Se desestima si hay una subcadena que debe contener y no la contiene.
+// if (subcadena && cadenaParaFiltro.indexOf(subcadena) === -1) { incluirRegistro = false }
+
+// // Se desestima si se piden usuarios de alta y el usuario no está de alta
+// if (fou && fou.SoloUsuariosDeAlta && nuevoUsuario.FechaBaja) { incluirRegistro = false }
+
+// if (incluirRegistro) { usuarios.push(nuevoUsuario); }

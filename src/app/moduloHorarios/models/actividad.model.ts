@@ -1,15 +1,15 @@
-import { IGrupo } from './grupo.model';
-import { IAsignatura } from './asignatura.model';
-import { IDocente } from './docente.model';
+import { Grupo } from './grupo.model';
+import { Asignatura } from './asignatura.model';
+import { Docente } from './docente.model';
 import { Sesion } from './sesion';
 
 export class Actividad {
   idActividad: string;
   sesion: Sesion;
   detalleActividad: string;
-  docentes: IDocente[];
-  asignaturas: IAsignatura[];
-  grupos: IGrupo[];
+  docentes: Docente[];
+  asignaturas: Asignatura[];
+  grupos: Grupo[];
   dependencia: string | undefined;
 
   public actualizarActividad(actividad: Actividad): void {

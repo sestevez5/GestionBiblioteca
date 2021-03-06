@@ -112,7 +112,8 @@ export class AuthService {
       .get()
       .pipe(
              map(
-          value => {
+               value => {
+
             const usuarios: Usuario[] = [];
 
             // Procesamos cada uno de los elementos para convertirlos en la colección de Usuarios.
@@ -127,15 +128,23 @@ export class AuthService {
                 };
 
 
-                const cadenaParaFiltro = nuevoUsuario.nombre +
+                var cadenaParaFiltro = nuevoUsuario.nombre +
                   '~' + nuevoUsuario.primerApellido +
                   '~' + nuevoUsuario.segundoApellido +
                   '~' + nuevoUsuario.email;
 
+
+
+
                 let incluirRegistro = true;
 
+                var subcadena;
+
+                if (fou && fou.contieneSubcadena) subcadena = this.normalizarCadena(fou.contieneSubcadena)
+
+
                 // Se desestima si hay una subcadena que debe contener y no la contiene.
-                if (fou && fou.contieneSubcadena && cadenaParaFiltro.indexOf(fou.contieneSubcadena) === -1) { incluirRegistro = false }
+                if (subcadena && cadenaParaFiltro.indexOf(subcadena) === -1) { incluirRegistro = false }
 
                 // Se desestima si se piden usuarios de alta y el usuario no está de alta
                 if (fou && fou.SoloUsuariosDeAlta && nuevoUsuario.FechaBaja) { incluirRegistro = false }
@@ -185,6 +194,17 @@ export class AuthService {
       )
     return usuario$;
 
+  }
+
+
+  private normalizarCadena(cadena: string) {
+    const s1 = 'ÀÁÄÂÈÉËÊÌÍÏÎÒÓÖÔÙÚÜÛãàáäâèéëêìíïîòóöôùúüûÇç';
+    const s2 = 'AAAAAEEEEIIIIOOOOUUUUaaaaaeeeeiiiioooouuuucc';
+    for (var i = 0; i < s1.length; i++) {
+      cadena = cadena.replace(new RegExp(s1.charAt(i), 'g'), s2.charAt(i));
+    }
+
+    return cadena.toLowerCase();
   }
 
 

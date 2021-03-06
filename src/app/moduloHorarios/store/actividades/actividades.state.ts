@@ -1,5 +1,6 @@
-import { Actividad } from './../models/actividad.model';
+import { Actividad } from './../../models/actividad.model';
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
+
 export interface actividadesState extends EntityState<Actividad> {
   actividadActiva: Actividad | undefined;
   procesandoAccion: boolean;

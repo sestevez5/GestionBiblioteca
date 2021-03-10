@@ -17,47 +17,16 @@ import { Component, OnInit} from '@angular/core';
 })
 export class SelectorEntidadesComponent implements OnInit {
 
-  tipoEntidadesHorario = ['docentes', 'grupos', 'dependencias']
+  TiposEntidadesHorario = EnumTipoEntidadHorario;
 
-  tipoEntidadSeleccionada: string = 'docentes'
+  tipoEntidadSeleccionada: EnumTipoEntidadHorario = EnumTipoEntidadHorario.DOCENTE;
 
 
   entidades: EntidadHorario[] = [];
 
-
-
   constructor(usuarios: AuthService, private store: Store<ModuloHorarioRootState>) {
-
-    // usuarios.ObtenerUsuarios(null)
-
-    // .subscribe(
-    //   usuarios => {
-
-
-    //     this.entidades = usuarios.map(
-    //       usuario => {
-
-    //         const docente: Docente =
-    //          {
-    //           idDocente: usuario.uid,
-    //           nombre: usuario.nombre,
-    //           apellido1: usuario.primerApellido,
-    //           apellido2: usuario.segundoApellido,
-    //           foto: usuario.foto,
-    //           alias: usuario.nombre.slice(0, 2) + usuario.primerApellido.slice(0, 2) + usuario.segundoApellido.slice(0, 2)
-    //         }
-
-    //         return new EntidadHorario(docente);
-
-
-    //       });
-
-    //       // Fin map
-    //   }); // Fin subscribe
-
     this.store.dispatch(FromEntidadesHorarioActions.cargarEntidadesHorario({ tipoEntidad: EnumTipoEntidadHorario.DOCENTE }))
-
-   }
+  }
 
   ngOnInit(): void {
 
@@ -69,14 +38,36 @@ export class SelectorEntidadesComponent implements OnInit {
   }
 
 
-  onItemsSeleccionados(item: any) {
+  onItemsSeleccionados(item: string) {
 
     console.log(item);
 
   }
 
   onSeleccionarEntidad(item: string) {
-    this.tipoEntidadSeleccionada = item;
+
+
+    this.tipoEntidadSeleccionada = item as EnumTipoEntidadHorario;
+    switch (this.tipoEntidadSeleccionada) {
+      case EnumTipoEntidadHorario.DOCENTE:
+        this.store.dispatch(FromEntidadesHorarioActions.cargarEntidadesHorario({ tipoEntidad: EnumTipoEntidadHorario.DOCENTE }));
+      break;
+
+      case EnumTipoEntidadHorario.GRUPO:
+        this.store.dispatch(FromEntidadesHorarioActions.cargarEntidadesHorario({ tipoEntidad: EnumTipoEntidadHorario.GRUPO}));
+      break;
+
+      case EnumTipoEntidadHorario.DEPENDENCIA:
+        this.store.dispatch(FromEntidadesHorarioActions.cargarEntidadesHorario({ tipoEntidad: EnumTipoEntidadHorario.DEPENDENCIA}));
+      break;
+
+      default:
+        this.store.dispatch(FromEntidadesHorarioActions.cargarEntidadesHorario({ tipoEntidad: EnumTipoEntidadHorario.GRUPO}));
+      break;
+
+
+    }
+
 
   }
 

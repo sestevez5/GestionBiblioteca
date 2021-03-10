@@ -25,6 +25,8 @@ export class PanelHorarioComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+
+    
     this.horarioG = new HorarioG('div#horario', this.ParametrosHorario, this.Actividades, this.idPlantillaActual);
     this.evento$ = this.horarioG.eventos$;
   }

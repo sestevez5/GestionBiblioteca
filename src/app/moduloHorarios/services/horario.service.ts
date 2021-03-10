@@ -38,8 +38,8 @@ export class HorarioService {
   parametrosHorario: parametrosHorario =
     {
       horaMinima: '07:00',
-      horaMaxima: '15:00',
-      diasSemanaHabiles: ['L','M','X'],
+      horaMaxima: '22:00',
+      diasSemanaHabiles: ['L','M','X','V'],
       plantillas: [
         {
           idPlantilla: 'P1',
@@ -79,7 +79,7 @@ export class HorarioService {
             { idSesion: 'P1V4', diaSemana: 'V', horaInicio: '11:15', horaFin: '12:10' },
             { idSesion: 'P1V5', diaSemana: 'V', horaInicio: '12:10', horaFin: '13:05' },
             { idSesion: 'P1V6', diaSemana: 'V', horaInicio: '13:05', horaFin: '14:00' },
-            { idSesion: 'P1V6', diaSemana: 'V', horaInicio: '13:05', horaFin: '14:00' },
+            { idSesion: 'P1V6', diaSemana: 'V', horaInicio: '18:05', horaFin: '19:00' },
 
             { idSesion: 'P1S1', diaSemana: 'S', horaInicio: '08:00', horaFin: '08:55' },
 
@@ -266,17 +266,52 @@ export class HorarioService {
     {
       idGrupo: '1',
       codigo: 'ESO1A',
-      denominacionLarga: 'Aula 1'
+      denominacionLarga: '1º ESO A'
     },
     {
       idGrupo: '2',
-      codigo: 'ESO1A',
-      denominacionLarga: 'Aula 1'
+      codigo: 'ESO1B',
+      denominacionLarga: '1º ESO B'
+    },
+    {
+      idGrupo: '20',
+      codigo: 'ESO1C',
+      denominacionLarga: '1º ESO C'
+    },
+    {
+      idGrupo: '21',
+      codigo: 'ESO2A',
+      denominacionLarga: '2º ESO A'
+    },
+    {
+      idGrupo: '22',
+      codigo: 'ESO2B',
+      denominacionLarga: '2º ESO B'
     },
     {
       idGrupo: '3',
       codigo: 'BCN1A',
       denominacionLarga: '1ª Bachillerato CCNN A'
+    },
+    {
+      idGrupo: '33',
+      codigo: 'BCN1B',
+      denominacionLarga: '1ª Bachillerato CCNN B'
+    },
+    {
+      idGrupo: '34',
+      codigo: 'BCS1A',
+      denominacionLarga: '1ª Bachillerato CCS A'
+    },
+    {
+      idGrupo: '39',
+      codigo: 'CFGMMODA',
+      denominacionLarga: 'CFGM Moda y Confección A'
+    },
+    {
+      idGrupo: '40',
+      codigo: 'CFGMMODB',
+      denominacionLarga: 'CFGM Moda y Confección B'
     }
   ];
 
@@ -329,36 +364,84 @@ export class HorarioService {
 
   obtenerTodasLasEntidadesHorarios(tipoEntidad: EnumTipoEntidadHorario): Observable<EntidadHorario[]> {
 
-    const usuarios$: Observable<Usuario[]> = this.authService.ObtenerUsuarios(null);
+    switch (tipoEntidad) {
+      case EnumTipoEntidadHorario.DOCENTE:
+        return this.ObtenerEntidadesHorarioAPartirdeDocentes();
+      break;
 
-    // Convertimos usuarios en entidadesHorario, pasando por Docente.
-    const entidadHorario$ = usuarios$
-        .pipe(
-          map(usuarios => {
+      case EnumTipoEntidadHorario.GRUPO:
+        return this.ObtenerEntidadesHorarioAPartirdeGrupos();
+        break;
 
-            return usuarios.map(
-              usuario => {
-                const docente: Docente =
-                {
-                  idDocente: usuario.uid,
-                  nombre: usuario.nombre,
-                  apellido1: usuario.primerApellido,
-                  apellido2: usuario.segundoApellido,
-                  foto: usuario.foto,
-                  alias: usuario.nombre.slice(0, 2) + usuario.primerApellido.slice(0, 2) + usuario.segundoApellido.slice(0, 2)
-                };
+      case EnumTipoEntidadHorario.DEPENDENCIA:
+        return this.ObtenerEntidadesHorarioAPartirdeDependencias();
+      break;
 
-                return new EntidadHorario(docente);
-              })
-          }) // Fin map
-    )  // fin pipe
-
-    return entidadHorario$;
+    }
 
   } // Fin obtenerTodasLasEntidadesHorarios
 
-}
+  private ObtenerEntidadesHorarioAPartirdeDocentes(): Observable<EntidadHorario[]> {
+    const usuarios$: Observable<Usuario[]> = this.authService.ObtenerUsuarios(null);
+        // Convertimos usuarios en entidadesHorario, pasando por Docente.
+        const entidadHorario$ = usuarios$
+          .pipe(
+            map(usuarios => {
 
+              return usuarios.map(
+                usuario => {
+                  const docente: Docente =
+                  {
+                    idDocente: usuario.uid,
+                    nombre: usuario.nombre,
+                    apellido1: usuario.primerApellido,
+                    apellido2: usuario.segundoApellido,
+                    foto: usuario.foto,
+                    alias: usuario.nombre.slice(0, 2) + usuario.primerApellido.slice(0, 2) + usuario.segundoApellido.slice(0, 2)
+                  };
+
+                  return new EntidadHorario(docente);
+                })
+            }) // Fin map
+          )  // fin pipe
+
+        return entidadHorario$;
+
+  }
+
+  private ObtenerEntidadesHorarioAPartirdeGrupos(): Observable<EntidadHorario[]> {
+    const grupos$: BehaviorSubject<Grupo[]> = new BehaviorSubject(this.grupos);
+
+    const entidadHorario$ = grupos$.pipe(
+      map(grupos => {
+        return grupos.map(
+          grupo => new EntidadHorario(grupo)
+        )
+      })
+    )
+
+    return entidadHorario$;
+
+  }
+
+  private ObtenerEntidadesHorarioAPartirdeDependencias(): Observable<EntidadHorario[]> {
+    const dependencias$: BehaviorSubject<Dependencia[]> = new BehaviorSubject(this.dependencias);
+
+    const entidadHorario$ = dependencias$.pipe(
+      map(dependencias => {
+
+        console.log('dependencias: ', dependencias);
+        return dependencias.map(
+          dependencia => new EntidadHorario(dependencia)
+        )
+      })
+    )
+
+    return entidadHorario$;
+
+  }
+
+}
 
 
 interface IActividad {

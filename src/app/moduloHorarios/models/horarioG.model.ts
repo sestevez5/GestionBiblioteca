@@ -50,12 +50,12 @@ export class HorarioG {
 
     panelHorario: {
       altoPanelHorario:     undefined,
-      colorPanelHorario:    '#bbbbbb',
+      colorPanelHorario:    '#ffffff',
       anchoPanelHorario:    undefined
     },
 
     panelDiaSemana: {
-      colorPanelDiaSemana: '#dfdfdf',
+      colorPanelDiaSemana: '#111111',
     },
 
     panelSesiones: {
@@ -147,7 +147,7 @@ export class HorarioG {
     this.configurarSvg();
     this.anyadirPanelHorario();
     this.anyadirPanelesDiasSemana();
-    this.params.parametrosHorario ? this.anyadirPlantilla(this.params.parametrosHorario.plantillas[idPlantillaActual]) : null;
+    this.params.parametrosHorario ? this.anyadirPlantilla(this.params.parametrosHorario.plantillas[0]) : null;
 
   }
   private configurarSvg()
@@ -159,7 +159,9 @@ export class HorarioG {
     this.svg
       .attr('width', this.params.grafico.anchoGrafico)
       .attr('height', this.params.grafico.altoGrafico)
-      .attr('viewbox','0 0 100 100')
+
+
+
 
     //-------------------------------------------------
     // Definición del rectángulo
@@ -185,11 +187,9 @@ export class HorarioG {
     // El resultado vienen en milisegundos y los convierto en horas.
     const rangoEnHoras = (fechaFin.getTime()-fechaInicio.getTime())/(3600000)
 
-    this.params.grafico.anchoGrafico = parseFloat(d3.select(this.elementoRaiz).style('width'))*.9;
-    this.params.grafico.altoGrafico = parseFloat(d3.select(this.elementoRaiz).style('height'))*Math.max(1,rangoEnHoras/7);
-
-
-     // return horaMinima.setMinutes(this.maximoIntervaloTemporal().getMinutes());
+    this.params.grafico.anchoGrafico = parseFloat(d3.select(this.elementoRaiz).style('width'))*.99;
+    this.params.grafico.altoGrafico = parseFloat(d3.select(this.elementoRaiz).style('height')) * Math.max(1, rangoEnHoras / 7);
+    console.log('rango alto', rangoEnHoras, this.params.grafico.altoGrafico, parseFloat(d3.select(this.elementoRaiz).style('height')))
 
     // Establecer dimensiones del panel que contiene las barras.
     this.params.panelHorario.anchoPanelHorario  = this.params.grafico.anchoGrafico * ((100-this.params.grafico.margenGrafico.margenIzquierdoGrafico - this.params.grafico.margenGrafico.margenDerechoGrafico)/100);

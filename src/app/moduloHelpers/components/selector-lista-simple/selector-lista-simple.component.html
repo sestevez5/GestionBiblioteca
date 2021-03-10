@@ -1,5 +1,5 @@
 <app-cadenabusqueda [tiempoEspera]=1000 [textoIndicativo]="'Introducir'" (cadenaBusqueda)="OnChangeCadenaBusqueda($event)"></app-cadenabusqueda>
-<div class="panelListaSeleccion">
+<div class="mt-2 panelListaSeleccion">
   <ul class="list-group m-0 p-0">
     <div class="item" *ngFor="let item of this.itemsFiltrados" (click)="onSeleccionar(item)" >
       <app-item-selector-lista-simple [marcado]="item.seleccionado" [camposConfig]=this.camposConfig [item]=item></app-item-selector-lista-simple>

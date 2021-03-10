@@ -187,7 +187,7 @@ export class HorarioG {
     // El resultado vienen en milisegundos y los convierto en horas.
     const rangoEnHoras = (fechaFin.getTime()-fechaInicio.getTime())/(3600000)
 
-    this.params.grafico.anchoGrafico = parseFloat(d3.select(this.elementoRaiz).style('width'))*.99;
+    this.params.grafico.anchoGrafico = parseFloat(d3.select(this.elementoRaiz).style('width'));
     this.params.grafico.altoGrafico = parseFloat(d3.select(this.elementoRaiz).style('height')) * Math.max(1, rangoEnHoras / 7);
     console.log('rango alto', rangoEnHoras, this.params.grafico.altoGrafico, parseFloat(d3.select(this.elementoRaiz).style('height')))
 
@@ -719,14 +719,17 @@ export class HorarioG {
     )
 
   }
+
   public minimoIntervaloTemporal(): Date {
     const horaMinima = HorarioG.convertirCadenaHoraEnTiempo(this.params.parametrosHorario?.horaMinima);
     return horaMinima.setMinutes(horaMinima.getMinutes());
   }
+
   public maximoIntervaloTemporal(): Date {
     const horaMaxima = HorarioG.convertirCadenaHoraEnTiempo(this.params.parametrosHorario?.horaMaxima);
     return horaMaxima.setMinutes(horaMaxima.getMinutes());
   }
+
   private compare(a: ActividadG, b: ActividadG): number {
 
     const codigosDiasSemana = HorarioG.diasSemana.map(ds => ds.codigo);
@@ -757,6 +760,7 @@ export class HorarioG {
       []
       )
   }
+  
   private anyadirDefs(element: any) {
     const defs = element.append('defs');
 

@@ -1,8 +1,7 @@
 <div class="row h-100 ">
-
   <div class="col-12 selectorEntidades d-flex flex-column">
     <!-- Selector del tipo de entidad -->
-    <div class="row mb-1">
+    <div class="row mb-3">
       <div class="col-12 d-flex flex-row-reverse">
         <div ngbDropdown class="w-100" id="selectorTipoEntidad">
           <button class="btn btn-outline-primary w-100" id="dropdownBasic1" ngbDropdownToggle >
@@ -16,8 +15,8 @@
     </div>
 
     <!-- Selector de una entidad -->
-    <div class="row flex-grow-1 divEntidades">
-      <div class="col-12">
+    <div class="row divEntidades">
+      <div class="col-12 h-100">
         <app-selector-lista-simple
           [items]="this.entidades"
           [camposConfig]="{ texto: 'descripcion', imagen: 'imagen', leyenda: 'detalle'}"

@@ -9,6 +9,7 @@ import { CommonModule } from '@angular/common';
 
 import { GestionActividadesComponent } from './containers/gestion-actividades/gestion-actividades.component';
 import { PanelHorarioComponent } from './components/panel-horario/panel-horario.component';
+import { CabeceraEntidadHorarioComponent } from './components/cabecera-entidad-horario/cabecera-entidad-horario.component'
 
 // NGRX
 import { ModuloHorarioFeaturekey, ModuloHorarioReducers } from './store/index';
@@ -21,6 +22,8 @@ import { HelperModule } from '../moduloHelpers/helper.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SelectorEntidadesComponent } from './containers/selector-entidades/selector-entidades.component';
 import { MostrarActividadComponent } from './containers/mostrar-actividad/mostrar-actividad.component';
+
+
 
 
 @NgModule({
@@ -38,8 +41,8 @@ import { MostrarActividadComponent } from './containers/mostrar-actividad/mostra
     GestionActividadesComponent,
     PanelHorarioComponent,
     SelectorEntidadesComponent,
-    MostrarActividadComponent
-
+    MostrarActividadComponent,
+    CabeceraEntidadHorarioComponent
   ],
 })
 export class HorariosModule { }

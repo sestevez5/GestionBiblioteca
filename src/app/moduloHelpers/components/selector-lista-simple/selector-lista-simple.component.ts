@@ -8,51 +8,28 @@ import { debounceTime, distinctUntilChanged, filter, first, skip } from 'rxjs/op
   templateUrl: './selector-lista-simple.component.html',
   styleUrls: ['./selector-lista-simple.component.css']
 })
-export class SelectorListaSimpleComponent implements OnInit, OnChanges {
+export class SelectorListaSimpleComponent implements OnChanges {
 
   @Input() items: any[];
   @Input() camposConfig: camposSelectorSimple;
   @Output() SeleccionItems: EventEmitter<any> = new EventEmitter();
 
   cadenaFiltro: string = '';
-
   itemsFiltrados: any[];
+  // itemSeleccionado: any;
 
-
-  constructor() {
-
-  }
+  @Input() itemSeleccionado: any;
 
   ngOnChanges() {
-
-     this.filtrarItems('');
-  }
-
-
-  ngOnInit(): void {
-
-
+    this.filtrarItems('');
   }
 
   onSeleccionar(item: any) {
-    const id = this.items.indexOf(item);
-
-
-    for (let index = 0; index < this.items.length; index++) {
-      index === id ? this.items[index].seleccionado = true : this.items[index].seleccionado = false;
-    }
-    this.SeleccionItems.emit(this.itemsSeleccionados());
-
-  }
-
-  itemsSeleccionados() {
-    return this.items.filter(item => !!item.seleccionado);
+    this.SeleccionItems.emit(item);
   }
 
   OnChangeCadenaBusqueda(cadena: string) {
     this.filtrarItems(cadena);
-
-
   }
 
 
@@ -68,6 +45,8 @@ export class SelectorListaSimpleComponent implements OnInit, OnChanges {
     } else this.itemsFiltrados = this.items;
 
 
+
+
   }
 }
 
@@ -78,25 +57,4 @@ export interface camposSelectorSimple {
   color: string;
 }
 
-// var cadenaParaFiltro = nuevoUsuario.nombre +
-// '~' + nuevoUsuario.primerApellido +
-// '~' + nuevoUsuario.segundoApellido +
-// '~' + nuevoUsuario.email;
 
-
-
-
-// let incluirRegistro = true;
-
-// var subcadena;
-
-// if (fou && fou.contieneSubcadena) subcadena = this.normalizarCadena(fou.contieneSubcadena)
-
-
-// // Se desestima si hay una subcadena que debe contener y no la contiene.
-// if (subcadena && cadenaParaFiltro.indexOf(subcadena) === -1) { incluirRegistro = false }
-
-// // Se desestima si se piden usuarios de alta y el usuario no está de alta
-// if (fou && fou.SoloUsuariosDeAlta && nuevoUsuario.FechaBaja) { incluirRegistro = false }
-
-// if (incluirRegistro) { usuarios.push(nuevoUsuario); }

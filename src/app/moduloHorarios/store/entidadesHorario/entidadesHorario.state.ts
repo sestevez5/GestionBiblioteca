@@ -4,10 +4,8 @@ import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 
 
 export interface entidadesHorarioState extends EntityState<EntidadHorario> {
-  entidadHorarioActiva: EntidadHorario | undefined;
+  entidadHorarioActiva: string | undefined;
   tipoEntidadActiva: EnumTipoEntidadHorario | undefined;
-  procesandoAccion: boolean;
-  errorAccion: any;
 }
 
 // Función que devuelve el identificador de la primary key
@@ -31,7 +29,5 @@ export const initialEntidadesHorarioState: entidadesHorarioState = adapter.getIn
   {
     entidadHorarioActiva: undefined,
     tipoEntidadActiva: undefined,
-    procesandoAccion: false,
-    errorAccion: null
   }
 )

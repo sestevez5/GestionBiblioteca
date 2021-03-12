@@ -1,3 +1,4 @@
+import { entidadesHorarioEffects } from './../../store/entidadesHorario/entidadesHorario.effects';
 import { entidadesHorarioState } from './../../store/entidadesHorario/entidadesHorario.state';
 import { EnumTipoEntidadHorario } from './../../models/tipoEntidadHorario.model';
 import { ModuloHorarioRootState } from './../../store/index';
@@ -9,6 +10,7 @@ import { AuthService } from './../../../moduloAuth/services/auth.service';
 import * as FromEntidadesHorarioActions from '../../store/entidadesHorario/entidadesHorario.actions';
 import * as FromEntidadesHorarioSelectors from '../../store/entidadesHorario/entidadesHorario.selectors';
 import { Component, OnInit} from '@angular/core';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector: 'app-selector-entidades',
@@ -19,33 +21,40 @@ export class SelectorEntidadesComponent implements OnInit {
 
   TiposEntidadesHorario = EnumTipoEntidadHorario;
 
-  tipoEntidadSeleccionada: EnumTipoEntidadHorario = EnumTipoEntidadHorario.DOCENTE;
+  // Tipo de entidad seleccionada: Docente, Grupos, ....
+  tipoEntidadSeleccionada: EnumTipoEntidadHorario | undefined;
 
-
+  // Entidades a mostrar
   entidades: EntidadHorario[] = [];
 
+  // Entidad que se ha seleccionado.
+  entidadHorarioSeleccionada: any;
+
+
   constructor(usuarios: AuthService, private store: Store<ModuloHorarioRootState>) {
-    this.store.dispatch(FromEntidadesHorarioActions.cargarEntidadesHorario({ tipoEntidad: EnumTipoEntidadHorario.DOCENTE }))
+
   }
 
   ngOnInit(): void {
 
-    this.store.pipe(
-      select(FromEntidadesHorarioSelectors.selectTodasLasEntidadesHorario)
-    )
-    .subscribe( entidadesHorario =>  this.entidades = entidadesHorario )
+    this.store.pipe(select(FromEntidadesHorarioSelectors.selectTodasLasEntidadesHorario))
+      .subscribe(entidadesHorario => this.entidades = entidadesHorario);
+
+    this.store.pipe(select(FromEntidadesHorarioSelectors.selectEntidadHorarioActiva))
+      .subscribe(entidadHorarioActiva => this.entidadHorarioSeleccionada = entidadHorarioActiva)
+
+    this.store.pipe(select(FromEntidadesHorarioSelectors.selectTipoEntidadActiva))
+      .subscribe(tipoEntidadActiva => this.tipoEntidadSeleccionada = tipoEntidadActiva)
 
   }
 
 
-  onItemsSeleccionados(item: string) {
-
-    console.log(item);
-
+  onSeleccionarItem(item: any) {
+    const entidadHorario = item as EntidadHorario;
+    this.store.dispatch(FromEntidadesHorarioActions.seleccionarEntidadHorario({ idEntidadHorario: entidadHorario.id, tipoEntidadHorario: entidadHorario.tipoEntidad }))
   }
 
-  onSeleccionarEntidad(item: string) {
-
+  onSeleccionarTipoEntidad(item: string) {
 
     this.tipoEntidadSeleccionada = item as EnumTipoEntidadHorario;
     switch (this.tipoEntidadSeleccionada) {

@@ -35,7 +35,7 @@ export class entidadesHorarioEffects {
 
                   entidadesHorario => {
                     this.store.dispatch(PrincipalActions.cargadoDatos());
-                    return entidadesHorarioActions.cargarEntidadesHorarioOK({ entidadesHorario: entidadesHorario });
+                    return entidadesHorarioActions.cargarEntidadesHorarioOK({ entidadesHorario: entidadesHorario, tipoEntidadHorario: action.tipoEntidad });
                   }
 
                 ), // Fin map

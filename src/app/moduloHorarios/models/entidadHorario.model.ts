@@ -10,7 +10,7 @@ export class EntidadHorario {
   descripcion: string;
   detalle: string;
   imagen: string;
-  tipoEntidad: EnumTipoEntidadHorario | undefined;
+  tipoEntidad: EnumTipoEntidadHorario;
 
   constructor(entidad: Docente | Grupo | Dependencia) {
 
@@ -42,18 +42,17 @@ export class EntidadHorario {
 
     }
 
-
-
   };
 
 
-  private tipoEntidadHorario(x: any): EnumTipoEntidadHorario | undefined
+  private tipoEntidadHorario(x: any): EnumTipoEntidadHorario
   {
 
     if (x && x.idDocente && typeof (x.idDocente) == 'string') return EnumTipoEntidadHorario.DOCENTE;
     if (x && x.idGrupo && typeof(x.idGrupo) == 'string') return EnumTipoEntidadHorario.GRUPO;
-    if (x && x.idDependencia && typeof(x.idDependencia))return EnumTipoEntidadHorario.DEPENDENCIA;
-    return undefined;
+    if (x && x.idDependencia && typeof (x.idDependencia)) return EnumTipoEntidadHorario.DEPENDENCIA;
+    else return EnumTipoEntidadHorario.DOCENTE;
+
 
   }
 

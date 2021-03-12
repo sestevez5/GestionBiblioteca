@@ -26,7 +26,13 @@ export const selectTotalEntidadesHorario = createSelector(
   entidadesHorarioReducers.selectTotalEntidadesHorario
 );
 
-export const selectProcesandoAccion = createSelector(
+export const selectEntidadHorarioActiva = createSelector(
   FromModuloHorario.selectHorario,
-  ({entidadesHorario}) => entidadesHorario.procesandoAccion
+  ({ entidadesHorario }) =>  entidadesHorario.entidadHorarioActiva? entidadesHorario.entities[entidadesHorario.entidadHorarioActiva]: undefined
+
+);
+
+export const selectTipoEntidadActiva = createSelector(
+  FromModuloHorario.selectHorario,
+  ({ entidadesHorario }) =>  entidadesHorario.tipoEntidadActiva
 );

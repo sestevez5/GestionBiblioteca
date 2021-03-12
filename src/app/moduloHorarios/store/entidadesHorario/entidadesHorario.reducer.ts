@@ -1,6 +1,6 @@
 import { adapter } from './entidadesHorario.state';
 import { initialEntidadesHorarioState } from './entidadesHorario.state';
-import { Action, createReducer, on } from '@ngrx/store';
+import {createReducer, on } from '@ngrx/store';
 import * as entidadesHorarioActions from './entidadesHorario.actions';
 
 
@@ -9,24 +9,24 @@ export const entidadesHorarioReducer = createReducer(
   initialEntidadesHorarioState,
 
   // -------------------------------------------------------------------------------
-  // CREACIÓN DE LIBRO
+  // CREACIÓN DE UNA ACTIVIDAD
   // -------------------------------------------------------------------------------
-  // Crear libro.
+  // Crear Actividad.
   on(
     entidadesHorarioActions.crearEntidadHorario,
     (state, action) => {
-      return { ...state, procesandoAccion: true, errorAccion: null};
+      return { ...state};
     }
   ),
 
-  // Libro creado Ok.
+  // Actividad creado Ok.
   on(
     entidadesHorarioActions.crearEntidadHorarioOK,
     (state, action) => {
       if (!action.entidadHorario) {
         return state
       }
-      return adapter.addOne(action.entidadHorario, { ...state, procesandoAccion: false, errorAccion: null });
+      return adapter.addOne(action.entidadHorario, { ...state });
 
     }
   ),
@@ -35,7 +35,7 @@ export const entidadesHorarioReducer = createReducer(
   on(
     entidadesHorarioActions.crearEntidadHorarioError,
     (state, action) => {
-      return { ...state, procesandoAccion: false, error: action.error };
+      return { ...state};
     }
   ),
 
@@ -47,7 +47,7 @@ export const entidadesHorarioReducer = createReducer(
   on(
     entidadesHorarioActions.cargarEntidadesHorario,
     (state, action) => {
-      return { ...state, procesandoAccion: true, errorAccion: false};
+      return { ...state};
     }
   ),
 
@@ -56,13 +56,11 @@ export const entidadesHorarioReducer = createReducer(
     entidadesHorarioActions.cargarEntidadesHorarioOK,
     (state, action) => {
 
-      console.log('action.entidadesHorario: ', action.entidadesHorario);
-
       if (state.ids.length === 0 && action.entidadesHorario.length === 0) {
         return state;
       }
       else {
-        return adapter.setAll(action.entidadesHorario, { ...state, procesandoAccion: false, errorAccion: null });
+        return adapter.setAll(action.entidadesHorario, { ...state, tipoEntidadActiva: action.tipoEntidadHorario});
       }
 
 
@@ -73,97 +71,79 @@ export const entidadesHorarioReducer = createReducer(
   on(
     entidadesHorarioActions.cargarEntidadesHorarioError,
     (state, action) => {
-      return { ...state,  procesandoAccion: false, error: action.error};
+      return { ...state};
     }
   ),
 
 
 
   // -------------------------------------------------------------------------------
-  // CARGA DE UN SOLO LIBRO
+  // SELECCIONAR ENTIDAD HORARIO
   // -------------------------------------------------------------------------------
-   // cargando libro.
+   // cargando Actividad.
    on(
-    entidadesHorarioActions.cargarEntidadHorario,
+    entidadesHorarioActions.seleccionarEntidadHorario,
     (state, action) => {
-      return { ...state, entidadHorarioActiva: undefined, procesandoAccion: true, errorAccion: null };
+      return { ...state, entidadHorarioActiva: action.idEntidadHorario, tipoEntidadActiva: action.tipoEntidadHorario};
     }
   ),
 
-  // libro cargado correctamente.
-  on(
-    entidadesHorarioActions.cargarEntidadHorarioOK,
-    (state, action) => {
-      return { ...state, entidadHorarioActiva: action.EntidadHorario,  procesandoAccion: false, errorAccion: null }
-    }
-  ),
-
-  // error en la carga del libro
-  on(
-    entidadesHorarioActions.cargarEntidadHorarioError,
-    (state, action) => {
-      return { ...state, entidadHorarioActiva: undefined, procesandoAccion: false, errorAccion: action.error};
-    }
-  ),
 
   // -------------------------------------------------------------------------------
-  // MODIFICAR LIBRO
+  // MODIFICAR Actividad
   // -------------------------------------------------------------------------------
   // modificarActividad.
-  on(
-  entidadesHorarioActions.modificarEntidadHorario,
-  (state, action) => {
-    return {
-      ...state, entidadHorarioActiva: action.entidadHorario, procesandoAccion: true, errorAccion: null
-    };
-  }
-  ),
+  // on(
+  // entidadesHorarioActions.modificarEntidadHorario,
+  // (state, action) => {
+  //   return {
+  //     ...state, entidadHorarioActiva: action.entidadHorario   };
+  // }
+  // ),
 
-  // libro cargado correctamente.
+  // Actividad cargado correctamente.
   on(
     entidadesHorarioActions.modificarEntidadHorarioOK,
     (state, action) => {
-      return adapter.updateOne(action.entidadHorario, { ...state, entidadHorarioActiva: undefined, procesandoAccion: false, errorAccion: null  })
+      return adapter.updateOne(action.entidadHorario, { ...state, entidadHorarioActiva: undefined})
 
     }
   ),
 
-  // error en la carga del libro
+  // error en la carga del Actividad
   on(
     entidadesHorarioActions.modificarEntidadHorarioError,
     (state, action) => {
-      return { ...state, entidadHorarioActiva: undefined, procesandoAccion: false, errorAccion: action.error };
+      return { ...state, entidadHorarioActiva: undefined };
     }
   ),
 
 
 
   // -------------------------------------------------------------------------------
-  //  ELIMINAR LIBRO
+  //  ELIMINAR Actividad
   // -------------------------------------------------------------------------------
   // modificarActividad.
   on(
     entidadesHorarioActions.eliminarEntidadHorario,
     (state, action) => {
-      return {
-        ...state, procesandoAccion: true, errorAccion: null
-      };
+      return {...state};
     }
     ),
 
-    // libro cargado correctamente.
+    // Actividad cargado correctamente.
     on(
       entidadesHorarioActions.eliminarEntidadHorarioOK,
       (state, action) => {
-        return adapter.removeOne(action.id, { ...state, entidadHorarioActiva: undefined, procesandoAccion: false, errorAccion: null})
+        return adapter.removeOne(action.id, { ...state, entidadHorarioActiva: undefined})
       }
     ),
 
-    // error en la carga del libro
+    // error en la carga del Actividad
     on(
       entidadesHorarioActions.eliminarEntidadHorarioError,
       (state, action) => {
-        return { ...state, entidadHorarioActiva: undefined, procesandoAccion: false, errorAccion: action.error};
+        return { ...state, entidadHorarioActiva: undefined};
       }
   ),
 

@@ -1,3 +1,4 @@
+import { IActividadesSesion } from './../models/actividadesSesion.model';
 import { EntidadHorario } from './../models/entidadHorario.model';
 import { Docente } from './../models/docente.model';
 import { AuthService } from './../../moduloAuth/services/auth.service';
@@ -119,7 +120,7 @@ export class HorarioService {
       idSesion: 'P1L3',
       detalleActividad: '',
       grupos: ['2'],
-      docentes: [],
+      docentes: ['IJyiJjc2LXTZXsdwY27ORvpzIYw1','NTNYueJSicQOvYLjWzQs5ZcyeV63'],
       asignaturas: ['1'],
       dependencia:'1'
     },
@@ -128,7 +129,7 @@ export class HorarioService {
       idSesion: 'P1L4',
       detalleActividad: '',
       grupos: ['2'],
-      docentes: [],
+      docentes: ['IJyiJjc2LXTZXsdwY27ORvpzIYw1','NTNYueJSicQOvYLjWzQs5ZcyeV63'],
       asignaturas: ['1'],
       dependencia:'2'
     },
@@ -137,7 +138,7 @@ export class HorarioService {
       idSesion: 'P1M1',
       detalleActividad: '',
       grupos: ['2'],
-      docentes: [],
+      docentes: ['IJyiJjc2LXTZXsdwY27ORvpzIYw1'],
       asignaturas: ['1','3'],
       dependencia:'2'
 
@@ -147,7 +148,7 @@ export class HorarioService {
       idSesion: 'P1M1',
       detalleActividad: '',
       grupos: ['2'],
-      docentes: [],
+      docentes: ['NTNYueJSicQOvYLjWzQs5ZcyeV63'],
       asignaturas: ['1','3'],
       dependencia:'2'
 
@@ -315,41 +316,6 @@ export class HorarioService {
     }
   ];
 
-  obtenerTodasLasActividades(): Observable<Actividad[]> {
-
-    const actividades$ = new BehaviorSubject<Actividad[]>([]);
-
-    // paso 1: Construimos un único array con todas las sesiones de todas las plantillas.
-    // Necesitamoas un único array con todas las sesiones para el punto 2.
-    var todasLasSesiones: Sesion[] = [];
-    this.parametrosHorario.plantillas.forEach(pl => todasLasSesiones = todasLasSesiones.concat(pl.sesionesPlantilla));
-
-    const actividades: Actividad[] = [];
-
-    this.actividades.map(
-      act => {
-        const nuevaActividad: Actividad = new Actividad();
-        nuevaActividad.idActividad = act.idActividad;
-        nuevaActividad.detalleActividad = act.detalleActividad;
-        nuevaActividad.grupos = act.grupos.map(g => this.grupos.filter(gr => gr.idGrupo === g)[0]);
-
-        // paso 2: Asignamos a cada actividadG su objeto sesión.
-        const sesionLocalizada = todasLasSesiones.find(s => s.idSesion === act.idSesion);
-          if (sesionLocalizada) nuevaActividad.sesion = sesionLocalizada
-
-        actividades.push(nuevaActividad);
-      }
-    );
-
-
-    actividades$.next(actividades)
-
-
-    return actividades$;
-
-
-  }
-
   obtenerTodasLasDependencias(): Dependencia[]{
     return this.dependencias;
   }
@@ -362,6 +328,9 @@ export class HorarioService {
     return this.parametrosHorario;
   }
 
+//------------------------------------------------------------------------------------------
+// Métodos públicos que devuelven entidadesHorario
+//------------------------------------------------------------------------------------------
   obtenerTodasLasEntidadesHorarios(tipoEntidad: EnumTipoEntidadHorario): Observable<EntidadHorario[]> {
 
     switch (tipoEntidad) {
@@ -440,6 +409,83 @@ export class HorarioService {
     return entidadHorario$;
 
   }
+
+
+//------------------------------------------------------------------------------------------
+// Métodos públicos que devuelven actividades
+//------------------------------------------------------------------------------------------
+  obtenerTodasLasActividades(): Observable<Actividad[]> {
+    return this.convertirIActividadesEnObservableActividades(this.actividades);
+  }
+
+  obtenerActividades(entidadHorario: EntidadHorario): Observable<Actividad[]> {
+
+
+    switch (entidadHorario.tipoEntidad) {
+      case EnumTipoEntidadHorario.DOCENTE:
+        const actividadesDocente = this.actividades.filter(
+          actividad => actividad.docentes.includes(entidadHorario.id)
+        );
+        return this.convertirIActividadesEnObservableActividades(actividadesDocente);
+
+      break;
+
+      case EnumTipoEntidadHorario.GRUPO:
+        const actividadesGrupo = this.actividades.filter(
+          actividad => actividad.grupos.includes(entidadHorario.id)
+        );
+        return this.convertirIActividadesEnObservableActividades(actividadesGrupo);
+        break;
+
+      case EnumTipoEntidadHorario.DEPENDENCIA:
+        const actividadesDependencia = this.actividades.filter(
+          actividad => actividad.dependencia === entidadHorario.id
+        );
+        return this.convertirIActividadesEnObservableActividades(actividadesDependencia);
+      break;
+
+    }
+
+  }
+
+
+//------------------------------------------------------------------------------------------
+// Métodos privados
+//------------------------------------------------------------------------------------------
+  private convertirIActividadesEnObservableActividades(idActividades: IActividad[]): Observable<Actividad[]> {
+    const actividades$ = new BehaviorSubject<Actividad[]>([]);
+
+    // paso 1: Construimos un único array con todas las sesiones de todas las plantillas.
+    // Necesitamoas un único array con todas las sesiones para el punto 2.
+    var todasLasSesiones: Sesion[] = [];
+    this.parametrosHorario.plantillas.forEach(pl => todasLasSesiones = todasLasSesiones.concat(pl.sesionesPlantilla));
+
+    const actividades: Actividad[] = [];
+
+    idActividades.map(
+      act => {
+
+
+        const nuevaActividad: Actividad = new Actividad();
+        nuevaActividad.idActividad = act.idActividad;
+        nuevaActividad.detalleActividad = act.detalleActividad;
+        nuevaActividad.grupos = act.grupos.map(g => this.grupos.filter(gr => gr.idGrupo === g)[0]);
+
+        // paso 2: Asignamos a cada actividadG su objeto sesión.
+        const sesionLocalizada = todasLasSesiones.find(s => s.idSesion === act.idSesion);
+          if (sesionLocalizada) nuevaActividad.sesion = sesionLocalizada
+
+        actividades.push(nuevaActividad);
+      }
+    );
+
+
+    actividades$.next(actividades)
+
+
+    return actividades$;
+
+    }
 
 }
 

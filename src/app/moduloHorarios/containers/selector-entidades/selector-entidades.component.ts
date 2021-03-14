@@ -51,7 +51,7 @@ export class SelectorEntidadesComponent implements OnInit {
 
   onSeleccionarItem(item: any) {
     const entidadHorario = item as EntidadHorario;
-    this.store.dispatch(FromEntidadesHorarioActions.seleccionarEntidadHorario({ idEntidadHorario: entidadHorario.id, tipoEntidadHorario: entidadHorario.tipoEntidad }))
+    this.store.dispatch(FromEntidadesHorarioActions.seleccionarEntidadHorario({ entidadHorario: entidadHorario, tipoEntidadHorario: entidadHorario.tipoEntidad }))
   }
 
   onSeleccionarTipoEntidad(item: string) {

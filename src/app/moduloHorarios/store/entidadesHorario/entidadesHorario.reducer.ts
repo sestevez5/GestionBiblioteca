@@ -9,7 +9,7 @@ export const entidadesHorarioReducer = createReducer(
   initialEntidadesHorarioState,
 
   // -------------------------------------------------------------------------------
-  // CREACIÓN DE UNA ACTIVIDAD
+  // CREACIÓN DE UNA ENTIDADhORARIO
   // -------------------------------------------------------------------------------
   // Crear Actividad.
   on(
@@ -84,7 +84,7 @@ export const entidadesHorarioReducer = createReducer(
    on(
     entidadesHorarioActions.seleccionarEntidadHorario,
     (state, action) => {
-      return { ...state, entidadHorarioActiva: action.idEntidadHorario, tipoEntidadActiva: action.tipoEntidadHorario};
+      return { ...state, entidadHorarioActiva: action.entidadHorario, tipoEntidadActiva: action.tipoEntidadHorario};
     }
   ),
 

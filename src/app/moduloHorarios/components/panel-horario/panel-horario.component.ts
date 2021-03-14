@@ -1,10 +1,13 @@
+import { ModuloHorarioRootState } from './../../store/index';
+import { Store, select } from '@ngrx/store';
 import { parametrosHorario } from './../../models/parametrosHorario.model';
 import { Plantilla } from './../../models/plantilla.model';
 import { ActividadG } from '../../models/actividadG.model';
 import { Observable } from 'rxjs';
 import { HorarioG } from '../../models/horarioG.model';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnChanges } from '@angular/core';
 import { Actividad } from '../../models/actividad.model';
+import * as FromActividadesSelectors from '../../store/actividades/actividades.selectors';
 
 @Component({
   selector: 'app-panel-horario',
@@ -22,14 +25,25 @@ export class PanelHorarioComponent implements OnInit {
   horarioG: HorarioG;
   evento$: Observable<ActividadG>;
 
-  constructor() { }
+  constructor(private store: Store<ModuloHorarioRootState>) { }
 
   ngOnInit(): void {
 
-    
+
     this.horarioG = new HorarioG('div#horario', this.ParametrosHorario, this.Actividades, this.idPlantillaActual);
     this.evento$ = this.horarioG.eventos$;
+
+    this.store.pipe(
+      select(FromActividadesSelectors.selectTodasLasActividades)
+    )
+      .subscribe(
+      actividades => this.horarioG.anyadirActualizarActividades(actividades)
+    )
+
+
   }
+
+
 
   onActualizar() {
     // const a = new Actividad();

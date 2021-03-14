@@ -4,7 +4,7 @@ import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 
 
 export interface entidadesHorarioState extends EntityState<EntidadHorario> {
-  entidadHorarioActiva: string | undefined;
+  entidadHorarioActiva: EntidadHorario | undefined;
   tipoEntidadActiva: EnumTipoEntidadHorario | undefined;
 }
 

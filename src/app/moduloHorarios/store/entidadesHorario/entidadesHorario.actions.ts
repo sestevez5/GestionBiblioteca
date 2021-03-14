@@ -20,7 +20,7 @@ export const crearEntidadHorarioOK         = createAction('[ENTIDADESHORARIO] cr
 export const crearEntidadHorarioError      = createAction('[ENTIDADESHORARIO] creación de EntidadHorario errónea', props<{ error: string }>());
 
 // cargar EntidadHorario.
-export const seleccionarEntidadHorario     = createAction('[ENTIDADESHORARIO] seleccionar EntidadHorario', props<{ idEntidadHorario: string, tipoEntidadHorario: EnumTipoEntidadHorario }>());
+export const seleccionarEntidadHorario     = createAction('[ENTIDADESHORARIO] seleccionar EntidadHorario', props<{ entidadHorario: EntidadHorario, tipoEntidadHorario: EnumTipoEntidadHorario }>());
 
 // modificación de un EntidadHorario.
 export const modificarEntidadHorario       = createAction('[ENTIDADESHORARIO] modificar EntidadHorario', props<{ entidadHorario: EntidadHorario }>());

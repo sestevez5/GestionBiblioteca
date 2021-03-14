@@ -28,7 +28,7 @@ export const selectTotalEntidadesHorario = createSelector(
 
 export const selectEntidadHorarioActiva = createSelector(
   FromModuloHorario.selectHorario,
-  ({ entidadesHorario }) =>  entidadesHorario.entidadHorarioActiva? entidadesHorario.entities[entidadesHorario.entidadHorarioActiva]: undefined
+  ({ entidadesHorario }) =>  entidadesHorario.entidadHorarioActiva
 
 );
 

@@ -16,7 +16,7 @@ import { SelectorMultipleDobleListaComponent } from './components/selector-multi
 import { ItemSelectorMultipleDobleListaComponent } from './components/selector-multiple-doble-lista/item-selector-multiple-doble-lista/item-selector-multiple-doble-lista.component';
 
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { VisorHorarioComponent } from './components/visorHorario/visorHorario.component';
+
 import { SelectorListaSimpleComponent } from './components/selector-lista-simple/selector-lista-simple.component';
 import { FormsModule } from '@angular/forms';
 import { CadenabusquedaComponent } from './components/cadenabusqueda/cadenabusqueda.component';
@@ -32,7 +32,7 @@ import { CadenabusquedaComponent } from './components/cadenabusqueda/cadenabusqu
     SelectorMultipleDobleListaComponent,
     ItemSelectorMultipleDobleListaComponent,
     ItemSelectorListaSimpleComponent,
-    VisorHorarioComponent,
+
     SelectorListaSimpleComponent,
     CadenabusquedaComponent
   ],
@@ -53,7 +53,7 @@ import { CadenabusquedaComponent } from './components/cadenabusqueda/cadenabusqu
     ObtenerImagenComponent,
     ConfirmacionAccionUsuarioComponent,
     SelectorMultipleDobleListaComponent,
-    VisorHorarioComponent,
+
     SelectorListaSimpleComponent,
     CadenabusquedaComponent
   ]

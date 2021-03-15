@@ -20,6 +20,7 @@ export class CabeceraEntidadHorarioComponent implements OnInit {
     this.store.pipe(select(FromEntidadesHorarioSelectors.selectEntidadHorarioActiva))
       .subscribe(entidadHorarioActiva => this.entidadHorario = entidadHorarioActiva);
     
+
   }
 
 }

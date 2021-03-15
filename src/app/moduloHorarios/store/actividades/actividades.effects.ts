@@ -56,6 +56,40 @@ export class actividadesEffects {
 
   ); // fin createeffect
 
+  cargarPlantillas$: Observable<Action> = createEffect(
+    () =>
+      this.action$.pipe(
+        ofType(actividadesActions.cargarPlantillas),
+
+        switchMap(
+          action => {
+
+            this.store.dispatch(PrincipalActions.cargandoDatos({ mensaje: "cargando" }));
+            return this.horarioService.obtenerTodasLasPlantillas()
+              .pipe(
+                map(
+                  plantillas => {
+                    this.store.dispatch(PrincipalActions.cargadoDatos());
+                    return actividadesActions.cargarPlantillasOK({ plantillas: plantillas });
+                  }
+
+                ), // Fin map
+
+                catchError(
+                  error => {
+                    this.store.dispatch(PrincipalActions.cargadoDatos());
+                    return of(actividadesActions.cargarPlantillasError({ error: 'error' }))
+                  }
+
+                )
+              ) // fin pipe
+
+                }
+      ) // Fin mergeMap
+
+    ) // fin this.action$.pipe
+
+  );
   constructor(
     private horarioService: HorarioService,
     private action$: Actions,

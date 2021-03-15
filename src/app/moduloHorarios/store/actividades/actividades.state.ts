@@ -1,11 +1,11 @@
+import { Plantilla } from './../../models/plantilla.model';
 import { Actividad } from './../../models/actividad.model';
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 
 export interface actividadesState extends EntityState<Actividad> {
   actividadActiva: Actividad | undefined;
-  procesandoAccion: boolean;
-  errorAccion: any;
-
+  plantillas: Plantilla[];
+  plantillaActiva: Plantilla | undefined;
 }
 
 // Función que devuelve el identificador de la primary key
@@ -30,7 +30,8 @@ export const adapter: EntityAdapter<Actividad> = createEntityAdapter<Actividad>(
 export const initialActividadesState: actividadesState = adapter.getInitialState(
   {
     actividadActiva: undefined,
-    procesandoAccion: false,
-    errorAccion: null
+    plantillas: [],
+    plantillaActiva: undefined
+
   }
 )

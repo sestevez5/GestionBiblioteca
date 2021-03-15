@@ -1,4 +1,3 @@
-import { DemoHorarioComponent } from './moduloPrincipal/components/demo-horario/demo-horario.component';
 import { DemoSelectorMultipleDobleListaComponent } from './moduloPrincipal/components/demo-selector-multiple-doble-lista/demo-selector-multiple-doble-lista.component';
 import { UsuarioAutenticadoGuard } from './moduloAuth/guards/usuarioAutenticado.guard';
 import { RegistroComponent } from './moduloAuth/components/nuevo-editar-usuario/nuevo-editar-usuario.component';
@@ -30,7 +29,7 @@ export const Approutes: Routes = [
         path: 'login',
         component: IndexSubsistemaComponent,
         data: { nombreSubsistema: 'Autenticación' },
-        
+
         children: [
           { path: '', redirectTo: 'login', pathMatch: "full" },
          // { path: 'index', component: ListaUsuariosComponent, canActivate: [UsuarioAutenticadoGuard]},

@@ -15,11 +15,11 @@ export const cargarEntidadesHorarioOK       = createAction('[ENTIDADESHORARIO] c
 export const cargarEntidadesHorarioError    = createAction('[ENTIDADESHORARIO] carga de entidadesHorario errónea', props<{ error: string }>());
 
 // creación de un nuevo EntidadHorario.
-export const crearEntidadHorario           = createAction('[ENTIDADESHORARIO] crear EntidadHorario', props<{ entidadHorario: EntidadHorario }>());
-export const crearEntidadHorarioOK         = createAction('[ENTIDADESHORARIO] creación de EntidadHorario OK', props<{ entidadHorario: EntidadHorario | undefined }>());
-export const crearEntidadHorarioError      = createAction('[ENTIDADESHORARIO] creación de EntidadHorario errónea', props<{ error: string }>());
+export const crearEntidadHorario           = createAction('[ENTIDADESHORARIO] crear entidadHorario', props<{ entidadHorario: EntidadHorario }>());
+export const crearEntidadHorarioOK         = createAction('[ENTIDADESHORARIO] creación de entidadHorario OK', props<{ entidadHorario: EntidadHorario | undefined }>());
+export const crearEntidadHorarioError      = createAction('[ENTIDADESHORARIO] creación de entidadHorario errónea', props<{ error: string }>());
 
-// cargar EntidadHorario.
+// seleccionar EntidadHorario.
 export const seleccionarEntidadHorario     = createAction('[ENTIDADESHORARIO] seleccionar EntidadHorario', props<{ entidadHorario: EntidadHorario, tipoEntidadHorario: EnumTipoEntidadHorario }>());
 
 // modificación de un EntidadHorario.

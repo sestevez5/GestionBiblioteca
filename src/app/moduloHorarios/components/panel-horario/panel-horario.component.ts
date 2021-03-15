@@ -29,15 +29,28 @@ export class PanelHorarioComponent implements OnInit {
 
   ngOnInit(): void {
 
-
-    this.horarioG = new HorarioG('div#horario', this.ParametrosHorario, this.Actividades, this.idPlantillaActual);
+    this.horarioG = new HorarioG('div#horario', this.ParametrosHorario);
     this.evento$ = this.horarioG.eventos$;
+
+
+    this.store
+      .pipe(
+        select(FromActividadesSelectors.selectPlantillaActiva)
+      )
+      .subscribe(
+        plantillaActiva => plantillaActiva ? this.horarioG.anyadirPlantilla(plantillaActiva) : null
+    )
+
+
 
     this.store.pipe(
       select(FromActividadesSelectors.selectTodasLasActividades)
     )
       .subscribe(
-      actividades => this.horarioG.anyadirActualizarActividades(actividades)
+        actividades => {
+          console.log('Actividades: ',actividades.map(act => act.idActividad));
+          this.horarioG.actualizarActividades(actividades)
+        }
     )
 
 

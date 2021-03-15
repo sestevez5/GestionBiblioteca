@@ -1,3 +1,4 @@
+import { Plantilla } from './../../models/plantilla.model';
 import { Update } from '@ngrx/entity/src/models';
 
 import { Actividad } from '../../models/actividad.model';
@@ -19,10 +20,10 @@ export const loadActividadesFailure = createAction(
 
 
 // ---------------------------------------------
-// Acciones de gestión de actividads.
+// Acciones de gestión de actividades.
 // ---------------------------------------------
 
-// carga de actividads.
+// carga de actividades.
 export const cargarActividades         = createAction('[ACTIVIDADES] cargar actividades');
 export const cargarActividadesOK       = createAction('[ACTIVIDADES] carga de actividades OK', props<{ actividades: Actividad[] }>());
 export const cargarActividadesError    = createAction('[ACTIVIDADES] carga de actividades errónea', props<{ error: string }>());
@@ -47,4 +48,13 @@ export const eliminarActividad        = createAction('[ACTIVIDADES] eliminar act
 export const eliminarActividadOK      = createAction('[ACTIVIDADES] eliminación actividad OK', props<{ idActividad: string }>());
 export const eliminarActividadError   = createAction('[ACTIVIDADES] eliminación actividad errónea', props<{ error: string }>());
 
+// ---------------------------------------------
+// Acciones de gestión de plantillas.
+// ---------------------------------------------
+// carga de actividades.
+export const cargarPlantillas         = createAction('[PLANTILLAS] cargar plantillas');
+export const cargarPlantillasOK       = createAction('[PLANTILLAS] carga de plantillas OK', props<{ plantillas: Plantilla[] }>());
+export const cargarPlantillasError    = createAction('[PLANTILLAS] carga de plantillas errónea', props<{ error: string }>());
+
+export const seleccionarPlantilla     = createAction('[PLANTILLAS] seleccionar plantilla', props<{ plantilla: Plantilla }>());
 

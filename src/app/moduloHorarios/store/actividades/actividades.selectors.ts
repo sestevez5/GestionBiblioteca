@@ -1,3 +1,4 @@
+import { actividadesState } from './actividades.state';
 import { selectHorario } from './../index';
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import * as FromModuloHorario from '../index';
@@ -25,7 +26,14 @@ export const selectTotalActividades = createSelector(
   actividadesReducers.selectTotalActividades
 );
 
-export const selectProcesandoAccion = createSelector(
-  FromModuloHorario.selectHorario,
-  ({actividades}) => actividades.procesandoAccion
+export const selectTodasLasPlantillas = createSelector(
+  selectActividades,
+  actividadesState => actividadesState.plantillas
 );
+
+export const selectPlantillaActiva = createSelector(
+  selectActividades,
+  actividadesState => actividadesState.plantillaActiva
+);
+
+

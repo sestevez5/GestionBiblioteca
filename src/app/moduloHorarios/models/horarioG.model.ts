@@ -1,7 +1,5 @@
 import { IActividadesSesion } from './actividadesSesion.model';
 import { parametrosHorario } from './parametrosHorario.model';
-import { HorarioService } from '../../moduloHelpers/services/horario.service';
-import { select } from '@ngrx/store';
 import { Sesion } from './sesion';
 import { Plantilla } from './plantilla.model';
 import { Subject } from 'rxjs';
@@ -10,8 +8,6 @@ import { DiaSemana } from './diaSemana.model';
 import { ActividadG, EstadoActividad } from './actividadG.model';
 import { Actividad } from './actividad.model';
 import * as d3 from 'd3';
-import { act } from '@ngrx/effects';
-import { ConstantPool } from '@angular/compiler';
 
 
 export class HorarioG {
@@ -29,6 +25,8 @@ export class HorarioG {
     { codigo: 'S', denominacionCorta: 'SAB', denominacionLarga: 'Sábado' },
     { codigo: 'D', denominacionCorta: 'DOM', denominacionLarga: 'Domingo' },
   ];
+
+  plantilla: Plantilla;
 
   params: parametrosGrafico = {
 
@@ -80,49 +78,14 @@ export class HorarioG {
 
   actividadesG: ActividadG[] = [];
 
-  constructor(elementoRaiz: string, parametrosHorario: parametrosHorario, actividades: Actividad[], idPlantillaActual: number) {
-
+  constructor(elementoRaiz: string, parametrosHorario: parametrosHorario, plantilla?: Plantilla) {
 
     this.elementoRaiz = elementoRaiz;
-    window.addEventListener('resize', this.generarGrafico.bind(this,parametrosHorario, idPlantillaActual));
-    this.generarGrafico(parametrosHorario, idPlantillaActual);
-    if (actividades) this.anyadirActualizarActividades(actividades);
+    window.addEventListener('resize', this.generarGrafico.bind(this,parametrosHorario, plantilla));
+    this.generarGrafico(parametrosHorario, plantilla);
+
   }
-  anyadirActualizarActividades(actividades: Actividad[]) {
 
-    const ActividadesNuevas: Actividad[] = actividades.filter(act => !this.actividadesG.map(actG => actG.idActividad).includes(act.idActividad));
-    const ActividadesModificadas: Actividad[] = actividades.filter(act => this.actividadesG.map(actG => actG.idActividad).includes(act.idActividad));
-
-    // Añadimos todas las actividades que están en Actividades nuevas
-    // marcándolas con dicho estado.
-    ActividadesNuevas.forEach(
-      act => {
-        const nuevaActividadG = new ActividadG(act);
-        nuevaActividadG.estado = EstadoActividad.NUEVA
-        this.actividadesG.push(nuevaActividadG);
-      }
-    );
-
-    //Procedemos a modificar las actividades.
-    ActividadesModificadas.forEach(
-      act =>
-           this.actividadesG.filter(actG => actG.idActividad === act.idActividad)
-          .map(actG => {
-            actG.actualizarActividad(act);
-            actG.nivelAncho = 0;
-            actG.estado = EstadoActividad.MODIFICADA
-          }
-          )
-    );
-
-    const actividadesGNuevas = this.actividadesG.filter(actG => actG.estado === EstadoActividad.NUEVA);
-    const actividadesGModificadas = this.actividadesG.filter(actG => actG.estado === EstadoActividad.MODIFICADA);
-
-    // Calcula el ancho de la actifidad en función de las actividades que cubre.
-    this.calcularFactorAnchoActividadesG(this.actividadesG.filter(actG => (actG.estado === EstadoActividad.NUEVA) || this.actividadesG.filter(actG => actG.estado === EstadoActividad.MODIFICADA)));
-
-    this.actualizarPanelesActividades();
-  }
   borrarActividades(idActividades: string[]) {
 
     this.actividadesG.filter(actG => idActividades.includes(actG.idActividad)).
@@ -131,14 +94,30 @@ export class HorarioG {
 
   }
 
-  CambiarPlantilla(idPlantilla: string) {
+  actualizarActividades(actividades: Actividad[]) {
+
+    this.actividadesG = [];
+    actividades.forEach(
+      act => {
+        const nuevaActividadG = new ActividadG(act);
+        nuevaActividadG.estado = EstadoActividad.NUEVA
+        this.actividadesG.push(nuevaActividadG);
+      }
+    );
+
+    this.calcularFactorAnchoActividadesG(this.actividadesG.filter(actG => (actG.estado === EstadoActividad.NUEVA) || this.actividadesG.filter(actG => actG.estado === EstadoActividad.MODIFICADA)));
+
+    this.actualizarPanelesActividades();
+
 
   }
+
+
 
   //----------------------------------------------------------------------------------------------------------
   // RENDERIZADO DEL HORARIO
   //----------------------------------------------------------------------------------------------------------
-  generarGrafico(parametrosHorario: parametrosHorario, idPlantillaActual: number) {
+  generarGrafico(parametrosHorario: parametrosHorario, plantillaActual?: Plantilla) {
 
     if (this.svg) d3.select('svg').remove();
     this.svg = d3.select(this.elementoRaiz).append('svg');
@@ -147,9 +126,14 @@ export class HorarioG {
     this.configurarSvg();
     this.anyadirPanelHorario();
     this.anyadirPanelesDiasSemana();
-    this.params.parametrosHorario ? this.anyadirPlantilla(this.params.parametrosHorario.plantillas[0]) : null;
+    if (plantillaActual) {
+      this.plantilla = plantillaActual;
+      this.anyadirPlantilla(this.plantilla);
+    }
+
 
   }
+
   private configurarSvg()
   {
     //-------------------------------------------------
@@ -177,6 +161,7 @@ export class HorarioG {
     this.anyadirDefs(this.svg);
 
   }
+
   private inicializarParametros(parametrosHorario: parametrosHorario) {
 
     this.params.parametrosHorario = parametrosHorario;
@@ -211,6 +196,7 @@ export class HorarioG {
     this.params.panelSesiones.anchoSesion = parseFloat(this.params.escalas.escalaHorizontal.bandwidth()) * (100-this.params.panelSesiones.margenLateral * 2)*0.01;
 
   }
+
   private anyadirPanelHorario() {
 
     //-------------------------------------------------
@@ -260,6 +246,7 @@ export class HorarioG {
     //-------------------------------------------------
     return panelHorario;
   }
+
   private anyadirPanelesDiasSemana() {
 
     //-------------------------------------------------
@@ -291,7 +278,8 @@ export class HorarioG {
     return panelesDiasSemana;
 
   }
-  private anyadirPlantilla(pl: Plantilla) {
+
+  public anyadirPlantilla(pl: Plantilla) {
 
     d3.selectAll('g.panelSesiones').remove();
 
@@ -305,27 +293,15 @@ export class HorarioG {
   }
   private actualizarPanelesActividades() {
 
-    // GESTION DE BORRADOS
-    this.actividadesG
-      .filter(actG => actG.estado === EstadoActividad.ELIMINADA || actG.estado === EstadoActividad.MODIFICADA)
-      .forEach(actG => {
-        this.svg.select('g#act' + actG.idActividad).remove();
-      }
-      );
+    this.svg.selectAll('g.panelSesionActividades').remove();
 
-    this.actividadesG = this.actividadesG.filter(actG => actG.estado !== EstadoActividad.ELIMINADA);
-
-
-    // GESTION DE CREACIÓN
-     d3.selectAll('g.panelDiaSemana').nodes().forEach(
+    d3.selectAll('g.panelDiaSemana').nodes().forEach(
        (nodo: any) => {
-         const actividadesACrear = this.actividadesG.filter(actG => actG.sesion.diaSemana === nodo['id'] && (actG.estado === EstadoActividad.NUEVA || actG.estado === EstadoActividad.MODIFICADA));
+         const actividadesACrear = this.actividadesG.filter(actG => actG.sesion.diaSemana === nodo['id']);
          this.renderizarActividades('g#' + nodo['id'], actividadesACrear)
        }
      );
 
-    // Una vez procesados todos los cambios las desmarcamos
-    this.actividadesG.map(actG => actG.estado = EstadoActividad.SINCAMBIOS);
   }
 
   //----------------------------------------------------------------------------------------------------------
@@ -400,7 +376,6 @@ export class HorarioG {
     this.crearPanelCuerpoSesionConActividades(panelesSesionActividades);
 
     this.añyadirPanelesActividades(actividadesSesion)
-
 
     // Paso 5: añadir los paneles que representarán a cada una de las actividades.
 
@@ -568,7 +543,7 @@ export class HorarioG {
   }
   añyadirPanelesActividades(actividadesSesiones: IActividadesSesion[]) {
 
-    d3.selectAll('#panelSesionActividadesP1M1').nodes().forEach((x: any) => console.log(x.dataset.actividades));
+
     const anchoSesion = this.params.panelSesiones.anchoSesion ? this.params.panelSesiones.anchoSesion.toString() : '0';
 
     actividadesSesiones.forEach(as => {
@@ -591,10 +566,8 @@ export class HorarioG {
         .attr('height', 40)
         .attr('stroke', 'white')
         .on("click", (d: any, i: any, e: any) => {
-          console.log(i)
 
           const marcadaActividadActualComoSeleccionada = d3.select('g#panelActividad' + i.idActividad).attr('class').split(' ').includes('actividadSeleccionada');
-
           d.ctrlKey ? null : this.desmarcarActividadesComoSeleccionadas();
 
           marcadaActividadActualComoSeleccionada ?
@@ -612,7 +585,7 @@ export class HorarioG {
         .text((d:any, i:any, n:any) =>d.idActividad )
         .attr('y', 30 / 2)
         .attr('font-size', '.8em')
-        .attr('fill', 'white')
+        .attr('fill', 'black')
         .attr('dominant-baseline', 'central')
         .attr('text-anchor', 'middle');
 
@@ -760,7 +733,7 @@ export class HorarioG {
       []
       )
   }
-  
+
   private anyadirDefs(element: any) {
     const defs = element.append('defs');
 

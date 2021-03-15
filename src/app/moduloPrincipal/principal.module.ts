@@ -29,7 +29,7 @@ import { environment } from '../../environments/environment';
 import { StoreModule } from '@ngrx/store';
 import { ModuloPrincipalFeaturekey, ModuloPrincipalReducers } from './store/index';
 import { DemoSelectorMultipleDobleListaComponent } from './components/demo-selector-multiple-doble-lista/demo-selector-multiple-doble-lista.component';
-import { DemoHorarioComponent } from './components/demo-horario/demo-horario.component';
+
 
 
 @NgModule({
@@ -38,8 +38,7 @@ import { DemoHorarioComponent } from './components/demo-horario/demo-horario.com
     AppComponent,
     IndexComponent,
     LoginComponent,
-    DemoSelectorMultipleDobleListaComponent,
-    DemoHorarioComponent
+    DemoSelectorMultipleDobleListaComponent
   ],
   imports: [
     CommonModule,

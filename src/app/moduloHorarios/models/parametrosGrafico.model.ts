@@ -1,5 +1,5 @@
 import { parametrosHorario } from './parametrosHorario.model';
-import { Plantilla } from '../../moduloHelpers/models/plantilla.model';
+
 export interface parametrosGrafico {
 
   // Parámetros del gráfico, en general.

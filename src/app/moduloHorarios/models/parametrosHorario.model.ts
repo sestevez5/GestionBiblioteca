@@ -3,7 +3,6 @@ export interface parametrosHorario {
   horaMinima: string,
   horaMaxima: string,
   diasSemanaHabiles: string[],
-  plantillas: Plantilla[]
 }
 
 

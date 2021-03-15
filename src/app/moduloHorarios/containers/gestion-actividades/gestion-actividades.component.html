@@ -1,5 +1,7 @@
   <div class="row f1">
 
+
+
     <div class="col-2 c1-f1">
       <app-selector-entidades></app-selector-entidades>
     </div>
@@ -8,9 +10,33 @@
 
 
       <div class="row f1-c2-f1">
-        <div class="c1-f1-c2-f1 col-12">
+        <div class="c1-f1-c2-f1 col-10">
           <app-cabecera-entidad-horario></app-cabecera-entidad-horario>
         </div>
+        <div class="col-2">
+
+    <!---------------------------------->
+    <!-- Selector del tipo de entidad -->
+     <!---------------------------------->
+    <div class="row mb-3">
+
+      <div class="row mb-3">
+        <div class="col-12 d-flex flex-row-reverse">
+          <div ngbDropdown class="w-100" id="selectorTipoEntidad">
+            <button class="btn btn-outline-primary w-100" id="dropdownBasic1" ngbDropdownToggle >
+              plantilla {{this.plantillaActual.denominacion}}
+              </button>
+              <div ngbDropdownMenu aria-labelledby="dropdownBasic1 w-100">
+              <button class="w-100" *ngFor="let plantilla of this.plantillas" class="dropdown-item" >plantilla {{ plantilla.denominacion }}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+          Plantilla:
+          Semana:
+        </div>
+
 
       </div>
 

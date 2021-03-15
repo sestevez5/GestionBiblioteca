@@ -9,24 +9,24 @@ export const actividadesReducer = createReducer(
   initialActividadesState,
 
   // -------------------------------------------------------------------------------
-  // CREACIÓN DE LIBRO
+  // CREACIÓN DE ACTIVIDAD
   // -------------------------------------------------------------------------------
-  // Crear libro.
+  // Crear actividad.
   on(
     actividadesActions.crearActividad,
     (state, action) => {
-      return { ...state, procesandoAccion: true, errorAccion: null};
+      return { ...state};
     }
   ),
 
-  // Libro creado Ok.
+  // actividad creada Ok.
   on(
     actividadesActions.crearActividadOK,
     (state, action) => {
       if (!action.actividad) {
         return state
       }
-      return adapter.addOne(action.actividad, { ...state, procesandoAccion: false, errorAccion: null });
+      return adapter.addOne(action.actividad, { ...state });
 
     }
   ),
@@ -35,19 +35,20 @@ export const actividadesReducer = createReducer(
   on(
     actividadesActions.crearActividadError,
     (state, action) => {
-      return { ...state, procesandoAccion: false, error: action.error };
+      return { ...state };
     }
   ),
 
 
   // -------------------------------------------------------------------------------
-  // CARGA DE actividades
+  // CARGA DE ACTIVIDADES
   // -------------------------------------------------------------------------------
+
   // cargando actividades.
   on(
     actividadesActions.cargarActividades,
     (state, action) => {
-      return { ...state, procesandoAccion: true, errorAccion: false};
+      return { ...state};
     }
   ),
 
@@ -60,7 +61,7 @@ export const actividadesReducer = createReducer(
         return state;
       }
       else {
-        return adapter.setAll(action.actividades, { ...state, procesandoAccion: false, errorAccion: null });
+        return adapter.setAll(action.actividades, { ...state});
       }
 
 
@@ -71,75 +72,77 @@ export const actividadesReducer = createReducer(
   on(
     actividadesActions.cargarActividadesError,
     (state, action) => {
-      return { ...state,  procesandoAccion: false, error: action.error};
+      return { ...state};
     }
   ),
 
 
 
   // -------------------------------------------------------------------------------
-  // CARGA DE UN SOLO LIBRO
+  // CARGA DE UNA SOLA ACTIVIDAD
   // -------------------------------------------------------------------------------
-   // cargando libro.
+
+  // cargando actividad.
    on(
     actividadesActions.cargarActividad,
     (state, action) => {
-      return { ...state, actividadActiva: undefined, procesandoAccion: true, errorAccion: null };
+      return { ...state, actividadActiva: undefined };
     }
   ),
 
-  // libro cargado correctamente.
+  // Actividad cargada correctamente.
   on(
     actividadesActions.cargarActividadOK,
     (state, action) => {
-      return { ...state, actividadActiva: action.actividad,  procesandoAccion: false, errorAccion: null }
+      return { ...state, actividadActiva: action.actividad}
     }
   ),
 
-  // error en la carga del libro
+  // error en la carga de la actividad
   on(
     actividadesActions.cargarActividadError,
     (state, action) => {
-      return { ...state, actividadActiva: undefined, procesandoAccion: false, errorAccion: action.error};
+      return { ...state, actividadActiva: undefined};
     }
   ),
 
   // -------------------------------------------------------------------------------
-  // MODIFICAR LIBRO
+  // MODIFICAR ACTIVIDAD
   // -------------------------------------------------------------------------------
-  // modificarActividad.
+
+  // modificar Actividad.
   on(
   actividadesActions.modificarActividad,
   (state, action) => {
     return {
-      ...state, actividadActiva: action.actividad, procesandoAccion: true, errorAccion: null
-    };
+      ...state, actividadActiva: action.actividad };
   }
   ),
 
-  // libro cargado correctamente.
+  // actividad modificada correctamente.
   on(
     actividadesActions.modificarActividadOK,
     (state, action) => {
-      return adapter.updateOne(action.actividad, { ...state, actividadActiva: undefined, procesandoAccion: false, errorAccion: null  })
+      return adapter.updateOne(action.actividad, { ...state, actividadActiva: undefined  })
 
     }
   ),
 
-  // error en la carga del libro
+  // error en la modificacion de la actividad
   on(
     actividadesActions.modificarActividadError,
     (state, action) => {
-      return { ...state, actividadActiva: undefined, procesandoAccion: false, errorAccion: action.error };
+      return { ...state, actividadActiva: undefined };
     }
   ),
 
 
 
   // -------------------------------------------------------------------------------
-  //  ELIMINAR LIBRO
+  //  ELIMINAR ACTIVIDAD
   // -------------------------------------------------------------------------------
-  // modificarActividad.
+
+  // eliminar actividad.
   on(
     actividadesActions.eliminarActividad,
     (state, action) => {
@@ -149,15 +152,15 @@ export const actividadesReducer = createReducer(
     }
     ),
 
-    // libro cargado correctamente.
+    // Actividad eliminada correctamente.
     on(
       actividadesActions.eliminarActividadOK,
       (state, action) => {
-        return adapter.removeOne(action.idActividad, { ...state, actividadActiva: undefined, procesandoAccion: false, errorAccion: null})
+        return adapter.removeOne(action.idActividad, { ...state, actividadActiva: undefined})
       }
     ),
 
-    // error en la carga del libro
+    // error en la eliminacion de la actividad
     on(
       actividadesActions.eliminarActividadError,
       (state, action) => {
@@ -166,7 +169,51 @@ export const actividadesReducer = createReducer(
   ),
 
 
+  // -------------------------------------------------------------------------------
+  // CARGA DE PLANTILLA
+  // -------------------------------------------------------------------------------
+
+  // Cargando plantilla.
+  on(
+    actividadesActions.cargarPlantillas,
+    (state, action) => {
+      return { ...state};
+    }
+  ),
+
+  // Plantillas cargadas correctamente.
+  on(
+    actividadesActions.cargarPlantillasOK,
+    (state, action) => {
+
+     return { ...state, plantillas: action.plantillas}
+
+    }
+  ),
+
+  // Error en la carga de plantillas
+  on(
+    actividadesActions.cargarPlantillasError,
+    (state, action) => {
+      return { ...state};
+    }
+  ),
+
+  // -------------------------------------------------------------------------------
+  // SELECCIÓN DE UNA PLANTILLA
+  // -------------------------------------------------------------------------------
+
+    // Selección de una plantilla.
+    on(
+      actividadesActions.seleccionarPlantilla,
+      (state, action) => {
+        return { ...state, plantillaActiva: action.plantilla};
+      }
+    ),
 )
+
+
+
 
 
 // get the selectors

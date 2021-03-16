@@ -22,7 +22,8 @@ import { HelperModule } from '../moduloHelpers/helper.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SelectorEntidadesComponent } from './containers/selector-entidades/selector-entidades.component';
 import { MostrarActividadComponent } from './containers/mostrar-actividad/mostrar-actividad.component';
-
+import { SelectorSemanasComponent } from './components/selector-semanas/selector-semanas.component';
+import { FormsModule } from '@angular/forms';
 
 
 
@@ -33,7 +34,8 @@ import { MostrarActividadComponent } from './containers/mostrar-actividad/mostra
     StoreModule.forFeature(ModuloHorarioFeaturekey, ModuloHorarioReducers),
     EffectsModule.forFeature([actividadesEffects, entidadesHorarioEffects]),
     HelperModule,
-    NgbModule
+    NgbModule,
+    FormsModule,
 
   ],
   declarations: [
@@ -42,7 +44,8 @@ import { MostrarActividadComponent } from './containers/mostrar-actividad/mostra
     PanelHorarioComponent,
     SelectorEntidadesComponent,
     MostrarActividadComponent,
-    CabeceraEntidadHorarioComponent
+    CabeceraEntidadHorarioComponent,
+    SelectorSemanasComponent
   ],
 })
 export class HorariosModule { }

@@ -424,12 +424,12 @@ export class HorarioService {
     return plantillas$;
   }
 
-  obtenerPlantilla(idPlantilla: string): Observable<Plantilla | undefined> {
-    const plantilla$ = new BehaviorSubject<Plantilla | undefined>(undefined);
+  obtenerPlantilla(idPlantilla: string): Observable<Plantilla> {
+    const plantilla$ = new BehaviorSubject<Plantilla>(null);
 
     const plantilla = this.plantillas.filter(plantilla => plantilla.idPlantilla === idPlantilla);
 
-    plantilla ? plantilla$.next(plantilla[0]) : plantilla$.next(undefined);
+    plantilla ? plantilla$.next(plantilla[0]) : plantilla$.thrownError('prueba');
 
     return plantilla$;
   }

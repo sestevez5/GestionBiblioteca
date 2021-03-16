@@ -3,9 +3,9 @@ import { Actividad } from './../../models/actividad.model';
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 
 export interface actividadesState extends EntityState<Actividad> {
-  actividadActiva: Actividad | undefined;
+  actividadActiva: Actividad;
   plantillas: Plantilla[];
-  plantillaActiva: Plantilla | undefined;
+  plantillaActiva: Plantilla;
 }
 
 // Función que devuelve el identificador de la primary key
@@ -29,9 +29,9 @@ export const adapter: EntityAdapter<Actividad> = createEntityAdapter<Actividad>(
 
 export const initialActividadesState: actividadesState = adapter.getInitialState(
   {
-    actividadActiva: undefined,
+    actividadActiva: null,
     plantillas: [],
-    plantillaActiva: undefined
+    plantillaActiva: null
 
   }
 )

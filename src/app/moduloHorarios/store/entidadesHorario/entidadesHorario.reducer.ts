@@ -80,7 +80,7 @@ export const entidadesHorarioReducer = createReducer(
   // -------------------------------------------------------------------------------
   // SELECCIONAR ENTIDAD HORARIO
   // -------------------------------------------------------------------------------
-   // cargando Actividad.
+   // cargando entidad Horario.
    on(
     entidadesHorarioActions.seleccionarEntidadHorario,
     (state, action) => {
@@ -105,7 +105,7 @@ export const entidadesHorarioReducer = createReducer(
   on(
     entidadesHorarioActions.modificarEntidadHorarioOK,
     (state, action) => {
-      return adapter.updateOne(action.entidadHorario, { ...state, entidadHorarioActiva: undefined})
+      return adapter.updateOne(action.entidadHorario, { ...state, entidadHorarioActiva: null})
 
     }
   ),

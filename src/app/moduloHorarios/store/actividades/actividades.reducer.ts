@@ -209,6 +209,17 @@ export const actividadesReducer = createReducer(
       (state, action) => {
         return { ...state, plantillaActiva: action.plantilla};
       }
+  ),
+
+  // -------------------------------------------------------------------------------
+  // SELECCIÓN DE UNA SEMANA
+  // -------------------------------------------------------------------------------
+    // Selección de una plantilla.
+    on(
+      actividadesActions.seleccionarSemana,
+      (state, action) => {
+        return { ...state, lunesSemanaSeleccionada: action.lunesSemanaSeleccionada};
+      }
     ),
 )
 

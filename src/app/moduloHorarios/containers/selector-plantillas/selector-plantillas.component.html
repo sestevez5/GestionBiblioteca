@@ -1,0 +1,8 @@
+<div ngbDropdown class="w-100" id="selectorTipoEntidad">
+  <button class="btn btn-outline-primary w-100" id="dropdownBasic1" ngbDropdownToggle >
+    plantilla {{this.plantillaActual.denominacion}}
+    </button>
+    <div ngbDropdownMenu aria-labelledby="dropdownBasic1 w-100">
+    <button class="w-100" *ngFor="let plantilla of this.plantillas" class="dropdown-item" >plantilla {{ plantilla.denominacion }}</button>
+  </div>
+</div>

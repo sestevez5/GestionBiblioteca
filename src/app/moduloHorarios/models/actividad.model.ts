@@ -1,3 +1,4 @@
+import { PeriodoVigencia } from './peridoVigencia';
 import { Grupo } from './grupo.model';
 import { Asignatura } from './asignatura.model';
 import { Docente } from './docente.model';
@@ -11,6 +12,7 @@ export class Actividad {
   asignaturas: Asignatura[];
   grupos: Grupo[];
   dependencia: string | undefined;
+  periodoVigencia: PeriodoVigencia;
 
   public actualizarActividad(actividad: Actividad): void {
     this.detalleActividad = actividad.detalleActividad
@@ -19,6 +21,7 @@ export class Actividad {
     this.dependencia = actividad.dependencia;
     this.grupos = actividad.grupos;
     this.asignaturas = actividad.asignaturas;
+    this.periodoVigencia = actividad.periodoVigencia;
  }
 
 

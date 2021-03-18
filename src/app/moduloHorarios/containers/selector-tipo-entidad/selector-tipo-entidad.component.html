@@ -1,0 +1,12 @@
+<div class="row mb-3">
+  <div class="col-12 d-flex flex-row-reverse">
+    <div ngbDropdown class="w-100" id="selectorTipoEntidad">
+      <button class="btn btn-outline-primary w-100" id="dropdownBasic1" ngbDropdownToggle >
+        Horarios de {{this.tipoEntidadSeleccionada}}
+        </button>
+        <div ngbDropdownMenu aria-labelledby="dropdownBasic1 w-100">
+        <button class="w-100" *ngFor="let tipoEntidad of this.TiposEntidadesHorario | keyvalue" class="dropdown-item" (click)="onSeleccionarTipoEntidad(tipoEntidad.value)">Horarios de {{ tipoEntidad.value }}</button>
+      </div>
+    </div>
+  </div>
+</div>

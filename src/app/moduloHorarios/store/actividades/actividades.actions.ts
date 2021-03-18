@@ -58,3 +58,7 @@ export const cargarPlantillasError    = createAction('[PLANTILLAS] carga de plan
 
 export const seleccionarPlantilla     = createAction('[PLANTILLAS] seleccionar plantilla', props<{ plantilla: Plantilla }>());
 
+// ---------------------------------------------
+// Acciones de gestión de semanas.
+// ---------------------------------------------
+export const seleccionarSemana     = createAction('[SEMANAS] seleccionar seman', props<{ lunesSemanaSeleccionada: Date }>());

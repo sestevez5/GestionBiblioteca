@@ -1,3 +1,4 @@
+import { PeriodoVigencia } from './../models/peridoVigencia';
 import { cargarPlantillasError } from './../store/actividades/actividades.actions';
 import { Sesion } from './../models/sesion';
 import { IActividadesSesion } from './../models/actividadesSesion.model';
@@ -47,7 +48,35 @@ export class HorarioService {
       horaMinima: '07:00',
       horaMaxima: '22:00',
       diasSemanaHabiles: ['L','M','X','V'],
-     };
+    };
+
+  PeriodoVigencia: PeriodoVigencia[] = [
+    {
+      idPeriodoVigencia: '1',
+      denominacion: 'curso completo',
+      fechaInicio: new Date(2020, 9, 1),
+      fechaFin: new Date(2021, 6, 20),
+      computo: 1
+    },
+
+    {
+      idPeriodoVigencia: '2',
+      denominacion: 'Primer trimestre',
+      fechaInicio: new Date(2020, 9, 1),
+      fechaFin: new Date(2020, 12, 31),
+      computo: 1 / 3
+    },
+
+    {
+      idPeriodoVigencia: '3',
+      denominacion: 'Segundo trimestre',
+      fechaInicio: new Date(2021, 1, 1),
+      fechaFin: new Date(2021, 3, 30),
+      computo: 1 / 3
+    },
+
+
+  ]
 
   plantillas: Plantilla[] = [
     {
@@ -130,7 +159,8 @@ export class HorarioService {
       grupos: ['2'],
       docentes: ['IJyiJjc2LXTZXsdwY27ORvpzIYw1','NTNYueJSicQOvYLjWzQs5ZcyeV63'],
       asignaturas: ['1'],
-      dependencia:'1'
+      dependencia: '1',
+      idPeriodoVigencia: '1'
     },
     {
       idActividad: '51',
@@ -139,7 +169,8 @@ export class HorarioService {
       grupos: ['2'],
       docentes: ['IJyiJjc2LXTZXsdwY27ORvpzIYw1','NTNYueJSicQOvYLjWzQs5ZcyeV63'],
       asignaturas: ['1'],
-      dependencia:'1'
+      dependencia:'1',
+      idPeriodoVigencia: '1'
     },
     {
       idActividad: '3',
@@ -148,7 +179,8 @@ export class HorarioService {
       grupos: ['2'],
       docentes: ['IJyiJjc2LXTZXsdwY27ORvpzIYw1','NTNYueJSicQOvYLjWzQs5ZcyeV63'],
       asignaturas: ['1'],
-      dependencia:'2'
+      dependencia:'2',
+      idPeriodoVigencia: '1'
     },
     {
       idActividad: '4',
@@ -157,7 +189,8 @@ export class HorarioService {
       grupos: ['2'],
       docentes: ['IJyiJjc2LXTZXsdwY27ORvpzIYw1'],
       asignaturas: ['1','3'],
-      dependencia:'2'
+      dependencia:'2',
+      idPeriodoVigencia: '1'
 
     },
     {
@@ -167,7 +200,8 @@ export class HorarioService {
       grupos: ['2'],
       docentes: ['NTNYueJSicQOvYLjWzQs5ZcyeV63'],
       asignaturas: ['1','3'],
-      dependencia:'2'
+      dependencia:'2',
+      idPeriodoVigencia: '1'
 
      },
      {
@@ -177,7 +211,8 @@ export class HorarioService {
        grupos: ['2'],
        docentes: [],
        asignaturas: ['1','3'],
-       dependencia:'2'
+       dependencia:'2',
+       idPeriodoVigencia: '1'
 
       },
     {
@@ -187,7 +222,8 @@ export class HorarioService {
       grupos: ['2'],
       docentes: ['uQ1KDOcvBxUEIk3c9do0ck4lvTa2'],
       asignaturas: ['1','3','4'],
-      dependencia:'3'
+      dependencia:'3',
+      idPeriodoVigencia: '1'
     },
 
     // {
@@ -197,7 +233,8 @@ export class HorarioService {
     //   grupos: ['3'],
     //   docentes: [],
     //   asignaturas: ['2','4'],
-    //   dependencia:'1'
+    //   dependencia:'1',
+      // idPeriodoVigencia: '1'
     // },
     // {
     //   idActividad: '8',
@@ -206,7 +243,8 @@ export class HorarioService {
     //   grupos: ['2'],
     //   docentes: [],
     //   asignaturas: ['2','3','1'],
-    //   dependencia:'2'
+    //   dependencia:'2',
+      // idPeriodoVigencia: '1'
      //}
 
   ];
@@ -544,6 +582,7 @@ interface IActividad {
   grupos: string[];
   docentes: string[];
   asignaturas: string[];
-  dependencia:string;
+  dependencia: string;
+  idPeriodoVigencia: string;
 }
 

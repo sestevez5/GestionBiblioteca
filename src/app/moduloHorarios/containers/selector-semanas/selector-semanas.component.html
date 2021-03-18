@@ -1,0 +1,40 @@
+<div class="form-check">
+  <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
+  <label class="form-check-label" for="exampleRadios1">
+    Todas las actividades
+  </label>
+</div>
+<div class="form-check">
+  <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
+  <label class="form-check-label" for="exampleRadios2">
+    Actividades de una semana
+  </label>
+  {{ this.convertirNgbDateEnFecha(this.semanaSeleccionada.inicio) | date: "dd/MM/yyyy"}} - {{ this.convertirNgbDateEnFecha(this.semanaSeleccionada.fin) | date: "dd/MM/yyyy"}}
+  <i (click)="d.toggle()" class="fa fa-calendar fa-lg " aria-hidden="true"></i>
+
+  <ng-template #t let-date let-focused="focused">
+    <span class="custom-day"
+          [class.focused]="focused"
+          [class.range]="isRange(date)"
+          [class.faded]="isHovered(date) || isInside(date)"
+          (mouseenter)="hoveredDate = date"
+          (mouseleave)="hoveredDate = null">
+      {{ date.day }}
+    </span>
+  </ng-template>
+
+  <!-- Es un elemento auxiliar para recoger el valor seleccionado
+  No aparecerá en la interfaz. -->
+  <input type="hidden"
+  class="form-control" placeholder="yyyy-mm-dd"
+  name="dp"
+  ngbDatepicker
+  (dateSelect)="onSeleccionarFecha($event)"
+  [dayTemplate]="t"
+  outsideDays="hidden"
+  #d="ngbDatepicker">
+</div>
+  <div>
+
+  </div>
+

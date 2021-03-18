@@ -1,0 +1,22 @@
+<div class="row" class="gestionHorario">
+  <div class="seccion seccionSelectorTipoEntidad">
+    <app-selector-tipo-entidad></app-selector-tipo-entidad>
+  </div>
+  <div class="seccion seccionCabeceraEntidadSeleccionada">
+    <app-cabecera-entidad-horario></app-cabecera-entidad-horario>
+  </div>
+  <div class="seccion seccionSelectorPlantilla">
+    <app-selector-plantillas></app-selector-plantillas></div>
+
+  <div class="seccion seccionSelectorSemanas">
+    <app-selector-semanas></app-selector-semanas>
+  </div>
+
+  <div class="seccion seccionSelectorEntidad">
+    <app-selector-entidades></app-selector-entidades>
+  </div>
+
+  <div class="seccion seccionActividadesEntidadSeleccionada">
+    <app-panel-horario [ParametrosHorario]="this.parametrosHorario" [Actividades]="this.actividades" [idPlantillaActual]=1></app-panel-horario>
+  </div>
+</div>

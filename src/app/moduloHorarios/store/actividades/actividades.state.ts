@@ -6,6 +6,7 @@ export interface actividadesState extends EntityState<Actividad> {
   actividadActiva: Actividad;
   plantillas: Plantilla[];
   plantillaActiva: Plantilla;
+  lunesSemanaSeleccionada: Date; // null => Se considera que se quiere todo el horario.
 }
 
 // Función que devuelve el identificador de la primary key
@@ -31,7 +32,8 @@ export const initialActividadesState: actividadesState = adapter.getInitialState
   {
     actividadActiva: null,
     plantillas: [],
-    plantillaActiva: null
+    plantillaActiva: null,
+    lunesSemanaSeleccionada: null,
 
   }
 )

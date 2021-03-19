@@ -1,8 +1,9 @@
 import { ModuloHorarioRootState } from './../../store/index';
 import { Store, select } from '@ngrx/store';
 import { EntidadHorario } from './../../models/entidadHorario.model';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import * as FromEntidadesHorarioSelectors from '../../store/entidadesHorario/entidadesHorario.selectors';
+
 
 @Component({
   selector: 'app-cabecera-entidad-horario',
@@ -19,7 +20,7 @@ export class CabeceraEntidadHorarioComponent implements OnInit {
 
     this.store.pipe(select(FromEntidadesHorarioSelectors.selectEntidadHorarioActiva))
       .subscribe(entidadHorarioActiva => this.entidadHorario = entidadHorarioActiva);
-    
+
 
   }
 

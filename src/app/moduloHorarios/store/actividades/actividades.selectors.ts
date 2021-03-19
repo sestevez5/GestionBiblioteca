@@ -36,4 +36,11 @@ export const selectPlantillaActiva = createSelector(
   actividadesState => actividadesState.plantillaActiva
 );
 
+export const selectParametrosHorario = createSelector(
+  selectActividades,
+  actividadesState => actividadesState.parametrosHorario
+);
+
+
+
 

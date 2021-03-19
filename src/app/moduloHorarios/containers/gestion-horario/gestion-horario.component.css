@@ -9,8 +9,10 @@
 }
 
 .seccion {
-  /* padding: 2px;
-  border: 1px solid tomato; */
+  padding: 5px;
+  border: 5px dotted tomato;
+  border-radius: 5px;
+
 }
 
 .seccionSelectorTipoEntidad {

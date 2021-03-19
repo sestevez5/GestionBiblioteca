@@ -1,3 +1,4 @@
+import { ParametrosHorario } from './../../models/parametrosHorario.model';
 import { Plantilla } from './../../models/plantilla.model';
 import { Update } from '@ngrx/entity/src/models';
 
@@ -62,3 +63,11 @@ export const seleccionarPlantilla     = createAction('[PLANTILLAS] seleccionar p
 // Acciones de gestión de semanas.
 // ---------------------------------------------
 export const seleccionarSemana     = createAction('[SEMANAS] seleccionar seman', props<{ lunesSemanaSeleccionada: Date }>());
+
+
+// ---------------------------------------------
+// Acciones de gestión de parámetros del horario.
+// ---------------------------------------------
+export const cargarParametrosHorario         = createAction('[PARAMETROS_HORARIO] cargar parámetros del horario');
+export const cargarParametrosHorarioOK       = createAction('[PARAMETROS_HORARIO] carga de parámetros del horario OK', props<{ parametrosHorario: ParametrosHorario }>());
+export const cargarParametrosHorarioError    = createAction('[PARAMETROS_HORARIO] carga de parámetros del horario errónea', props<{ error: string }>());

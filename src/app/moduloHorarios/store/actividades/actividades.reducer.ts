@@ -2,6 +2,7 @@ import { adapter } from './actividades.state';
 import { initialActividadesState } from './actividades.state';
 import { Action, createReducer, on } from '@ngrx/store';
 import * as actividadesActions from './actividades.actions';
+import { ACTIONS_SUBJECT_PROVIDERS } from '@ngrx/store/src/actions_subject';
 
 
 
@@ -220,7 +221,34 @@ export const actividadesReducer = createReducer(
       (state, action) => {
         return { ...state, lunesSemanaSeleccionada: action.lunesSemanaSeleccionada};
       }
-    ),
+  ),
+
+  // -------------------------------------------------------------------------------
+  // CARGA DE PARÁMETROS HORARIOS
+  // -------------------------------------------------------------------------------
+  // Solicitud de carga de parámetros horarios.
+  on(
+    actividadesActions.cargarParametrosHorarioOK,
+    (state, action) => {
+      return { ...state};
+    }
+  ),
+  // carga de parámetros horarios satisfactoria.
+  on(
+    actividadesActions.cargarParametrosHorarioOK,
+    (state, action) => {
+      return { ...state, parametrosHorario: action.parametrosHorario};
+    }
+  ),
+
+  // carga de parámetros errónea.
+  on(
+    actividadesActions.cargarParametrosHorarioOK,
+    (state, action) => {
+      return { ...state};
+    }
+  ),
+
 )
 
 

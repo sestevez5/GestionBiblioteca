@@ -8,8 +8,7 @@ import { CommonModule } from '@angular/common';
 // import the new component
 
 import { GestionHorarioComponent } from './containers/gestion-horario/gestion-horario.component';
-import { PanelHorarioComponent } from './components/panel-horario/panel-horario.component';
-import { CabeceraEntidadHorarioComponent } from './components/cabecera-entidad-horario/cabecera-entidad-horario.component'
+
 
 // NGRX
 import { ModuloHorarioFeaturekey, ModuloHorarioReducers } from './store/index';
@@ -27,6 +26,8 @@ import { FormsModule } from '@angular/forms';
 import { NuevaEditarActividadComponent } from './containers/nueva-editar-actividad/nueva-editar-actividad.component';
 import { SelectorTipoEntidadComponent } from './containers/selector-tipo-entidad/selector-tipo-entidad.component';
 import { SelectorPlantillasComponent } from './containers/selector-plantillas/selector-plantillas.component';
+import { MostrarActividadesComponent } from './containers/mostrar-actividades/mostrar-actividades.component';
+import { CabeceraEntidadHorarioComponent } from './containers/cabecera-entidad-horario/cabecera-entidad-horario.component';
 
 
 
@@ -44,14 +45,14 @@ import { SelectorPlantillasComponent } from './containers/selector-plantillas/se
   declarations: [
 
     GestionHorarioComponent,
-    PanelHorarioComponent,
     SelectorEntidadesComponent,
     MostrarActividadComponent,
-    CabeceraEntidadHorarioComponent,
     SelectorSemanasComponent,
     NuevaEditarActividadComponent,
     SelectorTipoEntidadComponent,
-    SelectorPlantillasComponent
+    SelectorPlantillasComponent,
+    MostrarActividadesComponent,
+    CabeceraEntidadHorarioComponent
   ],
 })
 export class HorariosModule { }

@@ -1,16 +1,14 @@
-import { Plantilla } from '../../models/plantilla.model';
+// Elementos del Framework
+import { Component } from '@angular/core';
+
+// Entidades
 import { EnumTipoEntidadHorario } from '../../models/tipoEntidadHorario.model';
-import { ModuloHorarioRootState } from '../../store/index';
-import { Store, select } from '@ngrx/store';
-import { parametrosHorario } from '../../models/parametrosHorario.model';
-import { AuthService } from '../../../moduloAuth/services/auth.service';
-import { HorarioService } from '../../services/horario.service';
-import { Component, OnInit, Pipe, PipeTransform } from '@angular/core';
-import { Actividad } from '../../models/actividad.model';
-import { EntidadHorario } from '../../models/entidadHorario.model'
-import * as FromActividadesSelector from '../../store/actividades/actividades.selectors';
+
+// Elementos relativos a. STORE
 import * as FromEntidadesHorarioActions from '../../store/entidadesHorario/entidadesHorario.actions';
 import * as FromActividadesActions from '../../store/actividades/actividades.actions';
+import { Store } from '@ngrx/store';
+import { ModuloHorarioRootState } from '../../store/index';
 
 
 @Component({
@@ -18,29 +16,19 @@ import * as FromActividadesActions from '../../store/actividades/actividades.act
   templateUrl: './gestion-horario.component.html',
   styleUrls: ['./gestion-horario.component.css']
 })
-export class GestionHorarioComponent implements OnInit {
+export class GestionHorarioComponent {
 
 
-  actividades: Actividad[];
-  parametrosHorario: parametrosHorario;
-  entidadHorarioActiva: EntidadHorario | undefined;
-
-
-  constructor(horarioService: HorarioService, usuarios: AuthService, private store: Store<ModuloHorarioRootState>) {
+  constructor(private store: Store<ModuloHorarioRootState>) {
 
     // Solicitud de carga de entidades de tipo docente.
     this.store.dispatch(FromEntidadesHorarioActions.cargarEntidadesHorario({ tipoEntidad: EnumTipoEntidadHorario.DOCENTE }));
 
-    this.parametrosHorario = horarioService.obtenerParametrosHorario();
+    // Solicitud de carga de los parámetros del horario.
+    this.store.dispatch(FromActividadesActions.cargarParametrosHorario());
+
    }
 
-  ngOnInit(): void {
-
-    this.store.pipe(select(FromActividadesSelector.selectTodasLasActividades))
-      .subscribe(actividades => this.actividades = actividades);
-
-
-  }
 
 }
 

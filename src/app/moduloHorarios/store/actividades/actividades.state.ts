@@ -1,3 +1,4 @@
+import { ParametrosHorario } from './../../models/parametrosHorario.model';
 import { Plantilla } from './../../models/plantilla.model';
 import { Actividad } from './../../models/actividad.model';
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
@@ -7,6 +8,7 @@ export interface actividadesState extends EntityState<Actividad> {
   plantillas: Plantilla[];
   plantillaActiva: Plantilla;
   lunesSemanaSeleccionada: Date; // null => Se considera que se quiere todo el horario.
+  parametrosHorario: ParametrosHorario;
 }
 
 // Función que devuelve el identificador de la primary key
@@ -34,6 +36,6 @@ export const initialActividadesState: actividadesState = adapter.getInitialState
     plantillas: [],
     plantillaActiva: null,
     lunesSemanaSeleccionada: null,
-
+    parametrosHorario: null
   }
 )

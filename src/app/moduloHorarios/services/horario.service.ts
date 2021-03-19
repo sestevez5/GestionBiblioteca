@@ -1,3 +1,4 @@
+import { ParametrosHorario } from './../models/parametrosHorario.model';
 import { PeriodoVigencia } from './../models/peridoVigencia';
 import { cargarPlantillasError } from './../store/actividades/actividades.actions';
 import { Sesion } from './../models/sesion';
@@ -9,7 +10,6 @@ import { EnumTipoEntidadHorario } from './../models/tipoEntidadHorario.model';
 import { Observable,from, Subject, Observer, BehaviorSubject } from 'rxjs'
 import { Grupo } from '../models/grupo.model';
 import { filter, map } from 'rxjs/operators';
-import { parametrosHorario } from '../models/parametrosHorario.model';
 import { Plantilla } from '../models/plantilla.model';
 
 import { Asignatura } from '../models/asignatura.model';
@@ -43,7 +43,7 @@ export class HorarioService {
 
   ];
 
-  parametrosHorario: parametrosHorario =
+  parametrosHorario: ParametrosHorario =
     {
       horaMinima: '07:00',
       horaMaxima: '22:00',
@@ -388,8 +388,10 @@ export class HorarioService {
   //------------------------------------------------
   // PARÁMETROS HORARIO
   //------------------------------------------------
-  obtenerParametrosHorario(): parametrosHorario{
-    return this.parametrosHorario;
+  obtenerParametrosHorario(): Observable<ParametrosHorario> {
+    const parametrosHorario$ = new BehaviorSubject<ParametrosHorario>(null);
+    parametrosHorario$.next(this.parametrosHorario);
+    return parametrosHorario$;
   }
 
   //------------------------------------------------------------------------------------------

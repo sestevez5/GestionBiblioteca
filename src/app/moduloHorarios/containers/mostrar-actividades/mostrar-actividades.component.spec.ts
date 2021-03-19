@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PanelHorarioComponent } from './panel-horario.component';
+import { MostrarActividadesComponent } from './mostrar-actividades.component';
 
-describe('PanelHorarioComponent', () => {
-  let component: PanelHorarioComponent;
-  let fixture: ComponentFixture<PanelHorarioComponent>;
+describe('MostrarActividadesComponent', () => {
+  let component: MostrarActividadesComponent;
+  let fixture: ComponentFixture<MostrarActividadesComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ PanelHorarioComponent ]
+      declarations: [ MostrarActividadesComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(PanelHorarioComponent);
+    fixture = TestBed.createComponent(MostrarActividadesComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

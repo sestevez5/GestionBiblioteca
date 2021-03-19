@@ -1,5 +1,4 @@
-import { TipoMensaje } from './../../../shared/models/mensajeUsuario.model';
-import { Actividad } from './../../models/actividad.model';
+
 import { Router } from '@angular/router';
 import { RootState } from './../../../reducers/app.reducer';
 import { HorarioService } from '../../services/horario.service';
@@ -7,7 +6,7 @@ import { Action, Store } from '@ngrx/store';
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, concatMap, switchMap, tap, mergeMap } from 'rxjs/operators';
-import { EMPTY, of, Observable } from 'rxjs';
+import { of, Observable } from 'rxjs';
 import * as PrincipalActions from '../../../moduloPrincipal/store/comunicaciones/comunicaciones.actions';
 import * as actividadesActions from './actividades.actions';
 
@@ -126,6 +125,41 @@ export class actividadesEffects {
 
   );
 
+  cargarParametrosHorario$: Observable<Action> = createEffect(
+    () =>
+      this.action$.pipe(
+        ofType(actividadesActions.cargarParametrosHorario),
+
+        switchMap(
+          action => {
+
+            this.store.dispatch(PrincipalActions.cargandoDatos({ mensaje: "cargando" }));
+            return this.horarioService.obtenerParametrosHorario()
+              .pipe(
+                map(
+                  parametrosHorario => {
+                    this.store.dispatch(PrincipalActions.cargadoDatos());
+                    console.log(parametrosHorario);
+                    return actividadesActions.cargarParametrosHorarioOK({ parametrosHorario: parametrosHorario });
+                  }
+
+                ), // Fin map
+
+                catchError(
+                  error => {
+                    this.store.dispatch(PrincipalActions.cargadoDatos());
+                    return of(actividadesActions.cargarParametrosHorarioError({ error: 'error' }))
+                  }
+
+                )
+              ) // fin pipe
+
+                }
+      ) // Fin mergeMap
+
+    ) // fin this.action$.pipe
+
+  );
 
   constructor(
     private horarioService: HorarioService,

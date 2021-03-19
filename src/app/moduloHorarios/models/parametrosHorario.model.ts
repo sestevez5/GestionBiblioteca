@@ -1,5 +1,5 @@
 import { Plantilla } from './plantilla.model';
-export interface parametrosHorario {
+export interface ParametrosHorario {
   horaMinima: string,
   horaMaxima: string,
   diasSemanaHabiles: string[],

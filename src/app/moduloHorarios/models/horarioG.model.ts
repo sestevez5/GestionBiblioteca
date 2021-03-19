@@ -1,5 +1,5 @@
 import { IActividadesSesion } from './actividadesSesion.model';
-import { parametrosHorario } from './parametrosHorario.model';
+import { ParametrosHorario } from './parametrosHorario.model';
 import { Sesion } from './sesion';
 import { Plantilla } from './plantilla.model';
 import { Subject } from 'rxjs';
@@ -78,12 +78,13 @@ export class HorarioG {
 
   actividadesG: ActividadG[] = [];
 
-  constructor(elementoRaiz: string, parametrosHorario: parametrosHorario, plantilla?: Plantilla) {
-
+  constructor(elementoRaiz: string) {
     this.elementoRaiz = elementoRaiz;
+  }
+
+  renderizarGrafico(parametrosHorario: ParametrosHorario, plantilla?: Plantilla) {
     window.addEventListener('resize', this.generarGrafico.bind(this,parametrosHorario, plantilla));
     this.generarGrafico(parametrosHorario, plantilla);
-
   }
 
   borrarActividades(idActividades: string[]) {
@@ -117,7 +118,7 @@ export class HorarioG {
   //----------------------------------------------------------------------------------------------------------
   // RENDERIZADO DEL HORARIO
   //----------------------------------------------------------------------------------------------------------
-  generarGrafico(parametrosHorario: parametrosHorario, plantillaActual?: Plantilla) {
+  generarGrafico(parametrosHorario: ParametrosHorario, plantillaActual?: Plantilla) {
 
     if (this.svg) d3.select('svg').remove();
     this.svg = d3.select(this.elementoRaiz).append('svg');
@@ -162,7 +163,7 @@ export class HorarioG {
 
   }
 
-  private inicializarParametros(parametrosHorario: parametrosHorario) {
+  private inicializarParametros(parametrosHorario: ParametrosHorario) {
 
     this.params.parametrosHorario = parametrosHorario;
 

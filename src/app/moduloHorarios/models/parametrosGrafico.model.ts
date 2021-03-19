@@ -1,9 +1,9 @@
-import { parametrosHorario } from './parametrosHorario.model';
+import { ParametrosHorario } from './parametrosHorario.model';
 
 export interface parametrosGrafico {
 
   // Parámetros del gráfico, en general.
-  parametrosHorario: parametrosHorario | undefined;
+  parametrosHorario: ParametrosHorario | undefined;
 
   grafico: {
     colorGrafico: string;

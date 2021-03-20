@@ -18,16 +18,20 @@ import { ModuloHorarioRootState } from '../../store/index';
 })
 export class GestionHorarioComponent {
 
-
   constructor(private store: Store<ModuloHorarioRootState>) {
+    this.gestionarAccionesIniciales();
+  }
 
-    // Solicitud de carga de entidades de tipo docente.
+  gestionarAccionesIniciales() {
+    // 1.- Solicitud de carga de entidades de tipo docente.
     this.store.dispatch(FromEntidadesHorarioActions.cargarEntidadesHorario({ tipoEntidad: EnumTipoEntidadHorario.DOCENTE }));
 
-    // Solicitud de carga de los parámetros del horario.
+    // 2.- Solicitud de carga de los parámetros del horario.
     this.store.dispatch(FromActividadesActions.cargarParametrosHorario());
 
-   }
+    // 3.- Solicitud de carga de las plantillas disponibles.
+    this.store.dispatch(FromActividadesActions.cargarPlantillas());
+  }
 
 
 }

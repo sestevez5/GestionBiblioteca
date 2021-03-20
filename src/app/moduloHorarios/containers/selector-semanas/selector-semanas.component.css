@@ -1,3 +1,11 @@
+
+ rangoSemana {
+   display: inline;
+ }
+.Gris {
+  color: #ccc
+}
+
 .fa {
   color: grey !important;
 }

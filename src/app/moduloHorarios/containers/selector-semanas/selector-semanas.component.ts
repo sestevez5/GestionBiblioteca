@@ -1,50 +1,87 @@
+import { ModuloHorarioRootState } from './../../store/index';
+import { Store, select } from '@ngrx/store';
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { NgbDateStruct, NgbDate, NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
-
+import * as FromActividadesSelector from '../../store/actividades/actividades.selectors';
 @Component({
   selector: 'app-selector-semanas',
   templateUrl: './selector-semanas.component.html',
   styleUrls: ['./selector-semanas.component.css']
 })
-export class SelectorSemanasComponent{
+export class SelectorSemanasComponent implements OnInit {
 
   hoveredDate: NgbDate | null = null;
 
+  opcionSeleccionada: string;
   @Output() lunesSemanaSeleccionada = new EventEmitter<Date>();
+  rangoSemanaSeleccionada: { inicio: NgbDate, fin: NgbDate };
 
-  semanaSeleccionada: { inicio: NgbDate, fin: NgbDate };
+  constructor(private calendar: NgbCalendar, private store: Store<ModuloHorarioRootState>) {
 
-  constructor(private calendar: NgbCalendar) {
-    this.semanaSeleccionada = this.obtenerSemanaDeLaFecha(calendar.getToday());
-   }
+    this.rangoSemanaSeleccionada = this.obtenerSemanaDeLaFecha(calendar.getToday());
 
+  }
 
+  ngOnInit(): void {
+    this.gestionarSubscripcionesStore();
+  }
 
+  // ----------------------------------------------------------------
+  // Método que gestiona las subscripciones necesarias al Store.
+  // ----------------------------------------------------------------
+  gestionarSubscripcionesStore() {
+
+    this.store.pipe(select(FromActividadesSelector.selectLunesSemanaSeleccionada))
+      .subscribe(lunesSemanaSeleccionada => {
+        if (lunesSemanaSeleccionada) {
+          this.opcionSeleccionada='semana';
+          const inicio: NgbDate = this.convertirFechaEnNgbDate(lunesSemanaSeleccionada);
+          this.rangoSemanaSeleccionada = this.obtenerSemanaDeLaFecha(inicio);
+        }
+        else {
+          this.opcionSeleccionada = 'todas';
+        }
+      });
+
+  }
+
+  // ----------------------------------------------------------------
+  // Métodos que atienden a las acciones del usuario
+  // ----------------------------------------------------------------
   onSeleccionarFecha(fecha: NgbDate) {
 
-    this.semanaSeleccionada = this.obtenerSemanaDeLaFecha(fecha);
-    this.lunesSemanaSeleccionada.emit(this.convertirNgbDateEnFecha(this.semanaSeleccionada.inicio));
+    this.rangoSemanaSeleccionada = this.obtenerSemanaDeLaFecha(fecha);
+    this.lunesSemanaSeleccionada.emit(this.convertirNgbDateEnFecha(this.rangoSemanaSeleccionada.inicio));
 
-   }
+  }
 
+  isHovered(date: NgbDate) {
+    console.log('hover: ', date);
+    return this.rangoSemanaSeleccionada.inicio && !this.rangoSemanaSeleccionada.fin && this.hoveredDate && date.after(this.rangoSemanaSeleccionada.inicio) && date.before(this.hoveredDate);
+  }
 
+  isInside(date: NgbDate) {
+    return this.rangoSemanaSeleccionada.fin && date.after(this.rangoSemanaSeleccionada.inicio) && date.before(this.rangoSemanaSeleccionada.fin);
+  }
 
+  isRange(date: NgbDate) {
+    return date.equals(this.rangoSemanaSeleccionada.inicio) || (this.rangoSemanaSeleccionada.fin && date.equals(this.rangoSemanaSeleccionada.fin)) || this.isInside(date) || this.isHovered(date);
+  }
 
-
+  // ----------------------------------------------------------------
+  // Métodos auxiliares
+  // ----------------------------------------------------------------
   private obtenerSemanaDeLaFecha(fecha: NgbDate): { inicio: NgbDate, fin: NgbDate }
   {
-
     const diaSemana = this.calendar.getWeekday(fecha);
     const fechaInicioSemana = this.modificarFecha(fecha, 1 - diaSemana);
     const fechaFinSemana = this.modificarFecha(fecha, 7-diaSemana);
     return { inicio: fechaInicioSemana, fin: fechaFinSemana }
-
   }
 
   private modificarFecha(fechaReferencia: NgbDate, numeroDias: number): NgbDate {
 
     var fecha = this.convertirNgbDateEnFecha(fechaReferencia);
-
     const miliSegundos: number = numeroDias * 24 * 60 * 60 * 1000;
     fecha.setTime(fecha.getTime() + miliSegundos);
 
@@ -63,17 +100,5 @@ export class SelectorSemanasComponent{
 
 
 
-  isHovered(date: NgbDate) {
-    console.log('hover: ', date);
-    return this.semanaSeleccionada.inicio && !this.semanaSeleccionada.fin && this.hoveredDate && date.after(this.semanaSeleccionada.inicio) && date.before(this.hoveredDate);
-  }
-
-  isInside(date: NgbDate) {
-    return this.semanaSeleccionada.fin && date.after(this.semanaSeleccionada.inicio) && date.before(this.semanaSeleccionada.fin);
-  }
-
-  isRange(date: NgbDate) {
-    return date.equals(this.semanaSeleccionada.inicio) || (this.semanaSeleccionada.fin && date.equals(this.semanaSeleccionada.fin)) || this.isInside(date) || this.isHovered(date);
-  }
 
 }

@@ -15,21 +15,34 @@ export class SelectorTipoEntidadComponent implements OnInit {
   TiposEntidadesHorario = EnumTipoEntidadHorario;
 
   // Tipo de entidad seleccionada: Docente, Grupos, ....
-  tipoEntidadSeleccionada: EnumTipoEntidadHorario | undefined;
+  tipoEntidadSeleccionada: EnumTipoEntidadHorario;
 
   constructor(private store: Store<ModuloHorarioRootState>) { }
 
   ngOnInit(): void {
+    this.gestionarSubscripcionesStore();
+
+  }
+
+  // ----------------------------------------------------------------
+  // Método que gestiona las subscripciones necesarias al Store.
+  // ----------------------------------------------------------------
+  gestionarSubscripcionesStore() {
+
     this.store.pipe(select(FromEntidadesHorarioSelectors.selectTipoEntidadActiva))
     .subscribe(tipoEntidadActiva => this.tipoEntidadSeleccionada = tipoEntidadActiva)
 
   }
 
-
+  // ----------------------------------------------------------------
+  // Métodos que atienden a las acciones del usuario
+  // ----------------------------------------------------------------
   onSeleccionarTipoEntidad(item: string) {
 
     this.tipoEntidadSeleccionada = item as EnumTipoEntidadHorario;
+
     switch (this.tipoEntidadSeleccionada) {
+
       case EnumTipoEntidadHorario.DOCENTE:
         this.store.dispatch(FromEntidadesHorarioActions.cargarEntidadesHorario({ tipoEntidad: EnumTipoEntidadHorario.DOCENTE }));
       break;
@@ -46,11 +59,7 @@ export class SelectorTipoEntidadComponent implements OnInit {
         this.store.dispatch(FromEntidadesHorarioActions.cargarEntidadesHorario({ tipoEntidad: EnumTipoEntidadHorario.GRUPO}));
       break;
 
-
     }
-
-
   }
-
 
 }

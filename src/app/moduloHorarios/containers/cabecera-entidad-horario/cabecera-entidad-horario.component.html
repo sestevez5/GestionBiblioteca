@@ -1,1 +1,12 @@
-{{this.entidadHorario?.id}}
+<div class="cabecera d-flex flex-nowrap">
+  <div class="imagen p-0 ">
+    <img *ngIf="!this.entidadHorario?.imagen" class="p-0 img-form" src='assets/images/general/NoPhoto.png' alt="user">
+    <img *ngIf="this.entidadHorario?.imagen" class="p-0 img-form" [src]='this.entidadHorario.imagen' alt="user">
+  </div>
+
+  <div class="pl-2 flex-grow-1">
+    <div class="mb-1 leyenda">{{ this.entidadHorario?.descripcion }}</div>
+    <div class="large font-italic">{{ this.entidadHorario?.detalle}}</div>
+  </div>
+
+</div>

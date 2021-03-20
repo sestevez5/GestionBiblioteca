@@ -1,17 +1,17 @@
 .gestionHorario {
-  height: 81.5vh;
+  height: 83vh;
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  grid-template-rows: 1fr 8fr;
+  grid-template-rows: 1fr 14fr;
   gap: 10px;
   overflow-y: hidden;
 
 }
 
 .seccion {
-  padding: 5px;
-  border: 5px dotted tomato;
-  border-radius: 5px;
+  /* padding: 5px;
+  border: 5px solid tomato;
+  border-radius: 5px; */
 
 }
 
@@ -23,17 +23,22 @@
 .seccionCabeceraEntidadSeleccionada{
   grid-column-start: 3;
   grid-column-end: 9;
+  border-right: solid 2px;
+  border-left: solid 2px;
 
 }
 
 .seccionSelectorPlantilla{
   grid-column-start: 9;
-  grid-column-end: 11;
+  grid-column-end: 10;
+  padding: 3px;
+  border-right: solid 2px;
 }
 
 .seccionSelectorSemanas{
-  grid-column-start: 11;
+  grid-column-start: 10;
   grid-column-end: 13;
+  border-right: solid 2px;
 }
 
 .seccionSelectorEntidad{

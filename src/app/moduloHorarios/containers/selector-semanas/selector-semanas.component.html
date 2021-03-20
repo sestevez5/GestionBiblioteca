@@ -1,16 +1,20 @@
 <div class="form-check">
-  <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
-  <label class="form-check-label" for="exampleRadios1">
-    Todas las actividades
+  <input class="form-check-input" type="radio" name="radioFiltroSemanas" [(ngModel)]="this.opcionSeleccionada" id="todas" value="todas" >
+  <label class="form-check-label" for="todas">
+    Anual
   </label>
 </div>
 <div class="form-check">
-  <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
-  <label class="form-check-label" for="exampleRadios2">
-    Actividades de una semana
+  <input class="form-check-input" type="radio" name="radioFiltroSemanas" [(ngModel)]="this.opcionSeleccionada" id="semana" value="semana"  >
+  <label class="form-check-label" for="semana">
+    Semanal
   </label>
-  {{ this.convertirNgbDateEnFecha(this.semanaSeleccionada.inicio) | date: "dd/MM/yyyy"}} - {{ this.convertirNgbDateEnFecha(this.semanaSeleccionada.fin) | date: "dd/MM/yyyy"}}
-  <i (click)="d.toggle()" class="fa fa-calendar fa-lg " aria-hidden="true"></i>
+
+<button (click)="d.toggle()" [disabled]="this.opcionSeleccionada==='todas'" >
+  <span class="rangoSemana mr-2" [ngClass]="{'Gris': this.opcionSeleccionada === 'todas'}"> {{ this.convertirNgbDateEnFecha(this.rangoSemanaSeleccionada.inicio)| date: "dd/MM/yyyy"}} - {{ this.convertirNgbDateEnFecha(this.rangoSemanaSeleccionada.fin) | date: "dd/MM/yyyy"}}</span>
+  <i class="fa fa-calendar fa-lg" aria-hidden="true" ></i>
+</button>
+
 
   <ng-template #t let-date let-focused="focused">
     <span class="custom-day"
@@ -32,7 +36,8 @@
   (dateSelect)="onSeleccionarFecha($event)"
   [dayTemplate]="t"
   outsideDays="hidden"
-  #d="ngbDatepicker">
+  #d="ngbDatepicker"
+  >
 </div>
   <div>
 

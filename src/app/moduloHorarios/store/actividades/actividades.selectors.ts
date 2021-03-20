@@ -41,6 +41,12 @@ export const selectParametrosHorario = createSelector(
   actividadesState => actividadesState.parametrosHorario
 );
 
+export const selectLunesSemanaSeleccionada = createSelector(
+  selectActividades,
+  actividadesState => actividadesState.lunesSemanaSeleccionada
+);
+
+
 
 
 

@@ -3,6 +3,6 @@
     plantilla {{this.plantillaActual.denominacion}}
     </button>
     <div ngbDropdownMenu aria-labelledby="dropdownBasic1 w-100">
-    <button class="w-100" *ngFor="let plantilla of this.plantillas" class="dropdown-item" >plantilla {{ plantilla.denominacion }}</button>
+    <button class="w-100" *ngFor="let plantilla of this.plantillas" class="dropdown-item" (click)="onPlantillaSeleccionada(plantilla)">plantilla {{ plantilla.denominacion }}</button>
   </div>
 </div>

@@ -47,7 +47,7 @@ export class HorarioService {
     {
       horaMinima: '07:00',
       horaMaxima: '22:00',
-      diasSemanaHabiles: ['L','M','X','V'],
+      diasSemanaHabiles: ['L','M','X','J','V'],
     };
 
   PeriodoVigencia: PeriodoVigencia[] = [

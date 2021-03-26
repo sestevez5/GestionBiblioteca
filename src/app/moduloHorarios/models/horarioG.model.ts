@@ -1,3 +1,4 @@
+import { Asignatura } from './asignatura.model';
 import { IActividadesSesion } from './actividadesSesion.model';
 import { ParametrosHorario } from './parametrosHorario.model';
 import { Sesion } from './sesion';
@@ -8,6 +9,7 @@ import { DiaSemana } from './diaSemana.model';
 import { ActividadG, EstadoActividad } from './actividadG.model';
 import { Actividad } from './actividad.model';
 import * as d3 from 'd3';
+import { ParsedEvent } from '@angular/compiler';
 
 
 export class HorarioG {
@@ -43,7 +45,6 @@ export class HorarioG {
         margenSuperiorGrafico:     5,
         margenIzquierdoGrafico:    5,
       },
-
     },
 
     panelHorario: {
@@ -175,7 +176,7 @@ export class HorarioG {
 
     this.params.grafico.anchoGrafico = parseFloat(d3.select(this.elementoRaiz).style('width'));
     this.params.grafico.altoGrafico = parseFloat(d3.select(this.elementoRaiz).style('height')) * Math.max(1, rangoEnHoras / 7);
-    console.log('rango alto', rangoEnHoras, this.params.grafico.altoGrafico, parseFloat(d3.select(this.elementoRaiz).style('height')))
+
 
     // Establecer dimensiones del panel que contiene las barras.
     this.params.panelHorario.anchoPanelHorario  = this.params.grafico.anchoGrafico * ((100-this.params.grafico.margenGrafico.margenIzquierdoGrafico - this.params.grafico.margenGrafico.margenDerechoGrafico)/100);
@@ -247,7 +248,6 @@ export class HorarioG {
     //-------------------------------------------------
     return panelHorario;
   }
-
   private anyadirPanelesDiasSemana() {
 
     //-------------------------------------------------
@@ -279,7 +279,6 @@ export class HorarioG {
     return panelesDiasSemana;
 
   }
-
   public anyadirPlantilla(pl: Plantilla) {
 
     d3.selectAll('g.panelSesiones').remove();
@@ -535,7 +534,7 @@ export class HorarioG {
 
     panelCuerpoSesionConActividades
       .attr("clip-path", (d: any) => {
-        console.log('rectangulo recortador: ', 'rectanguloRecortador' + d.sesion.idSesion);
+        //console.log('rectangulo recortador: ', 'rectanguloRecortador' + d.sesion.idSesion);
         return `url(#${'rectanguloRecortador' + d.sesion.idSesion})`
       })
 
@@ -549,15 +548,27 @@ export class HorarioG {
 
     actividadesSesiones.forEach(as => {
       const idPanel = '#panelCuerpoSesionActividades' + as.sesion.idSesion;
-      const panelesActividades: any  = d3.select(idPanel).selectAll('act' + 'xx').data(as.actividades).enter().append('g');
+      const panelesActividades: any = d3.select(idPanel).selectAll('act' + 'xx').data(as.actividades).enter().append('g');
+
+
+
 
       panelesActividades
-        .attr('class', (d:any, i:any, n:any) => {
+        .attr('class', (d: any, i: any, n: any) => {
           if (i == 0) return 'panelActividad visible'
           else return 'panelActividad'
         })
-        .attr('id', (d:any) => 'panelActividad' + d.idActividad)
-        .attr('transform', (d:any, i:any, n:any) => `translate(${(i) * parseFloat(anchoSesion)},0)`);
+        .attr('id', (d: any) => 'panelActividad_' + d.idActividad)
+        .attr('transform', (d: any, i: any, n: any) => `translate(${(i) * parseFloat(anchoSesion)},0)`)
+        .attr('x', (d: any, i: any, n: any) => (i) * parseFloat(anchoSesion))
+        .attr('y', 0)
+        .attr('height', 40)
+        .attr('width', anchoSesion)
+        .attr('value', (d: any, i: any, n: any) => {
+
+        })
+
+
 
       // Añadimos el rectángulo
       panelesActividades.append('rect')
@@ -568,32 +579,97 @@ export class HorarioG {
         .attr('stroke', 'white')
         .on("click", (d: any, i: any, e: any) => {
 
-          const marcadaActividadActualComoSeleccionada = d3.select('g#panelActividad' + i.idActividad).attr('class').split(' ').includes('actividadSeleccionada');
+          const marcadaActividadActualComoSeleccionada = d3.select('g#panelActividad_' + i.idActividad).attr('class').split(' ').includes('actividadSeleccionada');
           d.ctrlKey ? null : this.desmarcarActividadesComoSeleccionadas();
 
           marcadaActividadActualComoSeleccionada ?
-            d3.selectAll('g#panelActividad' + i.idActividad).attr('class', 'panelActividad actividadSeleccionada'):
-            d3.select('g#panelActividad' + i.idActividad).attr('class', 'panelActividad');
+            d3.selectAll('g#panelActividad_' + i.idActividad).attr('class', 'panelActividad actividadSeleccionada') :
+            d3.select('g#panelActividad_' + i.idActividad).attr('class', 'panelActividad');
 
-          d3.select('g#panelActividad' + i.idActividad).attr('class').split(' ').includes('actividadSeleccionada') ?
+          d3.select('g#panelActividad_' + i.idActividad).attr('class').split(' ').includes('actividadSeleccionada') ?
             this.desmarcarActividadesComoSeleccionadas([i.idActividad]) :
             this.marcarActividadesComoSeleccionadas([i.idActividad]);
         });
 
-      // Añadimos el texto al panel
-      panelesActividades.append('text')
-        .attr('x', parseInt(anchoSesion) / 2)
-        .text((d:any, i:any, n:any) =>d.idActividad )
-        .attr('y', 30 / 2)
-        .attr('font-size', '.8em')
+            // A cada panel de una actividad además le añadimos las tres secciones
+
+                as.actividades.forEach(
+                  actividad => {
+                    const panelActividad = d3.select('g#panelActividad_' + actividad.idActividad);
+                    this.crearSeccionPanelActividad(panelActividad,actividad,1,actividad.docentes?.map(docente => docente.alias));
+                    this.crearSeccionPanelActividad(panelActividad,actividad,2, actividad.grupos?.map(grupo => grupo.codigo));
+                    this.crearSeccionPanelActividad(panelActividad,actividad,3, actividad.asignaturas?.map(asignatura => asignatura.codigo));
+                  }
+                )
+
+
+
+
+    }
+    );
+
+
+
+
+
+  }
+  crearSeccionPanelActividad(panelActividad: any, actividad: ActividadG, numeroSeccion: number, listaCadenas: string[]) {
+
+    const panelActividadBBox =
+    {
+      'x': panelActividad.attr('x'),
+      'y': panelActividad.attr('y'),
+      'height': panelActividad.attr('height'),
+      'width': panelActividad.attr('width')
+    }
+
+    const panelSeccionBBox =
+    {
+      'x': (numeroSeccion-1) * (panelActividadBBox.width / 3),
+      'y': panelActividadBBox.y,
+      'height': panelActividadBBox.height,
+      'width': panelActividadBBox.width / 3
+    }
+
+
+    const panelSeccion = panelActividad.append('g')
+      .attr('class', 'panelActividadSeccion' + numeroSeccion)
+      .attr('id', 'panelActividadSeccion' + numeroSeccion + '_' + actividad.idActividad)
+      .attr('transform', `translate(${(panelSeccionBBox.x)},0)`)
+
+
+    panelSeccion.append('rect')
+      .attr('height', panelSeccionBBox.height)
+      .attr('width', panelSeccionBBox.width)
+      .attr('fill', 'green');
+
+    const anchoTexto = panelSeccionBBox.height / 60;
+    const anchoSeparacionTexto = anchoTexto / 3;
+
+    const panelTextoSeccion = panelSeccion.append('g')
+    .attr('class', 'panelTextoSeccion' + numeroSeccion)
+    .attr('id', 'panelTextoSeccion' + numeroSeccion + '_' + actividad.idActividad)
+
+
+    panelTextoSeccion.append('text')
+        .attr('x',panelSeccionBBox.width/2)
+        .text((d: any, i: any, n: any) => 'abcd')
+        .attr('y', 1)
+        .attr('font-size', anchoTexto+'em')
         .attr('fill', 'black')
-        .attr('dominant-baseline', 'central')
-        .attr('text-anchor', 'middle');
+        .attr('dominant-baseline', 'Hanging')
+      .attr('text-anchor', 'middle');
 
+      panelTextoSeccion.append('text')
+      .attr('x',panelSeccionBBox.width/2)
+      .text((d: any, i: any, n: any) => 'abcd')
+      .attr('y', (anchoTexto+anchoSeparacionTexto)*10)
+      .attr('font-size', anchoTexto+'em')
+      .attr('fill', 'black')
+      .attr('dominant-baseline', 'Hanging')
+      .attr('text-anchor', 'middle');
 
-    });
-
-
+    console.log('BBox: ', panelTextoSeccion.node().getBBox());
 
 
   }
@@ -633,7 +709,7 @@ export class HorarioG {
   marcarActividadesComoSeleccionadas(identificadoresActividades: string[]) {
     identificadoresActividades.forEach(
       iact => {
-        const x = d3.select('g#panelActividad' + iact)
+        const x = d3.select('g#panelActividad_' + iact)
 
         const y: any = x.select('.rectActividad');
 

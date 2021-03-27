@@ -4,7 +4,9 @@ import { ParametrosHorario } from './../../models/parametrosHorario.model';
 import { Plantilla } from './../../models/plantilla.model';
 import { ActividadG } from '../../models/actividadG.model';
 import { combineLatest, Observable } from 'rxjs';
-import { HorarioG } from '../../models/horarioG.model';
+// import { HorarioG } from '../../models/horarioG.model';
+import { HorarioG } from '../../models/graficoHorario/GraficoHorario';
+
 import { Component, Input, OnInit, OnChanges } from '@angular/core';
 import { Actividad } from '../../models/actividad.model';
 import * as FromActividadesSelectors from '../../store/actividades/actividades.selectors';

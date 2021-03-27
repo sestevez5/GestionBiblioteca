@@ -70,7 +70,6 @@ export class entidadesHorarioEffects {
                 map(
 
                   actividades => {
-                    console.log(actividades);
                     this.store.dispatch(PrincipalActions.cargadoDatos());
                     return FromActividadesActions.cargarActividadesOK({ actividades: actividades });
                   }

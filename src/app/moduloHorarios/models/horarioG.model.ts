@@ -393,17 +393,17 @@ export class HorarioG {
       .attr('data-actividades', d => d.actividades.map(act => act.idActividad).join(','))
       .attr('data-actividadVisible', d => d.actividades[0].idActividad)
 
-    panelSesionActividades.append('rect')
-      .attr('height', d => {
-        const coordenadaHoraInicio = this.params.escalas.escalaVertical(HorarioG.convertirCadenaHoraEnTiempo(d.sesion.horaInicio));
-        const coordenadaHoraFin = this.params.escalas.escalaVertical(HorarioG.convertirCadenaHoraEnTiempo(d.sesion.horaFin));
-        return coordenadaHoraFin - coordenadaHoraInicio;
-      })
-      .attr('width', d => this.params.escalas.escalaHorizontal.bandwidth())
-      .attr('fill', 'red')
-      .attr('opacity', '0.4')
-      .attr('rx', 2)
-      .attr('ry', 2);
+    // panelSesionActividades.append('rect')
+    //   .attr('height', d => {
+    //     const coordenadaHoraInicio = this.params.escalas.escalaVertical(HorarioG.convertirCadenaHoraEnTiempo(d.sesion.horaInicio));
+    //     const coordenadaHoraFin = this.params.escalas.escalaVertical(HorarioG.convertirCadenaHoraEnTiempo(d.sesion.horaFin));
+    //     return coordenadaHoraFin - coordenadaHoraInicio;
+    //   })
+    //   .attr('width', d => this.params.escalas.escalaHorizontal.bandwidth())
+    //   .attr('fill', 'red')
+    //   .attr('opacity', '0.4')
+    //   .attr('rx', 2)
+    //   .attr('ry', 2);
 
 
 
@@ -504,9 +504,8 @@ export class HorarioG {
       .attr('id', (d: IActividadesSesion) => 'panelCuerpoSesionActividades' + d.sesion.idSesion)
       .attr('transform', `translate(0,${altoCabeceraSesion})`)
 
-
     //---------------------------------------------------------------------------------
-    // Definicion del rectángulo que representa a la cabecera de la sesión.
+    // Definicion del rectángulo que representa el cuerpo de la sesión.
     //---------------------------------------------------------------------------------
     panelCuerpoSesionConActividades.append('rect')
       .attr('height', (d:any) => {
@@ -516,7 +515,7 @@ export class HorarioG {
       })
       .attr('width', (d: any) => this.params.escalas.escalaHorizontal.bandwidth())
       .attr('fill', 'yellow')
-      .attr('opacity', '0.4')
+      .attr('opacity', '0')
       .attr('rx', 2)
       .attr('ry', 2);
 
@@ -543,14 +542,17 @@ export class HorarioG {
   }
   añyadirPanelesActividades(actividadesSesiones: IActividadesSesion[]) {
 
-
     const anchoSesion = this.params.panelSesiones.anchoSesion ? this.params.panelSesiones.anchoSesion.toString() : '0';
 
     actividadesSesiones.forEach(as => {
+
+      // Precalculamos el alto de los paneles
+      const altoPanelActividadesEnActividadSesiones = this.altoPanel(as.sesion)-this.params.panelSesiones.altoCabecera;
+
+      // Localizamos el panel relativo al cuerpo de la actividadesSesion
+      // y le añadimos los paneles que representarán a cada una de sus actividades.
       const idPanel = '#panelCuerpoSesionActividades' + as.sesion.idSesion;
       const panelesActividades: any = d3.select(idPanel).selectAll('act' + 'xx').data(as.actividades).enter().append('g');
-
-
 
 
       panelesActividades
@@ -562,20 +564,26 @@ export class HorarioG {
         .attr('transform', (d: any, i: any, n: any) => `translate(${(i) * parseFloat(anchoSesion)},0)`)
         .attr('x', (d: any, i: any, n: any) => (i) * parseFloat(anchoSesion))
         .attr('y', 0)
-        .attr('height', 40)
-        .attr('width', anchoSesion)
-        .attr('value', (d: any, i: any, n: any) => {
+        .attr('height', altoPanelActividadesEnActividadSesiones)
+        .attr('width', anchoSesion);
 
-        })
-
-
+        // A cada panel de una actividad además le añadimos las tres secciones
+        as.actividades.forEach(
+          actividad => {
+            const panelActividad = d3.select('g#panelActividad_' + actividad.idActividad);
+            this.crearSeccionPanelActividad(panelActividad,actividad,1,actividad.grupos?.map(grupo => grupo.codigo));
+            this.crearSeccionPanelActividad(panelActividad,actividad,2, actividad.grupos?.map(grupo => grupo.codigo));
+            this.crearSeccionPanelActividad(panelActividad,actividad,3, actividad.asignaturas?.map(asignatura => asignatura.codigo));
+          }
+        )
 
       // Añadimos el rectángulo
       panelesActividades.append('rect')
         .attr('class', 'rectActividad')
         .attr('width', anchoSesion)
         .attr('fill', 'white')
-        .attr('height', 40)
+        .attr('height', altoPanelActividadesEnActividadSesiones)
+        .attr('opacity', '0')
         .attr('stroke', 'white')
         .on("click", (d: any, i: any, e: any) => {
 
@@ -591,26 +599,9 @@ export class HorarioG {
             this.marcarActividadesComoSeleccionadas([i.idActividad]);
         });
 
-            // A cada panel de una actividad además le añadimos las tres secciones
-
-                as.actividades.forEach(
-                  actividad => {
-                    const panelActividad = d3.select('g#panelActividad_' + actividad.idActividad);
-                    this.crearSeccionPanelActividad(panelActividad,actividad,1,actividad.docentes?.map(docente => docente.alias));
-                    this.crearSeccionPanelActividad(panelActividad,actividad,2, actividad.grupos?.map(grupo => grupo.codigo));
-                    this.crearSeccionPanelActividad(panelActividad,actividad,3, actividad.asignaturas?.map(asignatura => asignatura.codigo));
-                  }
-                )
-
-
-
 
     }
     );
-
-
-
-
 
   }
   crearSeccionPanelActividad(panelActividad: any, actividad: ActividadG, numeroSeccion: number, listaCadenas: string[]) {
@@ -636,40 +627,49 @@ export class HorarioG {
       .attr('class', 'panelActividadSeccion' + numeroSeccion)
       .attr('id', 'panelActividadSeccion' + numeroSeccion + '_' + actividad.idActividad)
       .attr('transform', `translate(${(panelSeccionBBox.x)},0)`)
+      .attr('height', panelSeccionBBox.height)
+      .attr('width', panelSeccionBBox.width)
 
 
-    panelSeccion.append('rect')
+      panelSeccion.append('rect')
       .attr('height', panelSeccionBBox.height)
       .attr('width', panelSeccionBBox.width)
       .attr('fill', 'green');
 
-    const anchoTexto = panelSeccionBBox.height / 60;
+      const panelTextoSeccion = panelSeccion.append('g')
+      .attr('class', 'panelTextoSeccion' + numeroSeccion)
+      .attr('id', 'panelTextoSeccion' + numeroSeccion + '_' + actividad.idActividad)
+
+
+      const panelContenidolistaCadenas = this.AnyadirContenidoPanelSeccion(panelTextoSeccion, listaCadenas)
+
+
+  }
+
+  AnyadirContenidoPanelSeccion(panelTextoSeccion: any, listaCadenas: string[]) {
+
+    const parentBBox = panelTextoSeccion.node().parentNode.getBBox();
+
+    console.log('parentBBox: ', parentBBox);
+
+    const anchoTexto = parentBBox.height / 30;
     const anchoSeparacionTexto = anchoTexto / 3;
 
-    const panelTextoSeccion = panelSeccion.append('g')
-    .attr('class', 'panelTextoSeccion' + numeroSeccion)
-    .attr('id', 'panelTextoSeccion' + numeroSeccion + '_' + actividad.idActividad)
+    if (listaCadenas) {
+      for (let index = 0; index < listaCadenas.length; index++) {
+        const item = listaCadenas[index];
+        panelTextoSeccion.append('text')
+          .attr('x', parentBBox.width / 2)
+          .text((d: any, i: any, n: any) => item)
+          .attr('y', (index + 1) * (anchoTexto + anchoSeparacionTexto))
+          .attr('font-size', anchoTexto + 'em')
+          .attr('fill', 'black')
+          .attr('dominant-baseline', 'Hanging')
+          .attr('text-anchor', 'middle');
 
+      }
+    }
 
-    panelTextoSeccion.append('text')
-        .attr('x',panelSeccionBBox.width/2)
-        .text((d: any, i: any, n: any) => 'abcd')
-        .attr('y', 1)
-        .attr('font-size', anchoTexto+'em')
-        .attr('fill', 'black')
-        .attr('dominant-baseline', 'Hanging')
-      .attr('text-anchor', 'middle');
-
-      panelTextoSeccion.append('text')
-      .attr('x',panelSeccionBBox.width/2)
-      .text((d: any, i: any, n: any) => 'abcd')
-      .attr('y', (anchoTexto+anchoSeparacionTexto)*10)
-      .attr('font-size', anchoTexto+'em')
-      .attr('fill', 'black')
-      .attr('dominant-baseline', 'Hanging')
-      .attr('text-anchor', 'middle');
-
-    console.log('BBox: ', panelTextoSeccion.node().getBBox());
 
 
   }
@@ -856,5 +856,14 @@ export class HorarioG {
 
 
   }
+
+  private altoPanel(sesion: Sesion) {
+    const coordenadaHoraInicio = this.params.escalas.escalaVertical(HorarioG.convertirCadenaHoraEnTiempo(sesion.horaInicio));
+    const coordenadaHoraFin = this.params.escalas.escalaVertical(HorarioG.convertirCadenaHoraEnTiempo(sesion.horaFin));
+
+    return coordenadaHoraFin - coordenadaHoraInicio;
+
+  }
+
 
 }

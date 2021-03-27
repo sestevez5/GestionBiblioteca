@@ -35,9 +35,14 @@ export interface parametrosGrafico {
     colorCuerpo: string;
 
   }
+
   escalas: {
     escalaVertical: any;
     escalaHorizontal: any;
+  }
+
+  actividades: {
+    tamanyoTexto: string;
   }
 
 

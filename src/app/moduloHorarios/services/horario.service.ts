@@ -156,7 +156,7 @@ export class HorarioService {
       idActividad: '11',
       idSesion: 'P1L3',
       detalleActividad: '',
-      grupos: ['2'],
+      grupos: ['2','20','21'],
       docentes: ['IJyiJjc2LXTZXsdwY27ORvpzIYw1','NTNYueJSicQOvYLjWzQs5ZcyeV63'],
       asignaturas: ['1'],
       dependencia: '1',
@@ -490,12 +490,28 @@ export class HorarioService {
 
     idActividades.map(
       act => {
-
-
         const nuevaActividad: Actividad = new Actividad();
         nuevaActividad.idActividad = act.idActividad;
         nuevaActividad.detalleActividad = act.detalleActividad;
-        nuevaActividad.grupos = act.grupos.map(g => this.grupos.filter(gr => gr.idGrupo === g)[0]);
+
+        // Asignamos la colección de grupos.
+        nuevaActividad.grupos = act.grupos.map(idGrupo => {
+          const grupoActual = this.grupos.filter(gr => gr.idGrupo === idGrupo)
+          if (grupoActual.length>0) return grupoActual[0]
+        });
+
+        // Asignamos la colección de asignaturas.
+          //  nuevaActividad.asignaturas = act.asignaturas.map(idAsignatura => {
+          //   const grupoActual = this.grupos.filter(gr => gr.idGrupo === idGrupo)
+          //   if (grupoActual.length>0) return grupoActual[0]
+          // });
+
+
+        // Asignamos la dependencia.
+        // const dependencia = this.dependencias.filter(dep => dep.idDependencia === act.dependencia);
+        // dependencia ? nuevaActividad.dependencia[0]:null;
+
+
 
         // paso 2: Asignamos a cada actividadG su objeto sesión.
         const sesionLocalizada = todasLasSesiones.find(s => s.idSesion === act.idSesion);

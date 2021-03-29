@@ -17,7 +17,9 @@ export class SelectorTipoEntidadComponent implements OnInit {
   // Tipo de entidad seleccionada: Docente, Grupos, ....
   tipoEntidadSeleccionada: EnumTipoEntidadHorario;
 
-  constructor(private store: Store<ModuloHorarioRootState>) { }
+  constructor(private store: Store<ModuloHorarioRootState>) {
+  
+  }
 
   ngOnInit(): void {
     this.gestionarSubscripcionesStore();

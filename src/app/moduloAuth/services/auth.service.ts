@@ -10,7 +10,7 @@ import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/fire
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Subject, Observable, BehaviorSubject, from, Observer} from 'rxjs';
 import { take, map, tap, first } from 'rxjs/operators';
-
+// import { AngularFirestoreCollection  } from 'angularfire2/firestore'
 @Injectable({
   providedIn: 'root'
 })
@@ -105,63 +105,61 @@ export class AuthService {
     return usuario$;
   }
 
-  // Obtener todos los usuarios.
   ObtenerUsuarios(fou: FiltroOrdenUsuario | null): Observable<Usuario[]> {
 
-    return this.firebaseDB.collection('usuarios')
-      .get()
+    const usuarios$: BehaviorSubject<Usuario[]> = new BehaviorSubject<Usuario[]>([]);
+
+
+    const coleccionUsuarios = this.firebaseDB.collection<Usuario>('usuarios');
+    coleccionUsuarios.snapshotChanges()
       .pipe(
-             map(
-               value => {
-
-            const usuarios: Usuario[] = [];
-
-            // Procesamos cada uno de los elementos para convertirlos en la colección de Usuarios.
-            value.docs.forEach(
-
-
-              usuario => {
-
-                const nuevoUsuario: Usuario = {
-                  ...usuario.data() as Usuario,
-                  uid: usuario.id
-                };
-
-
-                var cadenaParaFiltro = nuevoUsuario.nombre +
-                  '~' + nuevoUsuario.primerApellido +
-                  '~' + nuevoUsuario.segundoApellido +
-                  '~' + nuevoUsuario.email;
-
-
-
-
-                let incluirRegistro = true;
-
-                var subcadena;
-
-                if (fou && fou.contieneSubcadena) subcadena = this.normalizarCadena(fou.contieneSubcadena)
-
-
-                // Se desestima si hay una subcadena que debe contener y no la contiene.
-                if (subcadena && cadenaParaFiltro.indexOf(subcadena) === -1) { incluirRegistro = false }
-
-                // Se desestima si se piden usuarios de alta y el usuario no está de alta
-                if (fou && fou.SoloUsuariosDeAlta && nuevoUsuario.FechaBaja) { incluirRegistro = false }
-
-                if (incluirRegistro) { usuarios.push(nuevoUsuario); }
-
+        map(
+          actions => {
+            return actions.map(
+              act => {
+                const datos = act.payload.doc.data() as Usuario;
+                const uid = act.payload.doc.id;
+                return { uid, ...datos };
               }
-            );  // Fin foreach
-
-            return usuarios;
-
-
+            )
           }
-        ),  // Fin map
+        )
+      ).subscribe(
+        usuarios => {
+          const usuariosFiltrados: Usuario[] = [];
+          // Procesamos cada uno de los elementos para convertirlos en la colección de Usuarios.
+          usuarios.forEach(
+            nuevoUsuario => {
 
-      );
 
+              var cadenaParaFiltro = nuevoUsuario.nombre +
+                '~' + nuevoUsuario.primerApellido +
+                '~' + nuevoUsuario.segundoApellido +
+                '~' + nuevoUsuario.email;
+
+              let incluirRegistro = true;
+
+              var subcadena;
+
+              if (fou && fou.contieneSubcadena) subcadena = this.normalizarCadena(fou.contieneSubcadena)
+
+
+              // Se desestima si hay una subcadena que debe contener y no la contiene.
+              if (subcadena && cadenaParaFiltro.indexOf(subcadena) === -1) { incluirRegistro = false }
+
+              // Se desestima si se piden usuarios de alta y el usuario no está de alta
+              if (fou && fou.SoloUsuariosDeAlta && nuevoUsuario.FechaBaja) { incluirRegistro = false }
+
+              if (incluirRegistro) { usuariosFiltrados.push(nuevoUsuario); }
+
+            }
+          );
+          usuarios$.next(usuariosFiltrados);
+        }
+
+      )
+
+        return usuarios$
   }
 
   ModificarUsuario(usuario: Usuario): Observable<Usuario> {

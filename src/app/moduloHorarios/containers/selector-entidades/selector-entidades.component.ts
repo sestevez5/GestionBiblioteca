@@ -28,6 +28,7 @@ export class SelectorEntidadesComponent implements OnInit {
 
   constructor(usuarios: AuthService, private store: Store<ModuloHorarioRootState>) {
 
+
   }
 
   ngOnInit(): void {

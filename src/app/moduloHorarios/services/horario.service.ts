@@ -1,3 +1,4 @@
+import { Asignatura } from './../models/asignatura.model';
 import { ParametrosHorario } from './../models/parametrosHorario.model';
 import { PeriodoVigencia } from './../models/peridoVigencia';
 import { cargarPlantillasError } from './../store/actividades/actividades.actions';
@@ -7,12 +8,10 @@ import { EntidadHorario } from './../models/entidadHorario.model';
 import { Docente } from './../models/docente.model';
 import { AuthService } from './../../moduloAuth/services/auth.service';
 import { EnumTipoEntidadHorario } from './../models/tipoEntidadHorario.model';
-import { Observable,from, Subject, Observer, BehaviorSubject } from 'rxjs'
+import { Observable,from, Subject, Observer, BehaviorSubject, combineLatest } from 'rxjs'
 import { Grupo } from '../models/grupo.model';
-import { filter, map } from 'rxjs/operators';
+import { filter, map, distinctUntilChanged } from 'rxjs/operators';
 import { Plantilla } from '../models/plantilla.model';
-
-import { Asignatura } from '../models/asignatura.model';
 import { Dependencia } from '../models/dependencia.model';
 import { DiaSemana } from '../models/diaSemana.model';
 
@@ -24,10 +23,91 @@ import { Usuario } from 'src/app/moduloAuth/models/usuario.model';
 })
 export class HorarioService {
 
+  docentes$: BehaviorSubject<Docente[]>;
+  dependencias$: BehaviorSubject<Dependencia[]>;
+  grupos$: BehaviorSubject<Grupo[]>;
+  asignaturas$: BehaviorSubject<Asignatura[]>;
+  combinacionEntidades$: BehaviorSubject<{ dependencias: Dependencia[], grupos: Grupo[], asignaturas: Asignatura[], docentes: Docente[] }>;
+
+
+
   constructor(private authService: AuthService) {
+
+    // En estos tres casos tiramos de los JSON descritos aquí
+    this.dependencias$= new BehaviorSubject<Dependencia[]>(this.dependencias);
+    this.grupos$      = new BehaviorSubject<Grupo[]>(this.grupos);
+    this.asignaturas$ = new BehaviorSubject<Asignatura[]>(this.asignaturas);
+    this.docentes$ = new BehaviorSubject<Docente[]>([]);
+
+    this.combinacionEntidades$= new BehaviorSubject<
+      {
+        dependencias: Dependencia[],
+        grupos: Grupo[], asignaturas:
+        Asignatura[],
+        docentes: Docente[]
+      }>({dependencias: [],grupos: [], asignaturas: [],docentes:[]});
+
+
+
+    authService.ObtenerUsuarios(null)
+      .pipe(
+        map(
+          usuarios => usuarios.map(
+            usuario => {
+                  return {
+                idDocente: usuario.uid,
+                nombre: usuario.nombre,
+                apellido1: usuario.primerApellido,
+                apellido2: usuario.segundoApellido,
+                foto: usuario.foto,
+                alias: usuario.nombre.slice(0, 2) + usuario.primerApellido.slice(0, 2) + usuario.segundoApellido.slice(0, 2)
+              } as Docente
+            }
+          )
+        )
+    ).subscribe(
+      docentes => this.docentes$.next(docentes)
+    )
+
+
+    const x = combineLatest(
+      [this.dependencias$,
+      this.grupos$,
+      this.asignaturas$,
+      this.docentes$])
+      .pipe(
+        map(combinacion => {
+          return {
+            dependencias: combinacion[0],
+            grupos: combinacion[1],
+            asignaturas: combinacion[2],
+            docentes: combinacion[3]
+          }
+        })
+      ).subscribe(
+        combinacion => this.combinacionEntidades$.next(combinacion)
+    )
+
+
+
+
+
 
   }
 
+  actualizarAsignaturas(asignaturas: Asignatura[]) {
+    this.asignaturas$.next(asignaturas);
+  };
+
+  actualizarGrupos(grupos: Grupo[]) {
+    this.grupos$.next(grupos);
+  };
+
+  actualizarDependencias(dependencias: Dependencia[]) {
+    this.dependencias$.next(dependencias);
+  };
+
+  docentes: Docente[];
   //-----------------------------------------------------------------------------------
   // DATOS MOCK
   //-----------------------------------------------------------------------------------
@@ -249,40 +329,40 @@ export class HorarioService {
 
   ];
 
-  asignaturas: any = [
+  asignaturas: Asignatura[] = [
 
     {
-      id: '1',
+      idAsignatura: '1',
       codigo: 'MAT',
       denominacionLarga: 'Matemáticas'
     },
     {
-      id: '2',
+      idAsignatura: '2',
       codigo: 'CSO',
       denominacionLarga: 'Matemáticas'
     },
     {
-      id: '3',
+      idAsignatura: '3',
       codigo: 'ING',
       denominacionLarga: 'Inglés'
     },
     {
-      id: '4',
+      idAsignatura: '4',
       codigo: 'FYQ',
       denominacionLarga: 'Física y Química'
     },
     {
-      id: '5',
+      idAsignatura: '5',
       codigo: 'REL',
       denominacionLarga: 'Religión'
     },
     {
-      id: '6',
+      idAsignatura: '6',
       codigo: 'EFI',
       denominacionLarga: 'MEducación Física'
     },
     {
-      id: '7',
+      idAsignatura: '7',
       codigo: 'TEC',
       denominacionLarga: 'Tecnología'
     },
@@ -481,80 +561,90 @@ export class HorarioService {
   private convertirIActividadesEnObservableActividades(idActividades: IActividad[]): Observable<Actividad[]> {
     const actividades$ = new BehaviorSubject<Actividad[]>([]);
 
+    this.combinacionEntidades$.subscribe(
+
+      (combinacion: { dependencias: Dependencia[], grupos: Grupo[], asignaturas: Asignatura[], docentes: Docente[] }) =>
+      {
+        console.log(combinacion);
+        var todasLasSesiones: Sesion[] = [];
+        this.plantillas.forEach(pl => todasLasSesiones = todasLasSesiones.concat(pl.sesionesPlantilla));
+
+        const actividades: Actividad[] = [];
+
+        idActividades.map(
+          act => {
+            const nuevaActividad: Actividad = new Actividad();
+            nuevaActividad.idActividad = act.idActividad;
+            nuevaActividad.detalleActividad = act.detalleActividad;
+
+            // Asignamos la colección de grupos.
+            nuevaActividad.grupos = act.grupos.map(idGrupo => {
+              const grupoActual = this.grupos.filter(gr => gr.idGrupo === idGrupo)
+              if (grupoActual.length>0) return grupoActual[0]
+            });
+
+            // Asignamos la colección de asignaturas.
+            nuevaActividad.asignaturas = act.asignaturas.map(idAsignatura => {
+              const asignaturaActual = this.asignaturas.filter(as  => as.idAsignatura === idAsignatura)
+              if (asignaturaActual.length > 0) return asignaturaActual[0];
+            });
+
+            nuevaActividad.docentes = act.docentes.map(idDocente => {
+              console.log('idDocente',idDocente);
+
+              const docenteActual = combinacion.docentes.filter((docente: Docente) => docente.idDocente === idDocente)
+              console.log('idDocente', idDocente);
+              console.log('docenteActual',docenteActual);
+              if (docenteActual.length > 0) return docenteActual[0];
+            });
+
+
+
+
+            // Asignamos la dependencia.
+            // const dependencia = this.dependencias.filter(dep => dep.idDependencia === act.dependencia);
+            // dependencia ? nuevaActividad.dependencia[0]:null;
+
+
+
+            // paso 2: Asignamos a cada actividadG su objeto sesión.
+            const sesionLocalizada = todasLasSesiones.find(s => s.idSesion === act.idSesion);
+              if (sesionLocalizada) nuevaActividad.sesion = sesionLocalizada
+
+            actividades.push(nuevaActividad);
+          }
+        );
+
+        actividades$.next(actividades)
+
+      }
+
+    )
+
     // paso 1: Construimos un único array con todas las sesiones de todas las plantillas.
     // Necesitamoas un único array con todas las sesiones para el punto 2.
     var todasLasSesiones: Sesion[] = [];
     this.plantillas.forEach(pl => todasLasSesiones = todasLasSesiones.concat(pl.sesionesPlantilla));
-
-    const actividades: Actividad[] = [];
-
-    idActividades.map(
-      act => {
-        const nuevaActividad: Actividad = new Actividad();
-        nuevaActividad.idActividad = act.idActividad;
-        nuevaActividad.detalleActividad = act.detalleActividad;
-
-        // Asignamos la colección de grupos.
-        nuevaActividad.grupos = act.grupos.map(idGrupo => {
-          const grupoActual = this.grupos.filter(gr => gr.idGrupo === idGrupo)
-          if (grupoActual.length>0) return grupoActual[0]
-        });
-
-        // Asignamos la colección de asignaturas.
-          //  nuevaActividad.asignaturas = act.asignaturas.map(idAsignatura => {
-          //   const grupoActual = this.grupos.filter(gr => gr.idGrupo === idGrupo)
-          //   if (grupoActual.length>0) return grupoActual[0]
-          // });
-
-
-        // Asignamos la dependencia.
-        // const dependencia = this.dependencias.filter(dep => dep.idDependencia === act.dependencia);
-        // dependencia ? nuevaActividad.dependencia[0]:null;
-
-
-
-        // paso 2: Asignamos a cada actividadG su objeto sesión.
-        const sesionLocalizada = todasLasSesiones.find(s => s.idSesion === act.idSesion);
-          if (sesionLocalizada) nuevaActividad.sesion = sesionLocalizada
-
-        actividades.push(nuevaActividad);
-      }
-    );
-
-
-    actividades$.next(actividades)
-
 
     return actividades$;
 
   }
 
   private ObtenerEntidadesHorarioAPartirdeDocentes(): Observable<EntidadHorario[]> {
-    const usuarios$: Observable<Usuario[]> = this.authService.ObtenerUsuarios(null);
-        // Convertimos usuarios en entidadesHorario, pasando por Docente.
-        const entidadHorario$ = usuarios$
-          .pipe(
-            map(usuarios => {
 
-              return usuarios.map(
-                usuario => {
-                  const docente: Docente =
-                  {
-                    idDocente: usuario.uid,
-                    nombre: usuario.nombre,
-                    apellido1: usuario.primerApellido,
-                    apellido2: usuario.segundoApellido,
-                    foto: usuario.foto,
-                    alias: usuario.nombre.slice(0, 2) + usuario.primerApellido.slice(0, 2) + usuario.segundoApellido.slice(0, 2)
-                  };
+    // const docentes$: Observable<Docente[]> = new BehaviorSubject([]);
 
-                  return new EntidadHorario(docente);
-                })
-            }) // Fin map
-          )  // fin pipe
 
-        return entidadHorario$;
+    const entidadHorario$ = this.docentes$
+      .pipe(map(docentes => {
+          return docentes.map(
+            docente => new EntidadHorario(docente)
+          )
+        })
+      )
 
+
+    return entidadHorario$;
   }
 
   private ObtenerEntidadesHorarioAPartirdeGrupos(): Observable<EntidadHorario[]> {

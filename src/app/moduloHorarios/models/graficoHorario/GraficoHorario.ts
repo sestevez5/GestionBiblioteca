@@ -46,7 +46,7 @@ export class HorarioG {
 
   public actualizarActividades(actividades: Actividad[]) {
 
-    console.log(actividades);
+
     this.actividadesG = [];
     actividades.forEach(
       act => {
@@ -493,10 +493,10 @@ export class HorarioG {
         // A cada panel de una actividad además le añadimos las tres secciones
         as.actividades.forEach(
           actividad => {
-            console.log('actividad-->', actividad);
             const panelActividad = d3.select('g#panelActividad_' + actividad.idActividad);
-            this.renderizarSeccionesPanelesActividades(panelActividad,actividad,1,actividad.grupos?.map(grupo => grupo.codigo));
-            this.renderizarSeccionesPanelesActividades(panelActividad,actividad,2, actividad.grupos?.map(grupo => grupo.codigo));
+            console.log("actividad", actividad);
+            this.renderizarSeccionesPanelesActividades(panelActividad, actividad, 1, actividad.grupos?.map(grupo => grupo.codigo));
+            this.renderizarSeccionesPanelesActividades(panelActividad,actividad,2, actividad.docentes?.map(docente => docente.alias));
             this.renderizarSeccionesPanelesActividades(panelActividad,actividad,3, actividad.asignaturas?.map(asignatura => asignatura.codigo));
           }
         )
@@ -558,7 +558,7 @@ export class HorarioG {
       panelSeccion.append('rect')
       .attr('height', panelSeccionBBox.height)
       .attr('width', panelSeccionBBox.width)
-      .attr('fill', 'green');
+      .attr('fill', 'orange');
 
       const panelTextoSeccion = panelSeccion.append('g')
       .attr('class', 'panelTextoSeccion' + numeroSeccion)
@@ -573,10 +573,8 @@ export class HorarioG {
 
     const parentBBox = panelTextoSeccion.node().parentNode.getBBox();
 
-    console.log('parentBBox: ', parentBBox);
-
     const anchoTexto = parentBBox.height / 30;
-    console.log('anchoTexto', anchoTexto);
+
     const anchoSeparacionTexto = anchoTexto / 3;
 
     if (listaCadenas) {

@@ -1,5 +1,5 @@
 export interface Asignatura {
-  id: string;
+  idAsignatura: string;
   codigo: string;
   denominacionLarga: string;
 }

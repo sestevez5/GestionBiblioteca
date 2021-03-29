@@ -51,8 +51,7 @@ export class MostrarActividadesComponent implements OnInit {
 
 
         combination => {
-          console.log('combination: ', combination);
-
+   
           if (combination.paremetrosHorario) {
             this.horarioG.renderizarGrafico(combination.paremetrosHorario, combination.plantillaActiva);
             if (combination.actividades) this.horarioG.actualizarActividades(combination.actividades);

@@ -11,6 +11,7 @@ import { Actividad } from '../actividad.model';
 import * as d3 from 'd3';
 import { Parametros } from './parametros';
 import { Utilidades } from './utils';
+import { ScaleControlStyle } from '@agm/core';
 
 
 export class HorarioG {
@@ -501,27 +502,30 @@ export class HorarioG {
           }
         )
 
+
+      // -------------------------------------------------------------------
       // Añadimos el rectángulo
-      panelesActividades.append('rect')
-        .attr('class', 'rectActividad')
-        .attr('width', anchoSesion)
-        .attr('fill', 'white')
-        .attr('height', altoPanelActividadesEnActividadSesiones)
-        .attr('opacity', '0')
-        .attr('stroke', 'white')
-        .on("click", (d: any, i: any, e: any) => {
+      // -------------------------------------------------------------------
+      // panelesActividades.append('rect')
+      //   .attr('class', 'rectActividad')
+      //   .attr('width', anchoSesion)
+      //   .attr('fill', 'white')
+      //   .attr('height', altoPanelActividadesEnActividadSesiones)
+      //   .attr('opacity', '0')
+      //   .attr('stroke', 'white')
+      //   .on("click", (d: any, i: any, e: any) => {
 
-          const marcadaActividadActualComoSeleccionada = d3.select('g#panelActividad_' + i.idActividad).attr('class').split(' ').includes('actividadSeleccionada');
-          d.ctrlKey ? null : Utilidades.desmarcarActividadesComoSeleccionadas(this.actividadesG);
+      //     const marcadaActividadActualComoSeleccionada = d3.select('g#panelActividad_' + i.idActividad).attr('class').split(' ').includes('actividadSeleccionada');
+      //     d.ctrlKey ? null : Utilidades.desmarcarActividadesComoSeleccionadas(this.actividadesG);
 
-          marcadaActividadActualComoSeleccionada ?
-            d3.selectAll('g#panelActividad_' + i.idActividad).attr('class', 'panelActividad actividadSeleccionada') :
-            d3.select('g#panelActividad_' + i.idActividad).attr('class', 'panelActividad');
+      //     marcadaActividadActualComoSeleccionada ?
+      //       d3.selectAll('g#panelActividad_' + i.idActividad).attr('class', 'panelActividad actividadSeleccionada') :
+      //       d3.select('g#panelActividad_' + i.idActividad).attr('class', 'panelActividad');
 
-          d3.select('g#panelActividad_' + i.idActividad).attr('class').split(' ').includes('actividadSeleccionada') ?
-            Utilidades.desmarcarActividadesComoSeleccionadas(this.actividadesG,[i.idActividad]) :
-            Utilidades.marcarActividadesComoSeleccionadas([i.idActividad]);
-        });
+      //     d3.select('g#panelActividad_' + i.idActividad).attr('class').split(' ').includes('actividadSeleccionada') ?
+      //       Utilidades.desmarcarActividadesComoSeleccionadas(this.actividadesG,[i.idActividad]) :
+      //       Utilidades.marcarActividadesComoSeleccionadas([i.idActividad]);
+      //   });
 
 
     }
@@ -551,6 +555,8 @@ export class HorarioG {
       .attr('class', 'panelActividadSeccion' + numeroSeccion)
       .attr('id', 'panelActividadSeccion' + numeroSeccion + '_' + actividad.idActividad)
       .attr('transform', `translate(${(panelSeccionBBox.x)},0)`)
+      .attr('x', panelSeccionBBox.x)
+      .attr('y', panelSeccionBBox.y)
       .attr('height', panelSeccionBBox.height)
       .attr('width', panelSeccionBBox.width)
 
@@ -570,28 +576,108 @@ export class HorarioG {
 
   }
   private renderizarContenidoPanelesSeccionesActividades(panelTextoSeccion: any, listaCadenas: string[]) {
-
-    const parentBBox = panelTextoSeccion.node().parentNode.getBBox();
-
-    const anchoTexto = parentBBox.height / 30;
-
-    const anchoSeparacionTexto = anchoTexto / 3;
-
-    if (listaCadenas) {
-      for (let index = 0; index < listaCadenas.length; index++) {
-        const item = listaCadenas[index];
-        panelTextoSeccion.append('text')
-          .attr('x', parentBBox.width / 2)
-          .text((d: any, i: any, n: any) => item)
-          .attr('y', (index + 1) * (anchoTexto + anchoSeparacionTexto))
-          .attr('font-size', Parametros.parametrosGrafico.actividades.tamanyoTexto)
-          .attr('fill', 'black')
-          .attr('dominant-baseline', 'Hanging')
-          .attr('text-anchor', 'middle');
-
-      }
+    const panelSeccion= d3.select(panelTextoSeccion.node().parentNode);
+    const dimensionesPanelSeccion = {
+      x: parseFloat(panelSeccion.attr('x')),
+      y: parseFloat(panelSeccion.attr('y')),
+      width: parseFloat(panelSeccion.attr('width')),
+      height: parseFloat(panelSeccion.attr('height'))
     }
 
+    if (listaCadenas) this.anyadirTextos(panelTextoSeccion, listaCadenas);
+
+    const seccionContenidoBBox = panelTextoSeccion.node().getBBox();
+
+    if (dimensionesPanelSeccion.height < seccionContenidoBBox.height) this.anyadirScrollSeccionContenido(panelTextoSeccion, listaCadenas);
+
+  }
+
+  private anyadirTextos(panelTextoSeccion: any, listaCadenas: string[]) {
+
+    const altoTexto = parseFloat(Parametros.parametrosGrafico.actividades.tamanyoTexto);
+
+    const separacionEnteFilas = altoTexto/3;
+    const parentBBox = panelTextoSeccion.node().parentNode.getBBox();
+
+    for (let index = 0; index < listaCadenas.length; index++) {
+      const item = listaCadenas[index];
+      panelTextoSeccion.append('text')
+        .attr('x', parentBBox.width / 2)
+        .text((d: any, i: any, n: any) => item)
+        .attr('y', 10+(index) * (altoTexto + separacionEnteFilas))
+        .attr('font-size', Parametros.parametrosGrafico.actividades.tamanyoTexto)
+        .attr('fill', 'black')
+        .attr('dominant-baseline', 'Hanging')
+        .attr('text-anchor', 'middle');
+    }
+
+  }
+
+  private anyadirScrollSeccionContenido(panelTextoSeccion: any, listaCadenas: string[]) {
+
+    const panelSeccion= d3.select(panelTextoSeccion.node().parentNode);
+    const dimensionesPanelSeccion = {
+      x: parseFloat(panelSeccion.attr('x')),
+      y: parseFloat(panelSeccion.attr('y')),
+      width: parseFloat(panelSeccion.attr('width')),
+      height: parseFloat(panelSeccion.attr('height'))
+    }
+    const seccionContenidoBBox = panelTextoSeccion.node().getBBox();
+    const panelScroll = panelTextoSeccion.append('g');
+
+    const anchoScroll = 5;
+
+    const altoScroll = dimensionesPanelSeccion.height*dimensionesPanelSeccion.height/seccionContenidoBBox.height;
+
+    const rectScroll = panelScroll.append('rect')
+      .attr('rx', 4)
+      .attr('ry',4)
+      .attr('width', anchoScroll)
+      .attr('height', altoScroll)
+
+
+    panelScroll.attr('transform', `translate(${dimensionesPanelSeccion.width-anchoScroll},0)`);
+
+    const drag = d3.drag()
+      .on("drag", function (event, d:any) {
+        d.y = event.y;
+
+        panelScroll.attr('transform', `translate(${dimensionesPanelSeccion.width - anchoScroll},${d.y})`);
+
+        //panelSeccion.attr('transform', `translate(0,${0-d.y})`)
+
+      });
+
+    drag(panelScroll);
+
+
+      function dragstarted(event:any) {
+        panelScroll.raise();
+      }
+
+    function dragged(event: any, d: any) {
+
+      d.y = clamp(event.dy, 0, 30);
+
+      console.log(event);
+
+      panelScroll.raise().attr('transform', `translate(${dimensionesPanelSeccion.width-anchoScroll},${d.y})`);
+
+      }
+
+      function dragended(event:any) {
+        console.log(event);
+
+      }
+
+      function dragstart() {
+        d3.select(panelScroll).classed("fixed", true);
+      }
+
+
+      function clamp(x:any, lo:any, hi:any) {
+        return x < lo ? lo : x > hi ? hi : x;
+      }
 
 
   }

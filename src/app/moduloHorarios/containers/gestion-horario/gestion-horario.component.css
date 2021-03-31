@@ -22,23 +22,24 @@
 
 .seccionCabeceraEntidadSeleccionada{
   grid-column-start: 3;
-  grid-column-end: 9;
-  border-right: solid 2px;
-  border-left: solid 2px;
+  grid-column-end: 8;
+  border-right: solid 1px;
+  border-left: solid 1px;
+  padding-left: 6px;
 
 }
 
 .seccionSelectorPlantilla{
-  grid-column-start: 9;
+  grid-column-start: 8;
   grid-column-end: 10;
   padding: 3px;
-  border-right: solid 2px;
+  border-right: solid 1px;
 }
 
 .seccionSelectorSemanas{
   grid-column-start: 10;
   grid-column-end: 13;
-  border-right: solid 2px;
+  border-right: solid 1px;
 }
 
 .seccionSelectorEntidad{

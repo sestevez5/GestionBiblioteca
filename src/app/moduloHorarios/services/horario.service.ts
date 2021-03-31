@@ -236,8 +236,8 @@ export class HorarioService {
       idActividad: '11',
       idSesion: 'P1L3',
       detalleActividad: '',
-      grupos: ['2','20','21'],
-      docentes: ['IJyiJjc2LXTZXsdwY27ORvpzIYw1','NTNYueJSicQOvYLjWzQs5ZcyeV63'],
+      grupos: ['1', '2','20','21', '3'],
+      docentes: ['IJyiJjc2LXTZXsdwY27ORvpzIYw1'],
       asignaturas: ['1'],
       dependencia: '1',
       idPeriodoVigencia: '1'
@@ -247,7 +247,7 @@ export class HorarioService {
       idSesion: 'P1L3',
       detalleActividad: '',
       grupos: ['2'],
-      docentes: ['IJyiJjc2LXTZXsdwY27ORvpzIYw1','NTNYueJSicQOvYLjWzQs5ZcyeV63'],
+      docentes: ['NTNYueJSicQOvYLjWzQs5ZcyeV63'],
       asignaturas: ['1'],
       dependencia:'1',
       idPeriodoVigencia: '1'
@@ -257,7 +257,7 @@ export class HorarioService {
       idSesion: 'P1L4',
       detalleActividad: '',
       grupos: ['2'],
-      docentes: ['IJyiJjc2LXTZXsdwY27ORvpzIYw1','NTNYueJSicQOvYLjWzQs5ZcyeV63'],
+      docentes: ['NTNYueJSicQOvYLjWzQs5ZcyeV63'],
       asignaturas: ['1'],
       dependencia:'2',
       idPeriodoVigencia: '1'
@@ -267,7 +267,7 @@ export class HorarioService {
       idSesion: 'P1M1',
       detalleActividad: '',
       grupos: ['2'],
-      docentes: ['IJyiJjc2LXTZXsdwY27ORvpzIYw1'],
+      docentes: ['NTNYueJSicQOvYLjWzQs5ZcyeV63'],
       asignaturas: ['1','3'],
       dependencia:'2',
       idPeriodoVigencia: '1'
@@ -304,28 +304,7 @@ export class HorarioService {
       asignaturas: ['1','3','4'],
       dependencia:'3',
       idPeriodoVigencia: '1'
-    },
-
-    // {
-    //   idActividad: '7',
-    //   idSesion: 'P1X1',
-    //   detalleActividad: '',
-    //   grupos: ['3'],
-    //   docentes: [],
-    //   asignaturas: ['2','4'],
-    //   dependencia:'1',
-      // idPeriodoVigencia: '1'
-    // },
-    // {
-    //   idActividad: '8',
-    //   idSesion: 'P1J2',
-    //   detalleActividad: '',
-    //   grupos: ['2'],
-    //   docentes: [],
-    //   asignaturas: ['2','3','1'],
-    //   dependencia:'2',
-      // idPeriodoVigencia: '1'
-     //}
+    }
 
   ];
 

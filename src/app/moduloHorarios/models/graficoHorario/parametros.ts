@@ -55,7 +55,7 @@ export class Parametros {
     },
 
     actividades: {
-      tamanyoTexto: '0.6em'
+      tamanyoTexto: '12'
     }
 
   }

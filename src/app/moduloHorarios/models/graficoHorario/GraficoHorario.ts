@@ -552,8 +552,8 @@ export class HorarioG {
 
 
     const panelSeccion = panelActividad.append('g')
-      .attr('class', 'panelActividadSeccion' + numeroSeccion)
-      .attr('id', 'panelActividadSeccion' + numeroSeccion + '_' + actividad.idActividad)
+      .attr('class', 'panelActividadSeccion panelActividadSeccion_' + numeroSeccion)
+      .attr('id', 'panelActividadSeccion_' + numeroSeccion + '_' + actividad.idActividad)
       .attr('transform', `translate(${(panelSeccionBBox.x)},0)`)
       .attr('x', panelSeccionBBox.x)
       .attr('y', panelSeccionBBox.y)
@@ -566,121 +566,132 @@ export class HorarioG {
       .attr('width', panelSeccionBBox.width)
       .attr('fill', 'orange');
 
-      const panelTextoSeccion = panelSeccion.append('g')
-      .attr('class', 'panelTextoSeccion' + numeroSeccion)
-      .attr('id', 'panelTextoSeccion' + numeroSeccion + '_' + actividad.idActividad)
+    const panelContenidoSeccion = panelSeccion
+      .append('g')
+      .attr('class', 'panelContenidoSeccion panelContenidoSeccion_' + numeroSeccion)
+      .attr('id', 'panelContenidoSeccion_' + numeroSeccion + '_' + actividad.idActividad)
 
 
-      const panelContenidolistaCadenas = this.renderizarContenidoPanelesSeccionesActividades(panelTextoSeccion, listaCadenas)
+      const panelContenidolistaCadenas = this.renderizarContenidoPanelesSeccionesActividades(panelContenidoSeccion, listaCadenas)
 
 
   }
-  private renderizarContenidoPanelesSeccionesActividades(panelTextoSeccion: any, listaCadenas: string[]) {
-    const panelSeccion= d3.select(panelTextoSeccion.node().parentNode);
-    const dimensionesPanelSeccion = {
+  private renderizarContenidoPanelesSeccionesActividades(panelContenidoSeccion: any, listaCadenas: string[]) {
+
+
+    // Obtenemos las dimensiones y posicionamiento del panel Sección del contenido actual
+    const panelSeccion = d3.select(panelContenidoSeccion.node().parentNode);
+
+    const dps = {
       x: parseFloat(panelSeccion.attr('x')),
       y: parseFloat(panelSeccion.attr('y')),
       width: parseFloat(panelSeccion.attr('width')),
       height: parseFloat(panelSeccion.attr('height'))
     }
 
-    if (listaCadenas) this.anyadirTextos(panelTextoSeccion, listaCadenas);
+    if (listaCadenas) this.anyadirContenidoPanelesSeccion(panelContenidoSeccion, listaCadenas);
 
-    const seccionContenidoBBox = panelTextoSeccion.node().getBBox();
+    const seccionContenidoBBox = panelContenidoSeccion.node().getBBox();
 
-    if (dimensionesPanelSeccion.height < seccionContenidoBBox.height) this.anyadirScrollSeccionContenido(panelTextoSeccion, listaCadenas);
+    if (dps.height < seccionContenidoBBox.height) this.anyadirScrollSeccion(panelContenidoSeccion);
 
   }
 
-  private anyadirTextos(panelTextoSeccion: any, listaCadenas: string[]) {
+  private anyadirContenidoPanelesSeccion(panelContenidoSeccion: any, listaCadenas: string[]) {
 
     const altoTexto = parseFloat(Parametros.parametrosGrafico.actividades.tamanyoTexto);
-
     const separacionEnteFilas = altoTexto/3;
-    const parentBBox = panelTextoSeccion.node().parentNode.getBBox();
+    const dps = panelContenidoSeccion.node().parentNode.getBBox();
 
     for (let index = 0; index < listaCadenas.length; index++) {
       const item = listaCadenas[index];
-      panelTextoSeccion.append('text')
-        .attr('x', parentBBox.width / 2)
+      panelContenidoSeccion.append('text')
+        .attr('x', dps.width / 2)
         .text((d: any, i: any, n: any) => item)
-        .attr('y', 10+(index) * (altoTexto + separacionEnteFilas))
+        .attr('y', (index) * (altoTexto + separacionEnteFilas))
         .attr('font-size', Parametros.parametrosGrafico.actividades.tamanyoTexto)
         .attr('fill', 'black')
-        .attr('dominant-baseline', 'Hanging')
+        .attr('dominant-baseline', 'text-before-edge')
         .attr('text-anchor', 'middle');
     }
 
   }
 
-  private anyadirScrollSeccionContenido(panelTextoSeccion: any, listaCadenas: string[]) {
+  private anyadirScrollSeccion(panelContenidoSeccion: any) {
 
-    const panelSeccion= d3.select(panelTextoSeccion.node().parentNode);
-    const dimensionesPanelSeccion = {
+    // 1.- Obtenemos las dimensiones de la sección
+    const panelSeccion = d3.select(panelContenidoSeccion.node().parentNode);
+    const dps = {
       x: parseFloat(panelSeccion.attr('x')),
       y: parseFloat(panelSeccion.attr('y')),
       width: parseFloat(panelSeccion.attr('width')),
       height: parseFloat(panelSeccion.attr('height'))
     }
-    const seccionContenidoBBox = panelTextoSeccion.node().getBBox();
-    const panelScroll = panelTextoSeccion.append('g');
 
+    // 2.- Obtenemos las dimenciones del grupo que contiene los textos.
+    const dpcs = panelContenidoSeccion.node().getBBox();
+
+    // 3,. Establecemos parámetros.
     const anchoScroll = 5;
+    const altoScroll = dps.height * dps.height / dpcs.height;
+    const maxDesplazamientoScroll = dps.height - altoScroll;
+    const longitudSeccionExterna = dpcs.height - dps.height;
 
-    const altoScroll = dimensionesPanelSeccion.height*dimensionesPanelSeccion.height/seccionContenidoBBox.height;
+    // 3.- Creamos el panel para el scroll
+    const panelScroll = panelSeccion.append('g');
 
+    // 4.- Añadimos el fondo del panel de scroll
+    const rectFondoZonaScroll = panelScroll.append('rect')
+      .attr('rx', 2)
+      .attr('ry',2)
+      .attr('width', anchoScroll)
+      .attr('height', dps.height)
+      .attr('fill', '#eee');
+
+    // 5.- Añadimos el propio scroll. Será un rectángulo.
     const rectScroll = panelScroll.append('rect')
-      .attr('rx', 4)
-      .attr('ry',4)
+      .attr('rx', 2)
+      .attr('ry', 2)
+      .attr('fill', '#777')
       .attr('width', anchoScroll)
       .attr('height', altoScroll)
 
+    // 6.- Trasladamos el panel de scroll a la derecha de la sección.
+    panelScroll.attr('transform', `translate(${dps.width-anchoScroll},0)`);
 
-    panelScroll.attr('transform', `translate(${dimensionesPanelSeccion.width-anchoScroll},0)`);
 
+    // 7.- Definimos el evento de scroll
     const drag = d3.drag()
-      .on("drag", function (event, d:any) {
-        d.y = event.y;
+      .on("drag", function (event, d: any) {
 
-        panelScroll.attr('transform', `translate(${dimensionesPanelSeccion.width - anchoScroll},${d.y})`);
+        console.log("drag valorinicial:", d.valorInicial);
+        // Acotamos sus posibles valores.
+        d.y = clamp(event.y-d.valorInicial, 0, maxDesplazamientoScroll);
 
-        //panelSeccion.attr('transform', `translate(0,${0-d.y})`)
+        // Aplicamos el movimiento al scroll
+        rectScroll.attr('y', d.y);
 
+        // Aplicamos el movimiento al panel de contenido.
+        panelContenidoSeccion.attr('transform', `translate(0,${(-1)*longitudSeccionExterna * d.y / maxDesplazamientoScroll})`)
+
+      })
+      .on("start", function (event,d:any) {
+        d.valorInicial = event.y;
       });
 
-    drag(panelScroll);
 
+    // 8.- Asociamos el scroll al panel
+    drag(panelScroll as any);
 
-      function dragstarted(event:any) {
-        panelScroll.raise();
-      }
-
-    function dragged(event: any, d: any) {
-
-      d.y = clamp(event.dy, 0, 30);
-
-      console.log(event);
-
-      panelScroll.raise().attr('transform', `translate(${dimensionesPanelSeccion.width-anchoScroll},${d.y})`);
-
-      }
-
-      function dragended(event:any) {
-        console.log(event);
-
-      }
-
-      function dragstart() {
-        d3.select(panelScroll).classed("fixed", true);
-      }
-
-
-      function clamp(x:any, lo:any, hi:any) {
-        return x < lo ? lo : x > hi ? hi : x;
-      }
-
+    // 9.- Función auxiliar que acota valores posibles entre
+    // un límite inferior y un límite superior.
+    function clamp(x:any, lo:any, hi:any) {
+      return x < lo ? lo : x > hi ? hi : x;
+    }
 
   }
+
+
   private actualizarActividadVisibleDeUnaSesion(d: any, i: IActividadesSesion, e: any) {
 
     var botonDerechoPulsado: boolean = d.srcElement.classList.contains('botonDerechoCabeceraSesionActividades') ? true : false;

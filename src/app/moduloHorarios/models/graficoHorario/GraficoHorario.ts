@@ -564,7 +564,7 @@ export class HorarioG {
       panelSeccion.append('rect')
       .attr('height', panelSeccionBBox.height)
       .attr('width', panelSeccionBBox.width)
-      .attr('fill', 'orange');
+      .attr('fill', '#D6EAF8');
 
     const panelContenidoSeccion = panelSeccion
       .append('g')

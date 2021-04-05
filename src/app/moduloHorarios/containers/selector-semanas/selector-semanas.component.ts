@@ -1,8 +1,9 @@
 import { ModuloHorarioRootState } from './../../store/index';
 import { Store, select } from '@ngrx/store';
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { NgbDateStruct, NgbDate, NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
+import { Component, OnInit, Output, EventEmitter, OnChanges, SimpleChange, SimpleChanges } from '@angular/core';
+import { NgbDate, NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
 import * as FromActividadesSelector from '../../store/actividades/actividades.selectors';
+import * as FromActividadesActions from '../../store/actividades/actividades.actions';
 @Component({
   selector: 'app-selector-semanas',
   templateUrl: './selector-semanas.component.html',
@@ -25,6 +26,24 @@ export class SelectorSemanasComponent implements OnInit {
   ngOnInit(): void {
     this.gestionarSubscripcionesStore();
   }
+
+  onChange(event:any) {
+    if (event === 'semana') {
+      this.store.dispatch(
+        FromActividadesActions.seleccionarSemana(
+          { lunesSemanaSeleccionada: this.convertirNgbDateEnFecha(this.rangoSemanaSeleccionada.inicio) }
+        ));
+    }
+    else
+    {
+      this.store.dispatch(
+        FromActividadesActions.seleccionarSemana(
+          { lunesSemanaSeleccionada: null }
+        ));
+      }
+  }
+
+
 
   // ----------------------------------------------------------------
   // Método que gestiona las subscripciones necesarias al Store.
@@ -51,13 +70,14 @@ export class SelectorSemanasComponent implements OnInit {
   onSeleccionarFecha(fecha: NgbDate) {
 
     this.rangoSemanaSeleccionada = this.obtenerSemanaDeLaFecha(fecha);
-    this.lunesSemanaSeleccionada.emit(this.convertirNgbDateEnFecha(this.rangoSemanaSeleccionada.inicio));
-
+    this.store.dispatch(
+      FromActividadesActions.seleccionarSemana(
+        { lunesSemanaSeleccionada: this.convertirNgbDateEnFecha(this.rangoSemanaSeleccionada.inicio) }
+      ));
   }
 
   isHovered(date: NgbDate) {
-    console.log('hover: ', date);
-    return this.rangoSemanaSeleccionada.inicio && !this.rangoSemanaSeleccionada.fin && this.hoveredDate && date.after(this.rangoSemanaSeleccionada.inicio) && date.before(this.hoveredDate);
+      return this.rangoSemanaSeleccionada.inicio && !this.rangoSemanaSeleccionada.fin && this.hoveredDate && date.after(this.rangoSemanaSeleccionada.inicio) && date.before(this.hoveredDate);
   }
 
   isInside(date: NgbDate) {

@@ -51,11 +51,11 @@ export class MostrarActividadesComponent implements OnInit {
 
 
         combination => {
-   
-          if (combination.paremetrosHorario) {
+
+          if (combination.paremetrosHorario && combination.plantillaActiva)
+          {
             this.horarioG.renderizarGrafico(combination.paremetrosHorario, combination.plantillaActiva);
             if (combination.actividades) this.horarioG.actualizarActividades(combination.actividades);
-
           }
         }
       );

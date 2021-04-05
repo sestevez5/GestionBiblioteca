@@ -1,5 +1,4 @@
 export interface IActividad {
-
   idActividad: string;
   idSesion: string;
   detalleActividad: string;

@@ -1,14 +1,15 @@
-
+import { ModuloHorarioRootState } from './../index';
 import { Router } from '@angular/router';
 import { RootState } from './../../../reducers/app.reducer';
 import { HorarioService } from '../../services/horario.service';
-import { Action, Store } from '@ngrx/store';
+import { Action, Store, select } from '@ngrx/store';
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, concatMap, switchMap, tap, mergeMap } from 'rxjs/operators';
 import { of, Observable } from 'rxjs';
 import * as PrincipalActions from '../../../moduloPrincipal/store/comunicaciones/comunicaciones.actions';
 import * as actividadesActions from './actividades.actions';
+import * as FromEntidadesHorarioSelectors from '../entidadesHorario/entidadesHorario.selectors';
 
 
 @Injectable()
@@ -17,43 +18,6 @@ export class actividadesEffects {
   // ---------------------------------------------------------------------
   // Cargar actividades
   // ---------------------------------------------------------------------
-  cargarActividades$: Observable<Action> = createEffect(
-    () =>
-      this.action$.pipe(
-        ofType(actividadesActions.cargarActividades),
-
-        switchMap(
-          action => {
-
-            this.store.dispatch(PrincipalActions.cargandoDatos({ mensaje: "cargando" }));
-            return this.horarioService.obtenerTodasLasActividades()
-              .pipe(
-
-                map(
-
-                  actividades => {
-
-                    this.store.dispatch(PrincipalActions.cargadoDatos());
-                    return actividadesActions.cargarActividadesOK({ actividades: actividades });
-                  }
-
-                ), // Fin map
-
-                catchError(
-                  error => {
-                    this.store.dispatch(PrincipalActions.cargadoDatos());
-                    return of(actividadesActions.cargarActividadesError({ error: 'error' }))
-                  }
-
-                )
-              ) // fin pipe
-
-                }
-      ) // Fin mergeMap
-
-    ) // fin this.action$.pipe
-
-  ); // fin createeffect
 
   cargarPlantillas$: Observable<Action> = createEffect(
     () =>
@@ -64,10 +28,11 @@ export class actividadesEffects {
           action => {
 
             this.store.dispatch(PrincipalActions.cargandoDatos({ mensaje: "cargando" }));
-            return this.horarioService.obtenerTodasLasPlantillas()
+            return this.horarioService.obtenerPlantillas()
               .pipe(
                 map(
                   plantillas => {
+                    console.log('plantillas', plantillas)
                     this.store.dispatch(PrincipalActions.cargadoDatos());
                     return actividadesActions.cargarPlantillasOK({ plantillas: plantillas });
                   }
@@ -99,27 +64,27 @@ export class actividadesEffects {
           action => {
 
             this.store.dispatch(PrincipalActions.cargandoDatos({ mensaje: "cargando" }));
-            return this.horarioService.obtenerTodasLasPlantillas()
-              .pipe(
-                map(
-                  plantillas => {
-                    this.store.dispatch(PrincipalActions.cargadoDatos());
-                    return actividadesActions.cargarPlantillasOK({ plantillas: plantillas });
-                  }
 
-                ), // Fin map
+            return this.store.pipe(
+                select(FromEntidadesHorarioSelectors.selectEntidadHorarioActiva),
+                switchMap( eha => this.horarioService.obtenerActividades(eha, action.lunesSemanaSeleccionada)
+                .pipe(
+                  map(
+                    actividades => {
+                      this.store.dispatch(PrincipalActions.cargadoDatos());
+                      return actividadesActions.cargarActividadesOK({ actividades: actividades });
+                    }),
+                  catchError(
+                    error => {
+                      this.store.dispatch(PrincipalActions.cargadoDatos());
+                      return of(actividadesActions.cargarPlantillasError({ error: 'error' }))
+                    })
+                  ) // Fin pipe
+                ) // Fin map
+            ) // Fin this.store.pipe
 
-                catchError(
-                  error => {
-                    this.store.dispatch(PrincipalActions.cargadoDatos());
-                    return of(actividadesActions.cargarPlantillasError({ error: 'error' }))
-                  }
 
-                )
-              ) // fin pipe
-
-                }
-      ) // Fin mergeMap
+      }) // Fin switchMap
 
     ) // fin this.action$.pipe
 
@@ -161,10 +126,46 @@ export class actividadesEffects {
 
   );
 
+  cargarActividad$: Observable<Action> = createEffect(
+    () =>
+      this.action$.pipe(
+        ofType(actividadesActions.cargarPlantillas),
+
+        switchMap(
+          action => {
+
+            this.store.dispatch(PrincipalActions.cargandoDatos({ mensaje: "cargando" }));
+            return this.horarioService.obtenerPlantillas()
+              .pipe(
+                map(
+                  plantillas => {
+                    console.log('plantillas', plantillas)
+                    this.store.dispatch(PrincipalActions.cargadoDatos());
+                    return actividadesActions.cargarPlantillasOK({ plantillas: plantillas });
+                  }
+
+                ), // Fin map
+
+                catchError(
+                  error => {
+                    this.store.dispatch(PrincipalActions.cargadoDatos());
+                    return of(actividadesActions.cargarPlantillasError({ error: 'error' }))
+                  }
+
+                )
+              ) // fin pipe
+
+                }
+      ) // Fin mergeMap
+
+    ) // fin this.action$.pipe
+
+  );
+
   constructor(
     private horarioService: HorarioService,
     private action$: Actions,
-    private store: Store<RootState>,
+    private store: Store<ModuloHorarioRootState>,
     private router: Router) {}
 
 }

@@ -1,3 +1,4 @@
+import { GestionarActividadComponent } from './containers/gestionar-actividad/gestionar-actividad.component';
 import { GestionHorarioComponent } from './containers/gestion-horario/gestion-horario.component';
 import { IndexSubsistemaComponent } from './../shared/components/index-subsistema/index-subsistema.component';
 import { NgModule } from '@angular/core';
@@ -11,7 +12,9 @@ const routes: Routes = [
     data: { nombreSubsistema: 'Gestión de Horarios' },
     children: [
       { path: '', redirectTo: 'index', pathMatch: "full" },
-      { path: 'index', component: GestionHorarioComponent  },
+      { path: 'index', component: GestionHorarioComponent },
+      { path: 'actividad/:id', component: GestionarActividadComponent },
+
     ]
   },
 

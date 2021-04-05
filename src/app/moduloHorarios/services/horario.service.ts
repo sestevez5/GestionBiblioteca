@@ -1,24 +1,30 @@
+import { filter } from 'rxjs/operators';
+
+// angular
+import { Injectable } from '@angular/core';
+
+// rxjs
+import { Observable, BehaviorSubject, combineLatest } from 'rxjs'
+
+// firebase
+import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
+import { map } from 'rxjs/operators';
+
+// modelo
 import { Asignatura } from './../models/asignatura.model';
 import { IActividad} from './../models/IActividad.model'
 import { ParametrosHorario } from './../models/parametrosHorario.model';
 import { PeriodoVigencia } from './../models/peridoVigencia';
-import { cargarPlantillasError } from './../store/actividades/actividades.actions';
 import { Sesion } from './../models/sesion';
-import { IActividadesSesion } from './../models/actividadesSesion.model';
 import { EntidadHorario } from './../models/entidadHorario.model';
 import { Docente } from './../models/docente.model';
 import { AuthService } from './../../moduloAuth/services/auth.service';
 import { EnumTipoEntidadHorario } from './../models/tipoEntidadHorario.model';
-import { Observable,from, Subject, Observer, BehaviorSubject, combineLatest } from 'rxjs'
 import { Grupo } from '../models/grupo.model';
-import { filter, map, distinctUntilChanged } from 'rxjs/operators';
 import { Plantilla } from '../models/plantilla.model';
 import { Dependencia } from '../models/dependencia.model';
 import { DiaSemana } from '../models/diaSemana.model';
-
 import { Actividad } from '../models/actividad.model';
-import { Injectable } from '@angular/core';
-import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -29,80 +35,17 @@ export class HorarioService {
   dependencias$: BehaviorSubject<Dependencia[]>;
   grupos$: BehaviorSubject<Grupo[]>;
   asignaturas$: BehaviorSubject<Asignatura[]>;
-  combinacionEntidades$: BehaviorSubject<{ dependencias: Dependencia[], grupos: Grupo[], asignaturas: Asignatura[], docentes: Docente[] }>;
+  plantillas$: BehaviorSubject<Plantilla[]>;
+  periodosVigencia$: BehaviorSubject<PeriodoVigencia[]>;
 
-
-
-  constructor(private authService: AuthService, private fireBaseDB: AngularFirestore) {
-
-    // En estos tres casos tiramos de los JSON descritos aquí
-    this.dependencias$= new BehaviorSubject<Dependencia[]>(this.dependencias);
-    this.grupos$      = new BehaviorSubject<Grupo[]>(this.grupos);
-    this.asignaturas$ = new BehaviorSubject<Asignatura[]>(this.asignaturas);
-    this.docentes$ = new BehaviorSubject<Docente[]>([]);
-
-    this.combinacionEntidades$= new BehaviorSubject<
-      {
-        dependencias: Dependencia[],
-        grupos: Grupo[], asignaturas:
-        Asignatura[],
-        docentes: Docente[]
-      }>({dependencias: [],grupos: [], asignaturas: [],docentes:[]});
-
-
-
-    this.ObtenerDocentes()
-      .subscribe(
-        docentes => this.docentes$.next(docentes)
-    );
-
-    this.ObtenerAsignaturas()
-      .subscribe(asignaturas =>
-        this.asignaturas$.next(asignaturas)
-        );
-
-    const x = combineLatest(
-      [this.dependencias$,
-      this.grupos$,
-      this.asignaturas$,
-      this.docentes$])
-      .pipe(
-        map(combinacion => {
-          return {
-            dependencias: combinacion[0],
-            grupos: combinacion[1],
-            asignaturas: combinacion[2],
-            docentes: combinacion[3]
-          }
-        })
-      ).subscribe(
-        combinacion => this.combinacionEntidades$.next(combinacion)
-    )
-
-
-
-
-
-
-  }
-
-
-  actualizarAsignaturas(asignaturas: Asignatura[]) {
-    this.asignaturas$.next(asignaturas);
-  };
-
-  actualizarGrupos(grupos: Grupo[]) {
-    this.grupos$.next(grupos);
-  };
-
-  actualizarDependencias(dependencias: Dependencia[]) {
-    this.dependencias$.next(dependencias);
-  };
-
-
-  //-----------------------------------------------------------------------------------
-  // DATOS MOCK
-  //-----------------------------------------------------------------------------------
+  combinacionEntidades$: BehaviorSubject<{
+    dependencias: Dependencia[],
+    grupos: Grupo[],
+    asignaturas: Asignatura[],
+    docentes: Docente[],
+    plantillas: Plantilla[],
+    periodosVigencia: PeriodoVigencia[]
+  }>;
 
   diasSemana: DiaSemana[] = [
     { codigo: 'L', denominacionCorta: 'LUN', denominacionLarga: 'Lunes' },
@@ -150,332 +93,143 @@ export class HorarioService {
 
   ]
 
-  plantillas: Plantilla[] = [
+
+  constructor(private authService: AuthService, private fireBaseDB: AngularFirestore) {
+
+    // En estos tres casos tiramos de los JSON descritos aquí
+    this.dependencias$= new BehaviorSubject<Dependencia[]>([]);
+    this.grupos$      = new BehaviorSubject<Grupo[]>([]);
+    this.asignaturas$ = new BehaviorSubject<Asignatura[]>([]);
+    this.docentes$ = new BehaviorSubject<Docente[]>([]);
+    this.plantillas$ = new BehaviorSubject<Plantilla[]>([]);
+    this.periodosVigencia$ = new BehaviorSubject<PeriodoVigencia[]>([]);
+
+
+
+    this.obtenerDocentes()
+      .subscribe(docentes => this.docentes$.next(docentes));
+
+    this.obtenerAsignaturas()
+      .subscribe(asignaturas => this.asignaturas$.next(asignaturas));
+
+    this.obtenerGrupos()
+      .subscribe(grupos => this.grupos$.next(grupos));
+
+    this.obtenerDependencias()
+      .subscribe(dependencias => this.dependencias$.next(dependencias));
+
+    this.obtenerPlantillas()
+      .subscribe(plantillas => this.plantillas$.next(plantillas));
+
+    this.obtenerPeriodosVigencia()
+      .subscribe(periodosVigencia => this.periodosVigencia$.next(periodosVigencia));
+
+    this.combinacionEntidades$= new BehaviorSubject<
     {
-      idPlantilla: 'P1',
-      denominacion: 'ordinaria',
-      sesionesPlantilla: [
+      dependencias: Dependencia[],
+      grupos: Grupo[],
+      asignaturas: Asignatura[],
+      docentes: Docente[],
+      plantillas: Plantilla[],
+      periodosVigencia: PeriodoVigencia[]
+    }>({
+      dependencias: [],
+      grupos: [],
+      asignaturas: [],
+      docentes: [],
+      plantillas: [],
+      periodosVigencia: []
+    });
 
-        { idSesion: 'P1L1', diaSemana: 'L', horaInicio: '08:00', horaFin: '08:55' },
-        { idSesion: 'P1L2', diaSemana: 'L', horaInicio: '08:55', horaFin: '09:50' },
-        { idSesion: 'P1L3', diaSemana: 'L', horaInicio: '09:50', horaFin: '10:45' },
-        { idSesion: 'P1L4', diaSemana: 'L', horaInicio: '11:15', horaFin: '12:10' },
-        { idSesion: 'P1L5', diaSemana: 'L', horaInicio: '12:10', horaFin: '13:05' },
-        { idSesion: 'P1L6', diaSemana: 'L', horaInicio: '13:05', horaFin: '14:00' },
+    combineLatest(
+      [this.dependencias$,
+      this.grupos$,
+      this.asignaturas$,
+      this.docentes$,
+      this.plantillas$,
+      this.periodosVigencia$])
+      .pipe(
+        map(combinacion => {
+          return {
+            dependencias: combinacion[0],
+            grupos: combinacion[1],
+            asignaturas: combinacion[2],
+            docentes: combinacion[3],
+            plantillas: combinacion[4],
+            periodosVigencia: combinacion[5]
+          }
+        })
+      ).subscribe(combinacion => this.combinacionEntidades$.next(combinacion));
 
-        { idSesion: 'P1M1', diaSemana: 'M', horaInicio: '08:00', horaFin: '08:55' },
-        { idSesion: 'P1M2', diaSemana: 'M', horaInicio: '08:55', horaFin: '09:50' },
-        { idSesion: 'P1M3', diaSemana: 'M', horaInicio: '09:50', horaFin: '10:45' },
-        { idSesion: 'P1M4', diaSemana: 'M', horaInicio: '11:15', horaFin: '12:10' },
-        { idSesion: 'P1M5', diaSemana: 'M', horaInicio: '12:10', horaFin: '13:05' },
-        { idSesion: 'P1M6', diaSemana: 'M', horaInicio: '13:05', horaFin: '14:00' },
-
-        { idSesion: 'P1X1', diaSemana: 'X', horaInicio: '08:00', horaFin: '08:55' },
-        { idSesion: 'P1X2', diaSemana: 'X', horaInicio: '08:55', horaFin: '09:50' },
-        { idSesion: 'P1X3', diaSemana: 'X', horaInicio: '09:50', horaFin: '10:45' },
-        { idSesion: 'P1X4', diaSemana: 'X', horaInicio: '11:15', horaFin: '12:10' },
-        { idSesion: 'P1X5', diaSemana: 'X', horaInicio: '12:10', horaFin: '13:05' },
-        { idSesion: 'P1X6', diaSemana: 'X', horaInicio: '13:05', horaFin: '14:00' },
-
-        { idSesion: 'P1J1', diaSemana: 'J', horaInicio: '08:00', horaFin: '08:55' },
-        { idSesion: 'P1J2', diaSemana: 'J', horaInicio: '08:55', horaFin: '09:50' },
-        { idSesion: 'P1J3', diaSemana: 'J', horaInicio: '09:50', horaFin: '10:45' },
-        { idSesion: 'P1J4', diaSemana: 'J', horaInicio: '11:15', horaFin: '12:10' },
-        { idSesion: 'P1J5', diaSemana: 'J', horaInicio: '12:10', horaFin: '13:05' },
-        { idSesion: 'P1J6', diaSemana: 'J', horaInicio: '13:05', horaFin: '14:00' },
-
-        { idSesion: 'P1V1', diaSemana: 'V', horaInicio: '08:00', horaFin: '08:55' },
-        { idSesion: 'P1V2', diaSemana: 'V', horaInicio: '08:55', horaFin: '09:50' },
-        { idSesion: 'P1V3', diaSemana: 'V', horaInicio: '09:50', horaFin: '10:45' },
-        { idSesion: 'P1V4', diaSemana: 'V', horaInicio: '11:15', horaFin: '12:10' },
-        { idSesion: 'P1V5', diaSemana: 'V', horaInicio: '12:10', horaFin: '13:05' },
-        { idSesion: 'P1V6', diaSemana: 'V', horaInicio: '13:05', horaFin: '14:00' },
-        { idSesion: 'P1V6', diaSemana: 'V', horaInicio: '18:05', horaFin: '19:00' },
-
-        { idSesion: 'P1S1', diaSemana: 'S', horaInicio: '08:00', horaFin: '08:55' },
-
-      ]
-    },
-    {
-      idPlantilla: 'P2',
-      denominacion: 'extraordinaria',
-      sesionesPlantilla: [
-        { idSesion: 'P2L1', diaSemana: 'L', horaInicio: '08:00', horaFin: '10:55' },
-
-
-
-        { idSesion: 'P2M1', diaSemana: 'M', horaInicio: '10:00', horaFin: '14:00' },
-
-
-
-        { idSesion: 'P2X1', diaSemana: 'X', horaInicio: '09:00', horaFin: '9:30' },
-        { idSesion: 'P2X2', diaSemana: 'X', horaInicio: '10:00', horaFin: '12:00' },
-        { idSesion: 'P2X3', diaSemana: 'X', horaInicio: '12:00', horaFin: '14:00' },
-
-
-
-
-        { idSesion: 'P2V1', diaSemana: 'V', horaInicio: '08:00', horaFin: '08:55' },
-
-
-      ]
-    }
-  ]
-
-  actividades: IActividad[] = [
-
-    {
-      idActividad: '11',
-      idSesion: 'P1L3',
-      detalleActividad: '',
-      grupos: ['1', '2','20','21', '3'],
-      docentes: ['IJyiJjc2LXTZXsdwY27ORvpzIYw1'],
-      asignaturas: ['1'],
-      dependencia: '1',
-      idPeriodoVigencia: '1'
-    },
-    {
-      idActividad: '51',
-      idSesion: 'P1L3',
-      detalleActividad: '',
-      grupos: ['2'],
-      docentes: ['NTNYueJSicQOvYLjWzQs5ZcyeV63'],
-      asignaturas: ['1'],
-      dependencia:'1',
-      idPeriodoVigencia: '1'
-    },
-    {
-      idActividad: '3',
-      idSesion: 'P1L4',
-      detalleActividad: '',
-      grupos: ['2'],
-      docentes: ['NTNYueJSicQOvYLjWzQs5ZcyeV63'],
-      asignaturas: ['1'],
-      dependencia:'2',
-      idPeriodoVigencia: '1'
-    },
-    {
-      idActividad: '4',
-      idSesion: 'P1M1',
-      detalleActividad: '',
-      grupos: ['2'],
-      docentes: ['NTNYueJSicQOvYLjWzQs5ZcyeV63'],
-      asignaturas: ['1','3'],
-      dependencia:'2',
-      idPeriodoVigencia: '1'
-
-    },
-    {
-      idActividad: '14',
-      idSesion: 'P1M1',
-      detalleActividad: '',
-      grupos: ['2'],
-      docentes: ['NTNYueJSicQOvYLjWzQs5ZcyeV63'],
-      asignaturas: ['1','3'],
-      dependencia:'2',
-      idPeriodoVigencia: '1'
-
-     },
-     {
-       idActividad: '23',
-       idSesion: 'P1M1',
-       detalleActividad: '',
-       grupos: ['2'],
-       docentes: [],
-       asignaturas: ['1','3'],
-       dependencia:'2',
-       idPeriodoVigencia: '1'
-
-      },
-    {
-      idActividad: '5',
-      idSesion: 'P1M3',
-      detalleActividad: '',
-      grupos: ['2'],
-      docentes: ['uQ1KDOcvBxUEIk3c9do0ck4lvTa2'],
-      asignaturas: ['1','3','4'],
-      dependencia:'3',
-      idPeriodoVigencia: '1'
-    }
-
-  ];
-
-  asignaturas: Asignatura[] = [
-
-    {
-      idAsignatura: '1',
-      codigo: 'MAT',
-      denominacionLarga: 'Matemáticas'
-    },
-    {
-      idAsignatura: '2',
-      codigo: 'CSO',
-      denominacionLarga: 'Matemáticas'
-    },
-    {
-      idAsignatura: '3',
-      codigo: 'ING',
-      denominacionLarga: 'Inglés'
-    },
-    {
-      idAsignatura: '4',
-      codigo: 'FYQ',
-      denominacionLarga: 'Física y Química'
-    },
-    {
-      idAsignatura: '5',
-      codigo: 'REL',
-      denominacionLarga: 'Religión'
-    },
-    {
-      idAsignatura: '6',
-      codigo: 'EFI',
-      denominacionLarga: 'MEducación Física'
-    },
-    {
-      idAsignatura: '7',
-      codigo: 'TEC',
-      denominacionLarga: 'Tecnología'
-    },
-  ];
-
-  dependencias: Dependencia[] = [
-
-    {
-      idDependencia: '1',
-      codigo: 'AU1',
-      denominacionLarga: 'Aula 1'
-    },
-    {
-      idDependencia: '2',
-      codigo: 'AU2',
-      denominacionLarga: 'Aula 2'
-    },
-    {
-      idDependencia: '3',
-      codigo: 'CAN',
-      denominacionLarga: 'Cancha'
-    },
-    {
-      idDependencia: '4',
-      codigo: 'LAB',
-      denominacionLarga: 'Laboratorio de Biología'
-    },
-    {
-      idDependencia: '5',
-      codigo: 'SAA',
-      denominacionLarga: 'Salón de actos'
-    }
-
-  ];
-
-  grupos: Grupo[] = [
-    {
-      idGrupo: '1',
-      codigo: 'ESO1A',
-      denominacionLarga: '1º ESO A'
-    },
-    {
-      idGrupo: '2',
-      codigo: 'ESO1B',
-      denominacionLarga: '1º ESO B'
-    },
-    {
-      idGrupo: '20',
-      codigo: 'ESO1C',
-      denominacionLarga: '1º ESO C'
-    },
-    {
-      idGrupo: '21',
-      codigo: 'ESO2A',
-      denominacionLarga: '2º ESO A'
-    },
-    {
-      idGrupo: '22',
-      codigo: 'ESO2B',
-      denominacionLarga: '2º ESO B'
-    },
-    {
-      idGrupo: '3',
-      codigo: 'BCN1A',
-      denominacionLarga: '1ª Bachillerato CCNN A'
-    },
-    {
-      idGrupo: '33',
-      codigo: 'BCN1B',
-      denominacionLarga: '1ª Bachillerato CCNN B'
-    },
-    {
-      idGrupo: '34',
-      codigo: 'BCS1A',
-      denominacionLarga: '1ª Bachillerato CCS A'
-    },
-    {
-      idGrupo: '39',
-      codigo: 'CFGMMODA',
-      denominacionLarga: 'CFGM Moda y Confección A'
-    },
-    {
-      idGrupo: '40',
-      codigo: 'CFGMMODB',
-      denominacionLarga: 'CFGM Moda y Confección B'
-    }
-  ];
-
-  //------------------------------------------------
-  // DEPENDENCIAS
-  //------------------------------------------------
-  obtenerTodasLasDependencias(): Dependencia[]{
-    return this.dependencias;
   }
 
-  //------------------------------------------------
-  // ASIGNATURAS
-  //------------------------------------------------
-  obtenerTodasLasAsignaturas(): Asignatura[]{
-    return this.asignaturas;
-  }
-
-  //------------------------------------------------
-  // PARÁMETROS HORARIO
-  //------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  // MÉTODOS "OBTENER ENTIDADES"
+  //-------------------------------------------------------------------------------------
   obtenerParametrosHorario(): Observable<ParametrosHorario> {
     const parametrosHorario$ = new BehaviorSubject<ParametrosHorario>(null);
     parametrosHorario$.next(this.parametrosHorario);
     return parametrosHorario$;
   }
+  obtenerPeriodosVigencia(): Observable<PeriodoVigencia[]>{
+    return this.fireBaseDB.collection('periodosVigencia')
+    .snapshotChanges()
+    .pipe(
+      map(
+        actions => {
+          return actions.map(
+            act => {
 
-  //------------------------------------------------------------------------------------------
-  // ENTIDADES HORARIO
-  //------------------------------------------------------------------------------------------
-  obtenerTodasLasEntidadesHorarios(tipoEntidad: EnumTipoEntidadHorario): Observable<EntidadHorario[]> {
+             var datos = act.payload.doc.data() as {computo:number, denominacion:string, fechaFin: any, fechaInicio: any, idPeriodoVigencia: string };
 
-    switch (tipoEntidad) {
-      case EnumTipoEntidadHorario.DOCENTE:
-        return this.ObtenerEntidadesHorarioAPartirdeDocentes();
-      break;
+             const idPeriodoVigencia = act.payload.doc.id;
+              datos = {
+                ...datos, idPeriodoVigencia,
+                fechaInicio: this.convertirCadena8aracteres(datos.fechaInicio as string),
+                fechaFin: this.convertirCadena8aracteres(datos.fechaFin as string)
+              } as PeriodoVigencia;
 
-      case EnumTipoEntidadHorario.GRUPO:
-        return this.ObtenerEntidadesHorarioAPartirdeGrupos();
-        break;
+              console.log('fechaInicio:',datos.fechaInicio);
+              return datos;
+           }
+          )
+          }
+    ),  // Fin map
+  );
 
-      case EnumTipoEntidadHorario.DEPENDENCIA:
-        return this.ObtenerEntidadesHorarioAPartirdeDependencias();
-      break;
+  }
+  obtenerPlantillas(): Observable<Plantilla[]> {
+    return this.fireBaseDB.collection('plantillas')
+    .snapshotChanges()
+    .pipe(
+      map(
+        actions => {
+          return actions.map(
+            act => {
+              const datos = act.payload.doc.data() as Plantilla;
+              const idPlantilla = act.payload.doc.id;
+              return { ...datos, idPlantilla }
+           }
+          )
+          }
+    ),  // Fin map
+  );
+  }
+  obtenerPlantilla(idPlantilla: string): Observable<Plantilla> {
+    const plantilla$ = this.plantillas$
+      .pipe(
+        map(plantillas => plantillas.filter(plantilla => plantilla.idPlantilla === idPlantilla)),
+        map(plantillas => plantillas[0] ? plantillas[0] : null)
+      );
 
-    }
-
-  } // Fin obtenerTodasLasEntidadesHorarios
-
-
-  //------------------------------------------------------------------------------------------
-  // ACTIVIDADES
-  //------------------------------------------------------------------------------------------
-  obtenerTodasLasActividades(): Observable<Actividad[]> {
-    return this.obtenerActividades();
+    return plantilla$;
   }
 
-  obtenerActividades(entidadHorario?: EntidadHorario): Observable<Actividad[]>{
+  // obtenerActividad(idActividad: string): Actividad {
+
+
+  // }
+  obtenerActividades(entidadHorario?: EntidadHorario,  lunesSemanaSeleccionada?:Date): Observable<Actividad[]>{
 
     //---------------------------------------------------------------------------------
     // Paso 1:  Construccion de la consulta que devuelve el observable de BBDD
@@ -487,125 +241,71 @@ export class HorarioService {
     else {
       switch (entidadHorario.tipoEntidad) {
 
-        // Caso 1: Tipo Docente: Se filtra por la colección de docentes.
-        case EnumTipoEntidadHorario.DOCENTE:
-          query= this.fireBaseDB.collection<IActividad>('actividades', ref => ref.where('docentes','array-contains',entidadHorario.id))
+          // Caso 1: Tipo Docente: Se filtra por la colección de docentes.
+          case EnumTipoEntidadHorario.DOCENTE:
+            query= this.fireBaseDB.collection<IActividad>('actividades', ref => ref.where('docentes','array-contains',entidadHorario.id))
+          break;
+
+          // Caso 2: Tipo Grupo: Se filtra por la colección de docentes.
+          case EnumTipoEntidadHorario.GRUPO:
+            query= this.fireBaseDB.collection<IActividad>('actividades', ref => ref.where('grupos','array-contains',entidadHorario.id))
+          break;
+
+         // Caso 3: Tipo Dependencia: Se filtra por el campo dependencia.
+          case EnumTipoEntidadHorario.DEPENDENCIA:
+          query= this.fireBaseDB.collection<IActividad>('actividades', ref => ref.where('dependencia','==',entidadHorario.id))
         break;
       }
 
     }
 
-
-
     //---------------------------------------------------------------------------------
     // Paso 2:  Transformamos el contenido en entidades IActividad
     //---------------------------------------------------------------------------------
-
     const iActividades$ = query.snapshotChanges()
       .pipe(
         map(
           actions => {
-            return actions.map(
-              act => {
+                return actions.map(
+                  act => {
+
                 const datos = act.payload.doc.data() as IActividad;
                 const idActividad = act.payload.doc.id;
-                return { idActividad, ...datos };
+                    const iActividad = { idActividad, ...datos };
+                       return iActividad;
               }
             )
           }
         )
-      )
-
+    )
 
     //---------------------------------------------------------------------------------
     // Paso 3:  Transformos el observable de IActividades en observable de Actividades
     //          Básicamente estamos haciendo los inner join necesarios.
     //---------------------------------------------------------------------------------
-    const actividades$ = this.convertirObservableArrayIActividadesEnObservableArrayActividades(iActividades$);
+    var actividades$ = this.convertirObservableArrayIActividadesEnObservableArrayActividades(iActividades$);
+
+
+    if (lunesSemanaSeleccionada) {
+      actividades$ = actividades$.pipe(
+        map(
+          actividades => actividades.filter(
+           actividad => actividad.periodoVigencia.fechaInicio <= lunesSemanaSeleccionada && actividad.periodoVigencia.fechaFin >= lunesSemanaSeleccionada
+         )
+       )
+      );
+    }
+
+    actividades$.subscribe(
+      actividades => actividades.forEach(
+        actividad => console.log('lunes, inicio, fin', lunesSemanaSeleccionada, actividad.periodoVigencia.fechaInicio, actividad.periodoVigencia.fechaFin)
+    ));
 
 
     return actividades$;
 
-
-
   }
-
-  //------------------------------------------------------------------------------------------
-  // PLANTILLAS
-  //------------------------------------------------------------------------------------------
-  obtenerTodasLasPlantillas(): Observable<Plantilla[]> {
-    const plantillas$ = new BehaviorSubject<Plantilla[]>([]);
-    plantillas$.next(this.plantillas);
-    return plantillas$;
-  }
-
-  obtenerPlantilla(idPlantilla: string): Observable<Plantilla> {
-    const plantilla$ = new BehaviorSubject<Plantilla>(null);
-
-    const plantilla = this.plantillas.filter(plantilla => plantilla.idPlantilla === idPlantilla);
-
-    plantilla ? plantilla$.next(plantilla[0]) : plantilla$.thrownError('prueba');
-
-    return plantilla$;
-  }
-
-
-//------------------------------------------------------------------------------------------
-// Métodos privados
-//------------------------------------------------------------------------------------------
-  private ObtenerEntidadesHorarioAPartirdeDocentes(): Observable<EntidadHorario[]> {
-
-    // const docentes$: Observable<Docente[]> = new BehaviorSubject([]);
-
-
-    const entidadHorario$ = this.docentes$
-      .pipe(map(docentes => {
-          return docentes.map(
-            docente => new EntidadHorario(docente)
-          )
-        })
-      )
-
-
-    return entidadHorario$;
-  }
-
-  private ObtenerEntidadesHorarioAPartirdeGrupos(): Observable<EntidadHorario[]> {
-    const grupos$: BehaviorSubject<Grupo[]> = new BehaviorSubject(this.grupos);
-
-    const entidadHorario$ = grupos$.pipe(
-      map(grupos => {
-        return grupos.map(
-          grupo => new EntidadHorario(grupo)
-        )
-      })
-    )
-
-    return entidadHorario$;
-
-  }
-
-  private ObtenerEntidadesHorarioAPartirdeDependencias(): Observable<EntidadHorario[]> {
-    const dependencias$: BehaviorSubject<Dependencia[]> = new BehaviorSubject(this.dependencias);
-
-    const entidadHorario$ = dependencias$.pipe(
-      map(dependencias => {
-
-        console.log('dependencias: ', dependencias);
-        return dependencias.map(
-          dependencia => new EntidadHorario(dependencia)
-        )
-      })
-    )
-
-    return entidadHorario$;
-
-  }
-
-  // -------------------------------------------------------------------------
-  // Acceso a Entidades.
-  // -------------------------------------------------------------------------
-  ObtenerDocentes(): Observable<Docente[]>{
+  obtenerDocentes(): Observable<Docente[]>{
     return this.authService.ObtenerUsuarios(null)
     .pipe(
       map(
@@ -625,33 +325,81 @@ export class HorarioService {
   )
 
   }
-
-  ObtenerAsignaturas(): Observable<Asignatura[]> {
+  obtenerAsignaturas(): Observable<Asignatura[]> {
     return this.fireBaseDB.collection('asignaturas')
       .snapshotChanges()
       .pipe(
         map(
           actions => {
-
             return actions.map(
-              act=> {
+              act => {
                 const datos = act.payload.doc.data() as Asignatura;
                 const idAsignatura = act.payload.doc.id;
-                console.log('asignatura-->: ', idAsignatura, datos)
-                return { idAsignatura, ...datos }
+                return { ...datos, idAsignatura }
              }
             )
             }
       ),  // Fin map
     );
   }
+  obtenerGrupos(): Observable<Grupo[]> {
+    return this.fireBaseDB.collection('grupos')
+      .snapshotChanges()
+      .pipe(
+        map(
+          actions => {
 
-  convertirObservableArrayIActividadesEnObservableArrayActividades(iActividades$: Observable<IActividad[]>): Observable<Actividad[]>{
+            return actions.map(
+              act => {
+                const datos = act.payload.doc.data() as Grupo;
+                const idGrupo = act.payload.doc.id;
+                return { ...datos, idGrupo}
+             }
+            )
+            }
+      ),  // Fin map
+    );
+  }
+  obtenerDependencias(): Observable<Dependencia[]> {
+    return this.fireBaseDB.collection('dependencias')
+      .snapshotChanges()
+      .pipe(
+        map(
+          actions => {
 
+            return actions.map(
+              act => {
+                const datos = act.payload.doc.data() as Dependencia;
+                const idDependencia = act.payload.doc.id;
+                return { ...datos, idDependencia}
+             }
+            )
+            }
+      ),  // Fin map
+    );
+  }
+  obtenerEntidadesHorarios(tipoEntidad: EnumTipoEntidadHorario): Observable<EntidadHorario[]> {
 
-    var todasLasSesiones: Sesion[] = [];
-    this.plantillas.forEach(pl => todasLasSesiones = todasLasSesiones.concat(pl.sesionesPlantilla));
+    switch (tipoEntidad) {
+      case EnumTipoEntidadHorario.DOCENTE:
+        return this.ObtenerEntidadesHorarioAPartirdeDocentes();
+      break;
 
+      case EnumTipoEntidadHorario.GRUPO:
+        return this.ObtenerEntidadesHorarioAPartirdeGrupos();
+        break;
+
+      case EnumTipoEntidadHorario.DEPENDENCIA:
+        return this.ObtenerEntidadesHorarioAPartirdeDependencias();
+        break;
+    }
+
+  }
+
+//------------------------------------------------------------------------------------------
+// MÉTODOS PRIVADOS
+//------------------------------------------------------------------------------------------
+  private convertirObservableArrayIActividadesEnObservableArrayActividades(iActividades$: Observable<IActividad[]>): Observable<Actividad[]>{
     const actividades$ = combineLatest(
       [this.combinacionEntidades$, iActividades$]
     )
@@ -663,23 +411,37 @@ export class HorarioService {
           }
         }),
         map(valor => valor.iActividades.map(
-            iActividad => {
+          iActividad => {
+
               const nuevaActividad: Actividad = new Actividad();
+
+              // Campos de la actividad.
               nuevaActividad.idActividad = iActividad.idActividad;
               nuevaActividad.detalleActividad = iActividad.detalleActividad;
 
+              // JOIN Periodos de vigencia
+              const periodoVigenciaEnActividad = valor.entidades.periodosVigencia?.filter(periodoVigencia => iActividad.idPeriodoVigencia === periodoVigencia.idPeriodoVigencia);
+              nuevaActividad.periodoVigencia = (periodoVigenciaEnActividad && periodoVigenciaEnActividad[0]) ? periodoVigenciaEnActividad[0] : undefined;
+
+              // JOIN Colección de docentes
               const docentesEnActividad = valor.entidades.docentes?.filter(docente => iActividad.docentes.includes(docente.idDocente));
               nuevaActividad.docentes = docentesEnActividad ? docentesEnActividad : [];
 
-            console.log(valor.entidades.asignaturas);
-
+              // JOIN Colección de asignaturas
               const asignaturasEnActividad = valor.entidades.asignaturas?.filter(asignatura => iActividad.asignaturas.includes(asignatura.idAsignatura));
               nuevaActividad.asignaturas = asignaturasEnActividad ? asignaturasEnActividad : [];
 
+              // JOIN Colección de grupos
+              const gruposEnActividad = valor.entidades.grupos?.filter(grupo => iActividad.grupos.includes(grupo.idGrupo));
+              nuevaActividad.grupos = gruposEnActividad ? gruposEnActividad : [];
 
-              nuevaActividad.dependencia = '';
-              nuevaActividad.grupos = [];
+              // JOIN con dependencia.
+              const dependenciaEnActividad = valor.entidades.dependencias?.filter(dependencia => iActividad.dependencia === dependencia.idDependencia);
+              nuevaActividad.dependencia = (dependenciaEnActividad && dependenciaEnActividad[0]) ? dependenciaEnActividad[0] : undefined;
 
+              // JOIN con sesiones.
+              var todasLasSesiones: Sesion[] = [];
+              valor.entidades.plantillas.forEach(pl => todasLasSesiones = todasLasSesiones.concat(pl.sesionesPlantilla));
               const sesionLocalizada = todasLasSesiones.find(s => s.idSesion === iActividad.idSesion);
               if (sesionLocalizada) nuevaActividad.sesion = sesionLocalizada;
 
@@ -692,27 +454,59 @@ export class HorarioService {
   return actividades$;
 
   }
+  private ObtenerEntidadesHorarioAPartirdeDocentes(): Observable<EntidadHorario[]> {
+
+    // const docentes$: Observable<Docente[]> = new BehaviorSubject([]);
 
 
+    const entidadHorario$ = this.docentes$
+      .pipe(map(docentes => {
+          return docentes.map(
+            docente => new EntidadHorario(docente)
+          )
+        })
+      )
+
+
+    return entidadHorario$;
+  }
+  private ObtenerEntidadesHorarioAPartirdeGrupos(): Observable<EntidadHorario[]> {
+    const grupos$ = this.grupos$;
+
+    const entidadHorario$ = grupos$.pipe(
+      map(grupos => {
+        return grupos.map(
+          grupo => new EntidadHorario(grupo)
+        )
+      })
+    )
+
+    return entidadHorario$;
+
+  }
+  private ObtenerEntidadesHorarioAPartirdeDependencias(): Observable<EntidadHorario[]> {
+    const dependencias$ = this.dependencias$;
+
+    const entidadHorario$ = dependencias$.pipe(
+      map(dependencias => {
+        return dependencias.map(
+          dependencia => new EntidadHorario(dependencia)
+        )
+      })
+    )
+
+    return entidadHorario$;
+
+  }
+
+  private convertirCadena8aracteres(cadena: string): Date {
+
+    const anyo: string = cadena.substring(0, 4);
+    const mes: string = cadena.substring(4, 6);
+    const dia: string = cadena.substring(6, 8);
+
+    return new Date(parseInt(anyo), parseInt(mes), parseInt(dia));
+  }
 }
-
-// const sesionLocalizada = todasLasSesiones.find(s => s.idSesion === act.idSesion);
-// if (sesionLocalizada) nuevaActividad.sesion = sesionLocalizada
-
-
-// Acceso a Entidades.
-
-
-    // export interface IActividad {
-
-    //   idActividad: string;
-    //   idSesion: string;
-    //   detalleActividad: string;
-    //   grupos: string[];
-    //   docentes: string[];
-    //   asignaturas: string[];
-    //   dependencia: string;
-    //   idPeriodoVigencia: string;
-    // }
 
 

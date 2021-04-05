@@ -1,3 +1,4 @@
+import { Dependencia } from './dependencia.model';
 import { PeriodoVigencia } from './peridoVigencia';
 import { Grupo } from './grupo.model';
 import { Asignatura } from './asignatura.model';
@@ -11,7 +12,7 @@ export class Actividad {
   docentes: Docente[];
   asignaturas: Asignatura[];
   grupos: Grupo[];
-  dependencia: string | undefined;
+  dependencia: Dependencia | undefined;
   periodoVigencia: PeriodoVigencia;
 
   public actualizarActividad(actividad: Actividad): void {

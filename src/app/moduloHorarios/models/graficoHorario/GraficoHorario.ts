@@ -495,10 +495,9 @@ export class HorarioG {
         as.actividades.forEach(
           actividad => {
             const panelActividad = d3.select('g#panelActividad_' + actividad.idActividad);
-            console.log("actividad", actividad);
             this.renderizarSeccionesPanelesActividades(panelActividad, actividad, 1, actividad.grupos?.map(grupo => grupo.codigo));
             this.renderizarSeccionesPanelesActividades(panelActividad,actividad,2, actividad.docentes?.map(docente => docente.alias));
-            this.renderizarSeccionesPanelesActividades(panelActividad,actividad,3, actividad.asignaturas?.map(asignatura => asignatura.codigo));
+            this.renderizarSeccionesPanelesActividades(panelActividad,actividad,3, actividad.dependencia?[actividad.dependencia.codigo]:[]);
           }
         )
 

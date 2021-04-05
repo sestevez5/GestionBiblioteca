@@ -1,3 +1,4 @@
+
 import { entidadesHorarioEffects } from './store/entidadesHorario/entidadesHorario.effects';
 
 
@@ -6,8 +7,6 @@ import { HorariosRoutingModule } from './horarios-routing.module';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 // import the new component
-
-import { GestionHorarioComponent } from './containers/gestion-horario/gestion-horario.component';
 
 
 // NGRX
@@ -20,7 +19,7 @@ import { HelperModule } from '../moduloHelpers/helper.module';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SelectorEntidadesComponent } from './containers/selector-entidades/selector-entidades.component';
-import { MostrarActividadComponent } from './containers/mostrar-actividad/mostrar-actividad.component';
+import { GestionarActividadComponent } from './containers/gestionar-actividad/gestionar-actividad.component';
 import { SelectorSemanasComponent } from './containers/selector-semanas/selector-semanas.component';
 import { FormsModule } from '@angular/forms';
 import { NuevaEditarActividadComponent } from './containers/nueva-editar-actividad/nueva-editar-actividad.component';
@@ -28,6 +27,8 @@ import { SelectorTipoEntidadComponent } from './containers/selector-tipo-entidad
 import { SelectorPlantillasComponent } from './containers/selector-plantillas/selector-plantillas.component';
 import { MostrarActividadesComponent } from './containers/mostrar-actividades/mostrar-actividades.component';
 import { CabeceraEntidadHorarioComponent } from './containers/cabecera-entidad-horario/cabecera-entidad-horario.component';
+import { GestionHorarioComponent } from './containers/gestion-horario/gestion-horario.component';
+import { MostrarActividadComponent } from './components/mostrar-actividad/mostrar-actividad.component';
 
 
 
@@ -43,16 +44,16 @@ import { CabeceraEntidadHorarioComponent } from './containers/cabecera-entidad-h
 
   ],
   declarations: [
-
     GestionHorarioComponent,
     SelectorEntidadesComponent,
-    MostrarActividadComponent,
+    GestionarActividadComponent,
     SelectorSemanasComponent,
     NuevaEditarActividadComponent,
     SelectorTipoEntidadComponent,
     SelectorPlantillasComponent,
     MostrarActividadesComponent,
-    CabeceraEntidadHorarioComponent
+    CabeceraEntidadHorarioComponent,
+    MostrarActividadComponent
   ],
 })
 export class HorariosModule { }

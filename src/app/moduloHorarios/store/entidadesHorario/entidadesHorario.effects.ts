@@ -27,12 +27,11 @@ export class entidadesHorarioEffects {
           action => {
 
             this.store.dispatch(PrincipalActions.cargandoDatos({ mensaje: "cargando" }));
-            
-            return this.horarioService.obtenerTodasLasEntidadesHorarios(action.tipoEntidad)
+
+            return this.horarioService.obtenerEntidadesHorarios(action.tipoEntidad)
               .pipe(
 
                 map(
-
                   entidadesHorario => {
                     this.store.dispatch(PrincipalActions.cargadoDatos());
                     return FromEntidadesHorarioActions.cargarEntidadesHorarioOK({ entidadesHorario: entidadesHorario, tipoEntidadHorario: action.tipoEntidad });

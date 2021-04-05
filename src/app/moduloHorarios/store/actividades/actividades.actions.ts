@@ -56,13 +56,12 @@ export const eliminarActividadError   = createAction('[ACTIVIDADES] eliminación
 export const cargarPlantillas         = createAction('[PLANTILLAS] cargar plantillas');
 export const cargarPlantillasOK       = createAction('[PLANTILLAS] carga de plantillas OK', props<{ plantillas: Plantilla[] }>());
 export const cargarPlantillasError    = createAction('[PLANTILLAS] carga de plantillas errónea', props<{ error: string }>());
-
 export const seleccionarPlantilla     = createAction('[PLANTILLAS] seleccionar plantilla', props<{ plantilla: Plantilla }>());
 
 // ---------------------------------------------
 // Acciones de gestión de semanas.
 // ---------------------------------------------
-export const seleccionarSemana     = createAction('[SEMANAS] seleccionar seman', props<{ lunesSemanaSeleccionada: Date }>());
+export const seleccionarSemana     = createAction('[SEMANAS] seleccionar semana', props<{ lunesSemanaSeleccionada: Date }>());
 
 
 // ---------------------------------------------

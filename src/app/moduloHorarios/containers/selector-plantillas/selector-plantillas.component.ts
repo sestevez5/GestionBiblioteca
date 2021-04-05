@@ -4,7 +4,7 @@ import { Store, select } from '@ngrx/store';
 import { Plantilla } from './../../models/plantilla.model';
 import { Component, OnInit } from '@angular/core';
 import * as FromActividadesActions from '../../store/actividades/actividades.actions';
-import * as FromActividadesSelector from '../../store/actividades/actividades.selectors';
+import * as FromActividadesSelectors from '../../store/actividades/actividades.selectors';
 
 @Component({
   selector: 'app-selector-plantillas',
@@ -30,7 +30,7 @@ export class SelectorPlantillasComponent implements OnInit {
   gestionarSubscripcionesStore() {
 
     // 1.- Subscripcion a la colección de plantillas disponibles
-    this.store.pipe(select(FromActividadesSelector.selectTodasLasPlantillas))
+    this.store.pipe(select(FromActividadesSelectors.selectTodasLasPlantillas))
       .subscribe(plantillas => {
         this.plantillas = plantillas;
         this.plantillas.length > 0 ? // En el caso de que encontremos alguna plantilla seleccionamos por defecto la primera de ellas.
@@ -39,7 +39,7 @@ export class SelectorPlantillasComponent implements OnInit {
       });
 
     // 2.- Subscripción a la plantilla activa.
-    this.store.pipe(select(FromActividadesSelector.selectPlantillaActiva))
+    this.store.pipe(select(FromActividadesSelectors.selectPlantillaActiva))
       .subscribe( plantillaActiva => plantillaActiva? this.plantillaActual = plantillaActiva: null)
 
   }

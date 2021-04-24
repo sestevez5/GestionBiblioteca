@@ -32,8 +32,7 @@ export class actividadesEffects {
               .pipe(
                 map(
                   plantillas => {
-                    console.log('plantillas', plantillas)
-                    this.store.dispatch(PrincipalActions.cargadoDatos());
+                   this.store.dispatch(PrincipalActions.cargadoDatos());
                     return actividadesActions.cargarPlantillasOK({ plantillas: plantillas });
                   }
 
@@ -104,7 +103,6 @@ export class actividadesEffects {
                 map(
                   parametrosHorario => {
                     this.store.dispatch(PrincipalActions.cargadoDatos());
-                    console.log(parametrosHorario);
                     return actividadesActions.cargarParametrosHorarioOK({ parametrosHorario: parametrosHorario });
                   }
 
@@ -126,31 +124,35 @@ export class actividadesEffects {
 
   );
 
+  // ---------------------------------------------------------------------
+  // Cargar Actividad
+  // ---------------------------------------------------------------------
   cargarActividad$: Observable<Action> = createEffect(
     () =>
       this.action$.pipe(
-        ofType(actividadesActions.cargarPlantillas),
+        ofType(actividadesActions.cargarActividad),
 
-        switchMap(
+        mergeMap(
           action => {
 
-            this.store.dispatch(PrincipalActions.cargandoDatos({ mensaje: "cargando" }));
-            return this.horarioService.obtenerPlantillas()
+            this.store.dispatch(PrincipalActions.cargandoDatos({ mensaje: "cargando actividad" }));
+
+
+            return this.horarioService.obtenerActividad(action.idActividad)
               .pipe(
+                tap(value => this.store.dispatch(PrincipalActions.cargadoDatos())),
+
                 map(
-                  plantillas => {
-                    console.log('plantillas', plantillas)
-                    this.store.dispatch(PrincipalActions.cargadoDatos());
-                    return actividadesActions.cargarPlantillasOK({ plantillas: plantillas });
+                  actividad => {
+                    return actividadesActions.cargarActividadOK({ actividad: actividad});
                   }
 
-                ), // Fin map
+                  ), // Fin map
 
-                catchError(
-                  error => {
-                    this.store.dispatch(PrincipalActions.cargadoDatos());
-                    return of(actividadesActions.cargarPlantillasError({ error: 'error' }))
-                  }
+                  catchError(
+                    error => {
+                      return of(actividadesActions.cargarActividadError({ error: 'error' }))
+                    }
 
                 )
               ) // fin pipe
@@ -160,7 +162,8 @@ export class actividadesEffects {
 
     ) // fin this.action$.pipe
 
-  );
+  ); // fin createeffect
+
 
   constructor(
     private horarioService: HorarioService,

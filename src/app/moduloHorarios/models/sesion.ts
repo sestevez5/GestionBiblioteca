@@ -1,3 +1,4 @@
+import { DiaSemana } from './diaSemana.model';
 export interface Sesion {
 
   idSesion: string;

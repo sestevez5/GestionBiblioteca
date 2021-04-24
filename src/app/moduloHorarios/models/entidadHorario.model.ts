@@ -1,3 +1,4 @@
+import { Asignatura } from './asignatura.model';
 import { Docente } from './docente.model';
 import { Dependencia } from './dependencia.model';
 import { Grupo } from './grupo.model';
@@ -12,7 +13,7 @@ export class EntidadHorario {
   imagen: string;
   tipoEntidad: EnumTipoEntidadHorario;
 
-  constructor(entidad: Docente | Grupo | Dependencia) {
+  constructor(entidad: Docente | Grupo | Dependencia ) {
 
 
     this.tipoEntidad = this.tipoEntidadHorario(entidad);
@@ -39,6 +40,7 @@ export class EntidadHorario {
         this.detalle = 'Código: ' +  dependencia.codigo;
         this.id = dependencia.idDependencia
         break;
+
 
     }
 

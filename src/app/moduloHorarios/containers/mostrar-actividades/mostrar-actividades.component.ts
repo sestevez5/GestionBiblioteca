@@ -1,16 +1,14 @@
 import { ModuloHorarioRootState } from './../../store/index';
 import { Store, select } from '@ngrx/store';
 import { ParametrosHorario } from './../../models/parametrosHorario.model';
-import { Plantilla } from './../../models/plantilla.model';
 import { ActividadG } from '../../models/actividadG.model';
 import { combineLatest, Observable } from 'rxjs';
-// import { HorarioG } from '../../models/horarioG.model';
 import { HorarioG } from '../../models/graficoHorario/GraficoHorario';
 
-import { Component, Input, OnInit, OnChanges } from '@angular/core';
-import { Actividad } from '../../models/actividad.model';
+import { Component, Input, OnInit, OnChanges, Output, EventEmitter } from '@angular/core';
+
 import * as FromActividadesSelectors from '../../store/actividades/actividades.selectors';
-import { combineAll, map } from 'rxjs/operators';
+import {  map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-mostrar-actividades',
@@ -27,15 +25,15 @@ export class MostrarActividadesComponent implements OnInit {
 
 
   horarioG: HorarioG;
-  evento$: Observable<ActividadG>;
+  @Output() actividadSeleccionadaEvent= new EventEmitter<ActividadG>();
+
 
   constructor(private store: Store<ModuloHorarioRootState>) { }
 
   ngOnInit(): void {
 
     this.horarioG = new HorarioG('div#horario');
-
-
+    this.horarioG.eventos$.subscribe(actividad => this.actividadSeleccionadaEvent.emit(actividad));
     var Obs1$ = this.store.pipe(select(FromActividadesSelectors.selectParametrosHorario));
     var Obs2$ = this.store.pipe(select(FromActividadesSelectors.selectPlantillaActiva));
     var Obs3$ = this.store.pipe(select(FromActividadesSelectors.selectTodasLasActividades));

@@ -29,8 +29,6 @@ export class gestionUsuariosComponent implements OnInit {
   usuarioActual: Usuario;
   solicitudConfirmacion: boolean = false;
 
-
-
   @ViewChild("panelModal") panelModal: ElementRef;
   private modalRef: any;
 
@@ -39,35 +37,25 @@ export class gestionUsuariosComponent implements OnInit {
     private store: Store<ModuloAuthRootState>,
     private router: Router,
     private route: ActivatedRoute,
-    private modalService: ModalManager) { }
+    private modalService: ModalManager) {
+
+     }
 
   ngOnInit(): void {
-
     this.store
-      .pipe(
-        select(FromSelector.selectTodosLosUsuarios)
-      )
-      .subscribe(
-       usuarios => {
-              if (usuarios.length == 0) {
-                 this.store.dispatch(AuthActions.cargarUsuarios({ fou: { contieneSubcadena: undefined , SoloUsuariosDeAlta: false }}))
-          };
+      .pipe(select(FromSelector.selectTodosLosUsuarios))
+      .subscribe(usuarios => this.usuarios = usuarios);
 
-            this.usuarios = usuarios;
-
-      }
-    )
+    this.store.dispatch(AuthActions.cargarUsuarios({ fou: { contieneSubcadena: '', SoloUsuariosDeAlta: false } }));
 
   }
 
 
   OnChangeCadenaBusqueda(cadena: string) {
-    this.store.dispatch(AuthActions.cargarUsuarios({ fou: { contieneSubcadena: cadena, SoloUsuariosDeAlta: false } }))
+     this.store.dispatch(AuthActions.cargarUsuarios({ fou: { contieneSubcadena: cadena, SoloUsuariosDeAlta: false } }));
   }
 
   filtrarPor(val: string) {
-
-    console.log('filtrando por: ',val);
 
   }
 

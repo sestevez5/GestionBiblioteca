@@ -3,6 +3,7 @@ import { Store, select } from '@ngrx/store';
 import { EntidadHorario } from './../../models/entidadHorario.model';
 import { Component, OnInit } from '@angular/core';
 import * as FromEntidadesHorarioSelectors from '../../store/entidadesHorario/entidadesHorario.selectors';
+import { TipoEntidadHorario } from '../../models/tipoEntidadHorario.model';
 
 
 @Component({
@@ -13,6 +14,7 @@ import * as FromEntidadesHorarioSelectors from '../../store/entidadesHorario/ent
 export class CabeceraEntidadHorarioComponent implements OnInit {
 
   entidadHorario: EntidadHorario | undefined;
+  tipoEntidadActiva: TipoEntidadHorario | undefined
 
   constructor(private store: Store<ModuloHorarioRootState>) { }
 
@@ -20,6 +22,9 @@ export class CabeceraEntidadHorarioComponent implements OnInit {
 
     this.store.pipe(select(FromEntidadesHorarioSelectors.selectEntidadHorarioActiva))
       .subscribe(entidadHorarioActiva => this.entidadHorario = entidadHorarioActiva);
+
+      this.store.pipe(select(FromEntidadesHorarioSelectors.selectTipoEntidadActiva))
+      .subscribe(tipoEntidadActiva => this.tipoEntidadActiva = tipoEntidadActiva);
 
 
   }

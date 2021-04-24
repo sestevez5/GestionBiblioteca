@@ -14,6 +14,7 @@ export class ActividadG extends Actividad{
     this.dependencia = actividad.dependencia;
     this.grupos = actividad.grupos;
     this.asignaturas = actividad.asignaturas;
+    this.periodoVigencia = actividad.periodoVigencia;
     this.nivelAncho = 0;
 
   }

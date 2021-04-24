@@ -1,19 +1,41 @@
 .gestionHorario {
-  height: 83vh;
+  height: 100%;
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  grid-template-rows: 1fr 14fr;
+  grid-template-rows: 1fr 20fr;
   gap: 10px;
   overflow-y: hidden;
 
 }
 
-.seccion {
-  /* padding: 5px;
-  border: 5px solid tomato;
-  border-radius: 5px; */
+
+.modal-body {
+  padding: 10px;
+}
+.modal-content {
+  border-radius: 7px 7px 7px 7px;
+}
+.modal-header {
+  background-color: #ddd;
+  padding: 7px;
+  border-radius: 7px 7px 0px 0px;
+
 
 }
+
+.modal-footer{
+  background-color: #ddd;
+  padding: 2px;
+  border-radius: 0px 0px 7px 7px;
+}
+
+.modal-header h3 {
+  margin:0px;
+  margin-top: 4px;
+  margin-left: 4px;
+}
+
+
 
 .seccionSelectorTipoEntidad {
   grid-column-start: 1;
@@ -55,4 +77,3 @@
   overflow-y:auto;
 
 }
-

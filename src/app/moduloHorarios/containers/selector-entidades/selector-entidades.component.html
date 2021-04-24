@@ -1,3 +1,4 @@
+
 <div class="row h-100 ">
 
   <div class="col-12 selectorEntidades d-flex flex-column">
@@ -5,10 +6,11 @@
 
     <div class="row divEntidades">
       <div class="col-12 h-100">
-        <app-selector-lista-simple
+        <app-selector-lista-simple *ngIf="this.tipoEntidadSeleccionada"
           [items]="this.entidades"
-          [itemSeleccionado]='this.entidadHorarioSeleccionada'
-          [camposConfig]="{ texto: 'descripcion', imagen: 'imagen', leyenda: 'detalle'}"
+          [itemSeleccionado]=this.entidadHorarioSeleccionada
+          [colorSeleccion]= this.tipoEntidadSeleccionada?.color
+          [camposConfig]=this.obtenerCamposConfig()
           (SeleccionItems)= "onSeleccionarItem($event)">
         </app-selector-lista-simple>
       </div>
@@ -17,5 +19,7 @@
 </div>
 
 </div>
+
+
 
 

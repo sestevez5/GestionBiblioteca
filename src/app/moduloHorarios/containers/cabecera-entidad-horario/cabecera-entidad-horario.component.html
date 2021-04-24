@@ -1,4 +1,4 @@
-<div class="cabecera d-flex flex-nowrap">
+<div class="cabecera d-flex flex-nowrap" [ngStyle]="{'border-bottom-color': this.tipoEntidadActiva? this.tipoEntidadActiva.color:null}">
   <div class="imagen p-0 ">
     <img *ngIf="!this.entidadHorario?.imagen" class="p-0 img-form" src='assets/images/general/NoPhoto.png' alt="user">
     <img *ngIf="this.entidadHorario?.imagen" class="p-0 img-form" [src]='this.entidadHorario.imagen' alt="user">

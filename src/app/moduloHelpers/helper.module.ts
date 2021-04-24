@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CargarImagenComponent } from './components/cargar-imagen-fichero/cargar-imagen-fichero.component'
 import { DndDirective } from './directives/dnd.directive';
-import {WebcamModule} from 'ngx-webcam';
+import { WebcamModule} from 'ngx-webcam';
 import { CapturarImagenWebcamComponent } from './components/capturar-imagen-webcam/capturar-imagen-webcam.component';
 import { ObtenerImagenComponent } from './components/obtener-imagen/obtener-imagen.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';

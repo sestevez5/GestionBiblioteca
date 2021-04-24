@@ -4,6 +4,7 @@ import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/fire
 import { Libro } from '../models/libro.model'
 import { Observable,from, Subject, Observer } from 'rxjs'
 import { FiltroOrdenLibro } from '../models/filtroOrdenLibro.model';
+import * as Utilidades from '../../moduloHelpers/utils/utilidades';
 
 
 @Injectable({
@@ -45,8 +46,11 @@ export class LibrosService {
 
                 let incluirRegistro = true;
 
+               
                 // Se desestima si hay una subcadena que debe contener y no la contiene.
-                if (fol && fol.contieneSubcadena && cadenaParaFiltro.indexOf(fol.contieneSubcadena) === -1) { incluirRegistro = false }
+                if (fol
+                  && fol.contieneSubcadena
+                  && Utilidades.Utils.normalizarCadena(cadenaParaFiltro).indexOf(Utilidades.Utils.normalizarCadena(fol.contieneSubcadena)) === -1) { incluirRegistro = false }
 
                 // Se desestima si se piden libros de alta y el libro no está de alta
                 if (fol && fol.SoloLibrosDeAlta) { incluirRegistro = false }

@@ -47,19 +47,19 @@
 }
 
 .panelListaSeleccion::-webkit-scrollbar-thumb:hover {
-  background: #b3b3b3;
-  box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.2);
+  /* background: #b3b3b3;
+  box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.2); */
 }
 
  /* Estilos track de scroll */
  .panelListaSeleccion::-webkit-scrollbar-track {
   background: #e1e1e1;
-  border-radius: 4px;
+  border-radius: 2px;
 }
 
 .panelListaSeleccion::-webkit-scrollbar-track:hover,
 .panelListaSeleccion::-webkit-scrollbar-track:active {
-  background: #d4d4d4;
+  /* background: #d4d4d4; */
 }
 
 

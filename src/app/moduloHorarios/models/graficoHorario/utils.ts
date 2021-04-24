@@ -88,12 +88,12 @@ export class Utilidades
 
   }
   static minimoIntervaloTemporal(): Date {
-    const horaMinima = Utilidades.convertirCadenaHoraEnTiempo(Parametros.parametrosGrafico.parametrosHorario?.horaMinima);
-    return horaMinima.setMinutes(horaMinima.getMinutes());
+    const horaMinima: Date = Utilidades.convertirCadenaHoraEnTiempo(Parametros.parametrosGrafico.parametrosHorario?.horaMinima);
+    return Utilidades.convertirCadenaHoraEnTiempo(Parametros.parametrosGrafico.parametrosHorario?.horaMinima);
   }
   static maximoIntervaloTemporal(): Date {
     const horaMaxima = Utilidades.convertirCadenaHoraEnTiempo(Parametros.parametrosGrafico.parametrosHorario?.horaMaxima);
-    return horaMaxima.setMinutes(horaMaxima.getMinutes());
+    return horaMaxima.setMinutes(horaMaxima.getMinutes()) as Date;
   }
   static actividadesCubiertasPor(actividad: ActividadG, actividades: ActividadG[]): ActividadG[] {
     return actividades.filter(

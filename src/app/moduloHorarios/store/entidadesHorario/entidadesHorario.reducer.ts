@@ -2,6 +2,7 @@ import { adapter } from './entidadesHorario.state';
 import { initialEntidadesHorarioState } from './entidadesHorario.state';
 import {createReducer, on } from '@ngrx/store';
 import * as entidadesHorarioActions from './entidadesHorario.actions';
+import { TipoEntidadHorario } from '../../models/tipoEntidadHorario.model';
 
 
 
@@ -60,7 +61,16 @@ export const entidadesHorarioReducer = createReducer(
         return state;
       }
       else {
-        return adapter.setAll(action.entidadesHorario, { ...state, tipoEntidadActiva: action.tipoEntidadHorario});
+
+        const entidadPreseleccionada = action.entidadesHorario.slice().sort((a, b) => a.descripcion > b.descripcion ? 1 : a.descripcion < b.descripcion ? -1 : 0)[0];
+
+
+        return adapter.setAll(action.entidadesHorario,
+          {
+            ...state
+            , tipoEntidadActiva: new TipoEntidadHorario(action.tipoEntidadHorario)
+            , entidadHorarioActiva: entidadPreseleccionada
+          });
       }
 
 
@@ -84,7 +94,11 @@ export const entidadesHorarioReducer = createReducer(
    on(
     entidadesHorarioActions.seleccionarEntidadHorario,
     (state, action) => {
-      return { ...state, entidadHorarioActiva: action.entidadHorario, tipoEntidadActiva: action.tipoEntidadHorario};
+      return {
+        ...state, entidadHorarioActiva: action.entidadHorario
+        // , tipoEntidadActiva: action.tipoEntidadHorario
+        , tipoEntidadActiva: new TipoEntidadHorario(action.tipoEntidadHorario)
+      };
     }
   ),
 
@@ -170,5 +184,6 @@ export const selectTodasLasEntidadesHorario = selectAll;
 
 // select the total user count
 export const selectTotalEntidadesHorario = selectTotal;
+
 
 

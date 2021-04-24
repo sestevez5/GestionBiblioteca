@@ -1,6 +1,6 @@
 import { parametrosGrafico } from './../parametrosGrafico.model';
 import { DiaSemana } from './../diaSemana.model';
-import * as d3 from 'd3';
+
 
 export class Parametros {
   static diasSemana: DiaSemana[] = [
@@ -44,7 +44,7 @@ export class Parametros {
       margenLateral: 0,
       altoCabecera: 11,
       anchoSesion: undefined,
-      colorCabecera:'#ffffff',
+      colorCabecera:'#e1e1e1',
       colorCuerpo:'#eeeeee'
 
     },
@@ -55,7 +55,8 @@ export class Parametros {
     },
 
     actividades: {
-      tamanyoTexto: '12'
+      tamanyoTexto: '12',
+      porcentajeZonaSeleccionActividad: 3
     }
 
   }

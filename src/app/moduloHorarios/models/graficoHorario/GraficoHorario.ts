@@ -1,17 +1,16 @@
+import { select } from '@ngrx/store';
 import { DiaSemana } from '../diaSemana.model';
 import { IActividadesSesion } from '../actividadesSesion.model';
 import { ParametrosHorario } from '../parametrosHorario.model';
 import { Sesion } from '../sesion';
 import { Plantilla } from '../plantilla.model';
 import { Subject } from 'rxjs';
-import { parametrosGrafico } from '../parametrosGrafico.model';
-
 import { ActividadG, EstadoActividad } from '../actividadG.model';
 import { Actividad } from '../actividad.model';
 import * as d3 from 'd3';
 import { Parametros } from './parametros';
 import { Utilidades } from './utils';
-import { ScaleControlStyle } from '@agm/core';
+import { timeMinutes } from 'd3';
 
 
 export class HorarioG {
@@ -114,7 +113,8 @@ export class HorarioG {
     // Establecer escala vertical:
     Parametros.parametrosGrafico.escalas.escalaVertical = d3.scaleTime()
       .domain([Utilidades.minimoIntervaloTemporal(), Utilidades.maximoIntervaloTemporal()])
-      .range([0, Parametros.parametrosGrafico.panelHorario.altoPanelHorario])
+      .range([0, Parametros.parametrosGrafico.panelHorario.altoPanelHorario]);
+
 
     // Calcular el ancho de las sesiones.
     Parametros.parametrosGrafico.panelSesiones.anchoSesion = parseFloat(Parametros.parametrosGrafico.escalas.escalaHorizontal.bandwidth()) * (100-Parametros.parametrosGrafico.panelSesiones.margenLateral * 2)*0.01;
@@ -149,28 +149,59 @@ export class HorarioG {
       .attr('fill', Parametros.parametrosGrafico.panelHorario.colorPanelHorario);
 
     //-------------------------------------------------
-    // Adicón del eje X
+    // Adición del eje X
     //-------------------------------------------------
-    var ejeX = d3.axisTop(Parametros.parametrosGrafico.escalas.escalaHorizontal as d3.ScaleBand<string>);
+    var ejeXGenerator = d3.axisTop(Parametros.parametrosGrafico.escalas.escalaHorizontal as d3.ScaleBand<string>);
 
-    panelHorario.append('g')
+    // eliminamos las marcas "ticks"
+    ejeXGenerator.tickSize(0);
+
+    const ejeX = panelHorario.append('g')
       .attr('class', 'ejeX')
-      .call(ejeX);
+      .call(ejeXGenerator);
+
+    // Elimnamos la línea del eje vertical.
+    ejeX.select(".domain").remove()
+
+    ejeX.selectAll(".tick text").attr("font-size", 20);
+
 
     //-------------------------------------------------
     // Adición del eje Y
     //-------------------------------------------------
-    var ejeY = d3.axisLeft(Parametros.parametrosGrafico.escalas.escalaVertical);
+    const inicioHora=parseInt(Parametros.parametrosGrafico.parametrosHorario.horaMinima.substring(0, 2));
+    const inicioMinuto = parseInt(Parametros.parametrosGrafico.parametrosHorario.horaMinima.substring(3, 5));
+    const fechaInicio: Date = new Date();
+    fechaInicio.setHours(inicioHora);
+    fechaInicio.setMinutes(inicioMinuto);
 
-    ejeY.ticks(d3.timeMinute.every(60))
+    const finHora=parseInt(Parametros.parametrosGrafico.parametrosHorario.horaMaxima.substring(0, 2));
+    const finMinuto = parseInt(Parametros.parametrosGrafico.parametrosHorario.horaMaxima.substring(3, 5));
+    const fechaFin: Date = new Date();
+    fechaFin.setHours(finHora);
+    fechaFin.setMinutes(finMinuto);
 
-    panelHorario.append('g')
+    const x = d3.scaleTime()
+    .domain([fechaInicio.setMinutes(fechaInicio.getMinutes()-1), fechaFin])
+    .range([0, Parametros.parametrosGrafico.panelHorario.altoPanelHorario]);
+
+
+    var ejeYGenerator = d3.axisLeft(x);
+
+    ejeYGenerator.ticks(d3.timeMinute.every(60));
+
+
+    const ejeY = panelHorario.append('g')
+      // .attr('transform', 'translate(-10,0)' )
       .attr('class', 'ejeY')
-      .attr('stroke', '#aaa')
+      .call(ejeYGenerator);
 
-      .call(ejeY)
-      .select('path')
-      .attr('stroke','#fff')
+      ejeY.select(".domain").remove()
+
+
+    // ejeY.selectAll(".tick text").attr("font-size", 10);
+
+
 
     //-------------------------------------------------
     // Devolución
@@ -249,8 +280,8 @@ export class HorarioG {
     panelCabeceraSesion.append('rect')
       .attr('class', 'fondoPanelSesionCabecera')
       .attr('id', d => 'fondoPanelSesionCabecera' + d.idSesion)
-      .attr('height',Parametros.parametrosGrafico.panelSesiones.altoCabecera)
-      .attr('width', anchoSesion)
+      .attr('height', Parametros.parametrosGrafico.panelSesiones.altoCabecera)
+      .attr('width', parseFloat(anchoSesion))
       .attr('fill', Parametros.parametrosGrafico.panelSesiones.colorCabecera);
 
     panelCabeceraSesion.append('text')
@@ -274,10 +305,9 @@ export class HorarioG {
         const coordenadaHoraFin = Parametros.parametrosGrafico.escalas.escalaVertical(Utilidades.convertirCadenaHoraEnTiempo(d.horaFin));
         return coordenadaHoraFin - coordenadaHoraInicio - Parametros.parametrosGrafico.panelSesiones.altoCabecera;
       })
-      .attr('width', anchoSesion)
+      .attr('width', parseFloat(anchoSesion))
       .attr('fill', Parametros.parametrosGrafico.panelSesiones.colorCuerpo)
-      // .attr('stroke', 'black')
-      // .attr('stroke-width', '1');
+
 
 
 
@@ -495,6 +525,7 @@ export class HorarioG {
         as.actividades.forEach(
           actividad => {
             const panelActividad = d3.select('g#panelActividad_' + actividad.idActividad);
+            this.renderizarActividadesSeccionZonaSeleccionActividad(panelActividad, actividad);
             this.renderizarSeccionesPanelesActividades(panelActividad, actividad, 1, actividad.grupos?.map(grupo => grupo.codigo));
             this.renderizarSeccionesPanelesActividades(panelActividad,actividad,2, actividad.docentes?.map(docente => docente.alias));
             this.renderizarSeccionesPanelesActividades(panelActividad,actividad,3, actividad.dependencia?[actividad.dependencia.codigo]:[]);
@@ -505,34 +536,56 @@ export class HorarioG {
       // -------------------------------------------------------------------
       // Añadimos el rectángulo
       // -------------------------------------------------------------------
-      // panelesActividades.append('rect')
-      //   .attr('class', 'rectActividad')
-      //   .attr('width', anchoSesion)
-      //   .attr('fill', 'white')
-      //   .attr('height', altoPanelActividadesEnActividadSesiones)
-      //   .attr('opacity', '0')
-      //   .attr('stroke', 'white')
-      //   .on("click", (d: any, i: any, e: any) => {
 
-      //     const marcadaActividadActualComoSeleccionada = d3.select('g#panelActividad_' + i.idActividad).attr('class').split(' ').includes('actividadSeleccionada');
-      //     d.ctrlKey ? null : Utilidades.desmarcarActividadesComoSeleccionadas(this.actividadesG);
+      const porcentajeAnchoZonaSeleccion = Parametros.parametrosGrafico.actividades.porcentajeZonaSeleccionActividad;
+        panelesActividades.append('rect')
+          .attr('class', 'rectActividad')
+          .attr('width', parseFloat(anchoSesion) * porcentajeAnchoZonaSeleccion / 100)
+          .attr('fill', 'white')
+          .attr('height', altoPanelActividadesEnActividadSesiones)
+          .attr('opacity', '0')
+          .attr('stroke', 'white')
+        .on("click", (d: any, i: any, e: any) => {
 
-      //     marcadaActividadActualComoSeleccionada ?
-      //       d3.selectAll('g#panelActividad_' + i.idActividad).attr('class', 'panelActividad actividadSeleccionada') :
-      //       d3.select('g#panelActividad_' + i.idActividad).attr('class', 'panelActividad');
+          const marcadaActividadActualComoSeleccionada = d3.select('g#panelActividad_' + i.idActividad).attr('class').split(' ').includes('actividadSeleccionada');
+          d.ctrlKey ? null : Utilidades.desmarcarActividadesComoSeleccionadas(this.actividadesG);
 
-      //     d3.select('g#panelActividad_' + i.idActividad).attr('class').split(' ').includes('actividadSeleccionada') ?
-      //       Utilidades.desmarcarActividadesComoSeleccionadas(this.actividadesG,[i.idActividad]) :
-      //       Utilidades.marcarActividadesComoSeleccionadas([i.idActividad]);
-      //   });
+          marcadaActividadActualComoSeleccionada ?
+            d3.selectAll('g#panelActividad_' + i.idActividad).attr('class', 'panelActividad actividadSeleccionada') :
+            d3.select('g#panelActividad_' + i.idActividad).attr('class', 'panelActividad');
+
+          d3.select('g#panelActividad_' + i.idActividad).attr('class').split(' ').includes('actividadSeleccionada') ?
+            Utilidades.desmarcarActividadesComoSeleccionadas(this.actividadesG,[i.idActividad]) :
+            Utilidades.marcarActividadesComoSeleccionadas([i.idActividad]);
+        });
 
 
     }
     );
 
   }
+  private renderizarActividadesSeccionZonaSeleccionActividad(panelActividad: any, actividad: ActividadG) {
+
+    const panelActividadBBox =
+    {
+      'x': panelActividad.attr('x'),
+      'y': panelActividad.attr('y'),
+      'height': panelActividad.attr('height'),
+      'width': panelActividad.attr('width')
+    }
+    const panelZonaSeleccionActividad = panelActividad.append('g')
+    .attr('class', 'panelActividadZonaSeleccion')
+    .attr('id', 'panelActividadZonaSeleccion_' + actividad.idActividad)
+
+
+    panelZonaSeleccionActividad.append('rect')
+      .attr('height', panelActividadBBox.height)
+      .attr('width', panelActividadBBox.width)
+      .attr('fill', '#b1b1b1');
+  };
   private renderizarSeccionesPanelesActividades(panelActividad: any, actividad: ActividadG, numeroSeccion: number, listaCadenas: string[]) {
 
+    const porcentajeAnchoZonaSeleccion = Parametros.parametrosGrafico.actividades.porcentajeZonaSeleccionActividad;
     const panelActividadBBox =
     {
       'x': panelActividad.attr('x'),
@@ -543,10 +596,10 @@ export class HorarioG {
 
     const panelSeccionBBox =
     {
-      'x': (numeroSeccion-1) * (panelActividadBBox.width / 3),
+      'x': (numeroSeccion-1) * (panelActividadBBox.width*(1-porcentajeAnchoZonaSeleccion/100) / 3)+panelActividadBBox.width*(porcentajeAnchoZonaSeleccion/100),
       'y': panelActividadBBox.y,
       'height': panelActividadBBox.height,
-      'width': panelActividadBBox.width / 3
+      'width': panelActividadBBox.width * (1-porcentajeAnchoZonaSeleccion/100) / 3
     }
 
 
@@ -560,10 +613,13 @@ export class HorarioG {
       .attr('width', panelSeccionBBox.width)
 
 
-      panelSeccion.append('rect')
+    panelSeccion.append('rect')
       .attr('height', panelSeccionBBox.height)
       .attr('width', panelSeccionBBox.width)
       .attr('fill', '#D6EAF8');
+
+
+
 
     const panelContenidoSeccion = panelSeccion
       .append('g')
@@ -571,7 +627,16 @@ export class HorarioG {
       .attr('id', 'panelContenidoSeccion_' + numeroSeccion + '_' + actividad.idActividad)
 
 
-      const panelContenidolistaCadenas = this.renderizarContenidoPanelesSeccionesActividades(panelContenidoSeccion, listaCadenas)
+    const panelContenidolistaCadenas = this.renderizarContenidoPanelesSeccionesActividades(panelContenidoSeccion, listaCadenas);
+
+    panelSeccion.append('rect')
+      .attr('height', panelSeccionBBox.height)
+      .attr('width', panelSeccionBBox.width*(100-Parametros.parametrosGrafico.actividades.porcentajeZonaSeleccionActividad)/100)
+      .attr('opacity', '0')
+
+      .on("click", (d: any, i: any, e: any) => {
+          this.eventos$.next(i);
+       });
 
 
   }
@@ -595,7 +660,6 @@ export class HorarioG {
     if (dps.height < seccionContenidoBBox.height) this.anyadirScrollSeccion(panelContenidoSeccion);
 
   }
-
   private anyadirContenidoPanelesSeccion(panelContenidoSeccion: any, listaCadenas: string[]) {
 
     const altoTexto = parseFloat(Parametros.parametrosGrafico.actividades.tamanyoTexto);
@@ -615,7 +679,6 @@ export class HorarioG {
     }
 
   }
-
   private anyadirScrollSeccion(panelContenidoSeccion: any) {
 
     // 1.- Obtenemos las dimensiones de la sección
@@ -689,8 +752,6 @@ export class HorarioG {
     }
 
   }
-
-
   private actualizarActividadVisibleDeUnaSesion(d: any, i: IActividadesSesion, e: any) {
 
     var botonDerechoPulsado: boolean = d.srcElement.classList.contains('botonDerechoCabeceraSesionActividades') ? true : false;

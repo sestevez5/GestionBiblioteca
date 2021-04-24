@@ -20,6 +20,28 @@
   </div>
 
   <div class="seccion seccionActividadesEntidadSeleccionada">
-    <app-mostrar-actividades></app-mostrar-actividades>
+    <app-mostrar-actividades (actividadSeleccionadaEvent)= 'onActividadSeleccionada($event)'></app-mostrar-actividades>
   </div>
 </div>
+
+<modal #panelModal (onOpen)="onAbrirVentanaModal()" (onClose)="onCerrarVentanaModal()" >
+    <!-- Cabecera -->
+    <modal-header>
+       <h3>Detalle de la actividad</h3>
+    </modal-header>
+
+    <!-- Cuerpo -->
+    <modal-content>
+        <app-gestionar-actividad *ngIf="this.actividad" [actividad] = this.actividad>
+
+        </app-gestionar-actividad>
+
+    </modal-content>
+
+    <!-- Pie -->
+    <modal-footer>
+        <!-- <button type="button" class="btn btn-sm btn-secondary mr-3" (click)="onAceptarVentanaModal()" >Aceptar</button> -->
+        <button type="button" class="btn btn-sm btn-secondary" (click)="onCerrarVentanaModal()">Cerrar</button>
+    </modal-footer>
+
+</modal>

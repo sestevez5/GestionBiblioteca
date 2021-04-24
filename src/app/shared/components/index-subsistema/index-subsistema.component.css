@@ -1,3 +1,26 @@
 .cabeceraSubsistema {
   text-align: right;
 }
+.subsistema {
+  height: 87vh;
+  display: grid;
+  grid-template-columns: repeat(20, 1fr);
+  grid-template-rows: 5% 95%;
+  gap: 5px;
+  overflow-y: hidden;
+
+}
+
+
+
+.seccionCabeceraSubsistema {
+  grid-column-start: 1;
+  grid-column-end: 21;
+}
+
+.seccionCuerpoSubsistema {
+  grid-column-start: 1;
+  grid-column-end: 21;
+
+
+}

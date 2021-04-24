@@ -1,11 +1,11 @@
-import { EnumTipoEntidadHorario } from './../../models/tipoEntidadHorario.model';
+import { EnumTipoEntidadHorario, TipoEntidadHorario } from '../../models/tipoEntidadHorario.model';
 import { EntidadHorario } from './../../models/entidadHorario.model';
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 
 
 export interface entidadesHorarioState extends EntityState<EntidadHorario> {
   entidadHorarioActiva: EntidadHorario;
-  tipoEntidadActiva: EnumTipoEntidadHorario;
+  tipoEntidadActiva: TipoEntidadHorario;
 }
 
 // Función que devuelve el identificador de la primary key
@@ -28,6 +28,7 @@ export const adapter: EntityAdapter<EntidadHorario> = createEntityAdapter<Entida
 export const initialEntidadesHorarioState: entidadesHorarioState = adapter.getInitialState(
   {
     entidadHorarioActiva: null,
-    tipoEntidadActiva: null,
+    tipoEntidadActiva: null
+
   }
 )

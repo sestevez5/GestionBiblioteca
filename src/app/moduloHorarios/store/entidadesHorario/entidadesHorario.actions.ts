@@ -1,5 +1,5 @@
 import { EntidadHorario } from './../../models/entidadHorario.model';
-import { EnumTipoEntidadHorario } from './../../models/tipoEntidadHorario.model';
+import { EnumTipoEntidadHorario } from '../../models/tipoEntidadHorario.model';
 import { Update } from '@ngrx/entity/src/models';
 
 

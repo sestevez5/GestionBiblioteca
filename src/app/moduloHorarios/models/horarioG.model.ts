@@ -605,6 +605,7 @@ export class HorarioG {
 
   }
   crearSeccionPanelActividad(panelActividad: any, actividad: ActividadG, numeroSeccion: number, listaCadenas: string[]) {
+    const porcentajeAnchoZonaSeleccion = 10;
 
     const panelActividadBBox =
     {
@@ -616,7 +617,7 @@ export class HorarioG {
 
     const panelSeccionBBox =
     {
-      'x': (numeroSeccion-1) * (panelActividadBBox.width / 3),
+      'x': (numeroSeccion-1) * (panelActividadBBox.width*(1-porcentajeAnchoZonaSeleccion/100) / 3)+panelActividadBBox.width*(porcentajeAnchoZonaSeleccion/100),
       'y': panelActividadBBox.y,
       'height': panelActividadBBox.height,
       'width': panelActividadBBox.width / 3

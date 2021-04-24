@@ -10,4 +10,12 @@ img {
   font-size: x-large;
 }
 
+.cabecera {
+  padding: 4px;
+  margin-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 6px;
+  border-radius: 6px;
+}
+
 

@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Actividad } from './../../models/actividad.model';
 import { ModuloHorarioRootState } from './../../store/index';
 import { select, Store } from '@ngrx/store';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import * as FromActividadesSelectors from '../../store/actividades/actividades.selectors';
 import * as FromActividadesActions from '../../store/actividades/actividades.actions';
 
@@ -14,31 +14,38 @@ import * as FromActividadesActions from '../../store/actividades/actividades.act
 })
 export class GestionarActividadComponent implements OnInit {
 
-  actividad: Actividad;
-  idActividad: string;
+  @Input() actividad: Actividad;
+
+
   constructor(
     private store: Store<ModuloHorarioRootState>,
     private route: ActivatedRoute,) { }
 
+  ngOnChanges(changes: SimpleChanges)
+  {
+
+  }
+
   ngOnInit(): void {
 
-    this.idActividad = this.route.snapshot.paramMap.get("id");
+  //   // Caso en el que ha sido invocado a través de una URI
+  //   this.idActividad = this.route.snapshot.paramMap.get("id");
 
-    if (this.idActividad) {
+  //   if (this.idActividad) {
 
-      this.store
-        .pipe(
-          select(FromActividadesSelectors.selectActividadActiva),
-          filter(actividad => !!actividad)
-        )
-        .subscribe(
-          actividadActiva => {
-            this.actividad = actividadActiva
-          }
-      );
+  //     this.store
+  //       .pipe(
+  //         select(FromActividadesSelectors.selectActividadActiva),
+  //         filter(actividad => !!actividad)
+  //       )
+  //       .subscribe(
+  //         actividadActiva => {
+  //           this.actividad = actividadActiva
+  //         }
+  //     );
 
-      this.store.dispatch(FromActividadesActions.cargarActividad({ idActividad: this.idActividad }))
-    }
-  }
+  //     this.store.dispatch(FromActividadesActions.cargarActividad({ idActividad: this.idActividad }))
+  //   }
+   }
 
 }

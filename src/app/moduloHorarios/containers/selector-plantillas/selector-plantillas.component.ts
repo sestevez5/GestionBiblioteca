@@ -33,8 +33,10 @@ export class SelectorPlantillasComponent implements OnInit {
     this.store.pipe(select(FromActividadesSelectors.selectTodasLasPlantillas))
       .subscribe(plantillas => {
         this.plantillas = plantillas;
-        this.plantillas.length > 0 ? // En el caso de que encontremos alguna plantilla seleccionamos por defecto la primera de ellas.
-          this.store.dispatch(FromActividadesActions.seleccionarPlantilla({ plantilla: plantillas[0] }))
+        const plantillasPorDefecto: Plantilla[] = this.plantillas.filter(pl => pl.plantillaPorDefecto);
+
+        plantillasPorDefecto.length? // En el caso de que encontremos alguna plantilla seleccionamos por defecto la primera de ellas.
+          this.store.dispatch(FromActividadesActions.seleccionarPlantilla({ plantilla: plantillasPorDefecto[0] }))
           : null;
       });
 

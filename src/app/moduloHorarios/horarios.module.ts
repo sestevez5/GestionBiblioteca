@@ -16,7 +16,7 @@ import { EffectsModule } from '@ngrx/effects';
 
 
 import { HelperModule } from '../moduloHelpers/helper.module';
-
+import { ModalModule } from 'ngb-modal';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SelectorEntidadesComponent } from './containers/selector-entidades/selector-entidades.component';
 import { GestionarActividadComponent } from './containers/gestionar-actividad/gestionar-actividad.component';
@@ -41,6 +41,7 @@ import { MostrarActividadComponent } from './components/mostrar-actividad/mostra
     HelperModule,
     NgbModule,
     FormsModule,
+    ModalModule
 
   ],
   declarations: [

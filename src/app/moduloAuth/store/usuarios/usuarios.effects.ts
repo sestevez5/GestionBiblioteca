@@ -1,4 +1,4 @@
-import { Utils } from './../../../moduloHelpers/utils/mensajes';
+import { Utils } from '../../../moduloHelpers/utils/utilidades';
 import { Router } from '@angular/router';
 import { Code } from 'angular-feather/icons';
 import { mensajeUsuario, TipoMensaje } from './../../../shared/models/mensajeUsuario.model';
@@ -110,6 +110,7 @@ export class UsuariosEffects {
 
                   usuarios => {
                     this.store.dispatch(PrincipalActions.cargadoDatos());
+                    console.log('usuarios:', usuarios, action.fou);
                     return AuthActions.cargarUsuariosOK({ usuarios: usuarios });
                   }
 

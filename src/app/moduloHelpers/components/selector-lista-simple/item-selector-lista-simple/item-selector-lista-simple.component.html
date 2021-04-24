@@ -1,7 +1,7 @@
-<li [class]="{'marcado': this.marcado}" class="list-group-item item" >
+<li [class]="{'marcado': this.marcado}" class="list-group-item item" [ngStyle]="{'border-left-color': this.marcado? this.colorMarcado:null}" >
 
   <div class="row d-flex flex-nowrap">
-    <div class="imagen p-0">
+    <div *ngIf="this.conFoto" class="imagen p-0">
       <img *ngIf="!this.item[this.camposConfig.imagen]" class="p-0 img-form" src='assets/images/general/NoPhoto.png' alt="user">
       <img *ngIf="this.item[this.camposConfig.imagen]" class="p-0 img-form" [src]='this.item[this.camposConfig.imagen]' alt="user">
     </div>

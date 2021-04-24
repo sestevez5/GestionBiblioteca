@@ -12,6 +12,8 @@ export class SelectorListaSimpleComponent implements OnChanges {
 
   @Input() items: any[];
   @Input() camposConfig: camposSelectorSimple;
+  @Input() anyadirBuscador = true;
+  @Input() colorSeleccion = '';
   @Output() SeleccionItems: EventEmitter<any> = new EventEmitter();
 
   cadenaFiltro: string = '';

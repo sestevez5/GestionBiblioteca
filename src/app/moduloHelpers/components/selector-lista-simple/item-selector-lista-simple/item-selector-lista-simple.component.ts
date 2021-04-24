@@ -11,6 +11,8 @@ export class ItemSelectorListaSimpleComponent implements OnInit {
 
   @Input() camposConfig: camposSelectorSimple;
   @Input() marcado = false;
+  @Input() colorMarcado = '#ff0000';
+  @Input() conFoto = true;
   @Input() item: any;
 
 

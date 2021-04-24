@@ -1,4 +1,4 @@
-import { mensajeUsuario, TipoMensaje } from './../../shared/models/mensajeUsuario.model';
+import { mensajeUsuario, TipoMensaje } from '../../shared/models/mensajeUsuario.model';
 export class Utils {
 
   static construirMensaje(codigo: string): mensajeUsuario {
@@ -34,4 +34,16 @@ export class Utils {
     return mensaje;
   }
 
+  static normalizarCadena(cadena: string) {
+    const s1 = 'ÀÁÄÂÈÉËÊÌÍÏÎÒÓÖÔÙÚÜÛãàáäâèéëêìíïîòóöôùúüûÇç';
+    const s2 = 'AAAAAEEEEIIIIOOOOUUUUaaaaaeeeeiiiioooouuuucc';
+    for (var i = 0; i < s1.length; i++) {
+      cadena = cadena.replace(new RegExp(s1.charAt(i), 'g'), s2.charAt(i));
+    }
+
+    return cadena.toLowerCase();
+  }
+
 }
+
+

@@ -29,7 +29,6 @@ export class gestionLibrosComponent implements OnInit {
   libroActual: Libro;
   solicitudConfirmacion: boolean = false;
 
-
   @ViewChild("panelModal") panelModal: ElementRef;
   private modalRef: any;
 
@@ -43,33 +42,13 @@ export class gestionLibrosComponent implements OnInit {
   ngOnInit(): void {
 
     this.store
-      .pipe(
-        select(FromLibrosSelector.selectTodosLosLibros)
-      )
-      .subscribe(
-       libros => {
-          if (libros.length == 0) {
+      .pipe(select(FromLibrosSelector.selectTodosLosLibros))
+      .subscribe(libros => this.libros = libros);
 
-            this.store.dispatch(LibrosActions.cargarLibros({ fol: { contieneSubcadena: undefined, SoloLibrosDeAlta: false } }));
-          };
-
-          this.libros = libros;
-      }
-    )
-
-    // this._textoFiltro
-    //   .pipe(
-    //     skip(1), // El primer valor del cuadro de texto queremos omitirlo.
-    //     debounceTime(700),
-    //     distinctUntilChanged()
-    //   )
-    //   .subscribe(
-
-    //     val => this.store.dispatch(LibrosActions.cargarLibros({ fol: { contieneSubcadena: this.textoFiltro, SoloLibrosDeAlta: false } }))
-    // )
-
-
+    this.store.dispatch(LibrosActions.cargarLibros({ fol: { contieneSubcadena: '', SoloLibrosDeAlta: false } }));
   }
+
+
 
   OnChangeCadenaBusqueda(cadena: string) {
     this.store.dispatch(LibrosActions.cargarLibros({ fol: { contieneSubcadena: cadena, SoloLibrosDeAlta: false } }))
@@ -77,8 +56,6 @@ export class gestionLibrosComponent implements OnInit {
 
 
   filtrarPor(val: string) {
-
-    console.log('filtrando por: ',val);
 
   }
 
@@ -100,12 +77,10 @@ export class gestionLibrosComponent implements OnInit {
   }
 
   onEditarLibro(libro: Libro) {
-    console.log('hola');
    this.router.navigate(['libros', 'editarLibro', libro.uid], { queryParams: { returnUrl: 'libros/index'}} )
   }
 
   onBorrarLibro(libro: Libro) {
-    console.log(libro);
     this.libroActual = libro;
     this.solicitudConfirmacion = true;
   }

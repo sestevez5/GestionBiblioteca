@@ -1,10 +1,11 @@
-import { filter } from 'rxjs/operators';
+import { Actividad } from './../models/actividad.model';
+import { filter, first } from 'rxjs/operators';
 
 // angular
 import { Injectable } from '@angular/core';
 
 // rxjs
-import { Observable, BehaviorSubject, combineLatest } from 'rxjs'
+import { Observable, BehaviorSubject, combineLatest, Observer, Subject } from 'rxjs'
 
 // firebase
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
@@ -19,12 +20,12 @@ import { Sesion } from './../models/sesion';
 import { EntidadHorario } from './../models/entidadHorario.model';
 import { Docente } from './../models/docente.model';
 import { AuthService } from './../../moduloAuth/services/auth.service';
-import { EnumTipoEntidadHorario } from './../models/tipoEntidadHorario.model';
+import { EnumTipoEntidadHorario } from '../models/tipoEntidadHorario.model';
 import { Grupo } from '../models/grupo.model';
 import { Plantilla } from '../models/plantilla.model';
 import { Dependencia } from '../models/dependencia.model';
 import { DiaSemana } from '../models/diaSemana.model';
-import { Actividad } from '../models/actividad.model';
+
 
 @Injectable({
   providedIn: 'root'
@@ -60,7 +61,7 @@ export class HorarioService {
 
   parametrosHorario: ParametrosHorario =
     {
-      horaMinima: '07:00',
+      horaMinima: '08:00',
       horaMaxima: '22:00',
       diasSemanaHabiles: ['L','M','X','J','V'],
     };
@@ -92,7 +93,6 @@ export class HorarioService {
 
 
   ]
-
 
   constructor(private authService: AuthService, private fireBaseDB: AngularFirestore) {
 
@@ -189,7 +189,6 @@ export class HorarioService {
                 fechaFin: this.convertirCadena8aracteres(datos.fechaFin as string)
               } as PeriodoVigencia;
 
-              console.log('fechaInicio:',datos.fechaInicio);
               return datos;
            }
           )
@@ -225,10 +224,30 @@ export class HorarioService {
     return plantilla$;
   }
 
-  // obtenerActividad(idActividad: string): Actividad {
+  obtenerActividad(idActividad: string): Observable<Actividad> {
 
+    const IActividad$ = new Subject<IActividad>();
+    this.fireBaseDB.doc<IActividad>(`actividades/${idActividad}`).valueChanges()
+      .pipe(
+        first(),
+        map(value => {
+          if (!value) {
+            return (IActividad$ as Observer<any>).error("Error")
+          }
+            IActividad$.next(value);
+        })
+    ).subscribe();
 
-  // }
+    const aux$ = this.convertirObservableArrayIActividadesEnObservableArrayActividades(IActividad$.pipe(map(iActividad => [iActividad])));
+    return aux$.pipe(
+      map(
+        actividades => {
+          console.log('act0', actividades[0]);
+          return actividades[0]
+        }
+      )
+    );
+  }
   obtenerActividades(entidadHorario?: EntidadHorario,  lunesSemanaSeleccionada?:Date): Observable<Actividad[]>{
 
     //---------------------------------------------------------------------------------
@@ -295,12 +314,6 @@ export class HorarioService {
        )
       );
     }
-
-    actividades$.subscribe(
-      actividades => actividades.forEach(
-        actividad => console.log('lunes, inicio, fin', lunesSemanaSeleccionada, actividad.periodoVigencia.fechaInicio, actividad.periodoVigencia.fechaFin)
-    ));
-
 
     return actividades$;
 
@@ -396,6 +409,13 @@ export class HorarioService {
 
   }
 
+  obtenerDiaSemana(codigo: string): DiaSemana | undefined
+  {
+    const diaSemana = this.diasSemana.filter(ds => ds.codigo === codigo);
+    return diaSemana[0] ? diaSemana[0] : undefined;
+  }
+
+
 //------------------------------------------------------------------------------------------
 // MÉTODOS PRIVADOS
 //------------------------------------------------------------------------------------------
@@ -420,8 +440,10 @@ export class HorarioService {
               nuevaActividad.detalleActividad = iActividad.detalleActividad;
 
               // JOIN Periodos de vigencia
+
               const periodoVigenciaEnActividad = valor.entidades.periodosVigencia?.filter(periodoVigencia => iActividad.idPeriodoVigencia === periodoVigencia.idPeriodoVigencia);
               nuevaActividad.periodoVigencia = (periodoVigenciaEnActividad && periodoVigenciaEnActividad[0]) ? periodoVigenciaEnActividad[0] : undefined;
+
 
               // JOIN Colección de docentes
               const docentesEnActividad = valor.entidades.docentes?.filter(docente => iActividad.docentes.includes(docente.idDocente));
@@ -442,8 +464,10 @@ export class HorarioService {
               // JOIN con sesiones.
               var todasLasSesiones: Sesion[] = [];
               valor.entidades.plantillas.forEach(pl => todasLasSesiones = todasLasSesiones.concat(pl.sesionesPlantilla));
+
               const sesionLocalizada = todasLasSesiones.find(s => s.idSesion === iActividad.idSesion);
               if (sesionLocalizada) nuevaActividad.sesion = sesionLocalizada;
+
 
               return nuevaActividad;
 
@@ -507,6 +531,9 @@ export class HorarioService {
 
     return new Date(parseInt(anyo), parseInt(mes), parseInt(dia));
   }
+
+
+
 }
 
 

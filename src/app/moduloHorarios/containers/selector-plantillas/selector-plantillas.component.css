@@ -1,0 +1,52 @@
+.gestionHorario {
+  height: 83%;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: 1fr 14fr;
+  gap: 10px;
+  overflow-y: hidden;
+
+}
+
+
+
+.seccionSelectorTipoEntidad {
+  grid-column-start: 1;
+  grid-column-end: 3;
+}
+
+.seccionCabeceraEntidadSeleccionada{
+  grid-column-start: 3;
+  grid-column-end: 8;
+  border-right: solid 1px;
+  border-left: solid 1px;
+  padding-left: 6px;
+
+}
+
+.seccionSelectorPlantilla{
+  grid-column-start: 8;
+  grid-column-end: 10;
+  padding: 3px;
+  border-right: solid 1px;
+}
+
+.seccionSelectorSemanas{
+  grid-column-start: 10;
+  grid-column-end: 13;
+  border-right: solid 1px;
+}
+
+.seccionSelectorEntidad{
+  grid-column-start: 1;
+  grid-column-end: 3;
+  overflow-y:hidden;
+  overflow-x: hidden;
+}
+
+.seccionActividadesEntidadSeleccionada {
+  grid-column-start: 3;
+  grid-column-end: 13;
+  overflow-y:auto;
+
+}

@@ -43,6 +43,7 @@ export interface parametrosGrafico {
 
   actividades: {
     tamanyoTexto: string;
+    porcentajeZonaSeleccionActividad: number | undefined;
   }
 
 

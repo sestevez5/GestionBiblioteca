@@ -1,6 +1,6 @@
 import { ModuloHorarioRootState } from './../../store/index';
 import { Store, select } from '@ngrx/store';
-import { EnumTipoEntidadHorario } from './../../models/tipoEntidadHorario.model';
+import { EnumTipoEntidadHorario } from '../../models/tipoEntidadHorario.model';
 import * as FromEntidadesHorarioSelectors from '../../store/entidadesHorario/entidadesHorario.selectors';
 import * as FromEntidadesHorarioActions from '../../store/entidadesHorario/entidadesHorario.actions';
 import { Component, OnInit } from '@angular/core';
@@ -18,7 +18,7 @@ export class SelectorTipoEntidadComponent implements OnInit {
   tipoEntidadSeleccionada: EnumTipoEntidadHorario;
 
   constructor(private store: Store<ModuloHorarioRootState>) {
-  
+
   }
 
   ngOnInit(): void {
@@ -31,8 +31,18 @@ export class SelectorTipoEntidadComponent implements OnInit {
   // ----------------------------------------------------------------
   gestionarSubscripcionesStore() {
 
-    this.store.pipe(select(FromEntidadesHorarioSelectors.selectTipoEntidadActiva))
-    .subscribe(tipoEntidadActiva => this.tipoEntidadSeleccionada = tipoEntidadActiva)
+    // this.store.pipe(select(FromEntidadesHorarioSelectors.selectTipoEntidadActiva))
+    //   .subscribe(tipoEntidadActiva => {
+    //     console.log('tea: ', tipoEntidadActiva)
+    //     this.tipoEntidadSeleccionada = tipoEntidadActiva
+    //   });
+
+      this.store.pipe(select(FromEntidadesHorarioSelectors.selectTipoEntidadActiva))
+      .subscribe(tipoEntidadActiva1 => {
+        console.log('tea1: ', tipoEntidadActiva1)
+
+        this.tipoEntidadSeleccionada = tipoEntidadActiva1?.tipoEntidadHorario;
+      });
 
   }
 

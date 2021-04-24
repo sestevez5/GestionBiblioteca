@@ -1,3 +1,4 @@
+// import { selectTipoEntidadActiva } from './entidadesHorario.selectors';
 import { entidadesHorarioState } from './entidadesHorario.state';
 import { selectHorario } from './../index';
 import { createFeatureSelector, createSelector } from '@ngrx/store';
@@ -26,6 +27,11 @@ export const selectTotalEntidadesHorario = createSelector(
   entidadesHorarioReducers.selectTotalEntidadesHorario
 );
 
+// export const selectTipoEntidadActiva = createSelector(
+//   FromModuloHorario.selectHorario,
+//   ({ entidadesHorario }) =>  entidadesHorario.tipoEntidadActiva
+// );
+
 export const selectEntidadHorarioActiva = createSelector(
   FromModuloHorario.selectHorario,
   ({ entidadesHorario }) =>  entidadesHorario.entidadHorarioActiva
@@ -35,4 +41,7 @@ export const selectEntidadHorarioActiva = createSelector(
 export const selectTipoEntidadActiva = createSelector(
   FromModuloHorario.selectHorario,
   ({ entidadesHorario }) =>  entidadesHorario.tipoEntidadActiva
+
 );
+
+

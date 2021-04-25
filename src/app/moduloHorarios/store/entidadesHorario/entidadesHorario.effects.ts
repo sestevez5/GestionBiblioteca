@@ -55,6 +55,32 @@ export class entidadesHorarioEffects {
 
   ); // fin createeffect
 
+  cargarEntidadesHorarioOk$: Observable<Action> = createEffect(
+    () =>
+      this.action$.pipe(
+        ofType(FromEntidadesHorarioActions.cargarEntidadesHorarioOK),
+
+        map(
+          action => {
+            if (action.entidadesHorario.length > 0) {
+              const entidadPreseleccionada = action.entidadesHorario.slice().sort((a, b) => a.descripcion > b.descripcion ? 1 : a.descripcion < b.descripcion ? -1 : 0)[0];
+              return FromEntidadesHorarioActions.seleccionarEntidadHorario({ entidadHorario: entidadPreseleccionada, tipoEntidadHorario: action.entidadesHorario[0].tipoEntidad });
+            }
+            else {
+              return FromEntidadesHorarioActions.seleccionarEntidadHorario({ entidadHorario: null, tipoEntidadHorario: action.tipoEntidadHorario });
+
+            }
+
+
+                }
+      ) // Fin mergeMap
+
+    ) // fin this.action$.pipe
+
+  ); // fin createeffect
+
+
+
   seleccionarEntidadHorario$: Observable<Action> = createEffect(
     () =>
       this.action$.pipe(

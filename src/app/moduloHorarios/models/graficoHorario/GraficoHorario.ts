@@ -461,17 +461,17 @@ export class HorarioG {
     //---------------------------------------------------------------------------------
     // Definicion del rectángulo que representa el cuerpo de la sesión.
     //---------------------------------------------------------------------------------
-    panelCuerpoSesionConActividades.append('rect')
-      .attr('height', (d:any) => {
-        const coordenadaHoraInicio = Parametros.parametrosGrafico.escalas.escalaVertical(Utilidades.convertirCadenaHoraEnTiempo(d.sesion.horaInicio));
-        const coordenadaHoraFin = Parametros.parametrosGrafico.escalas.escalaVertical(Utilidades.convertirCadenaHoraEnTiempo(d.sesion.horaFin));
-        return coordenadaHoraFin - coordenadaHoraInicio-altoCabeceraSesion;
-      })
-      .attr('width', (d: any) => Parametros.parametrosGrafico.escalas.escalaHorizontal.bandwidth())
-      .attr('fill', 'yellow')
-      .attr('opacity', '0')
-      .attr('rx', 2)
-      .attr('ry', 2);
+    // panelCuerpoSesionConActividades.append('rect')
+    //   .attr('height', (d:any) => {
+    //     const coordenadaHoraInicio = Parametros.parametrosGrafico.escalas.escalaVertical(Utilidades.convertirCadenaHoraEnTiempo(d.sesion.horaInicio));
+    //     const coordenadaHoraFin = Parametros.parametrosGrafico.escalas.escalaVertical(Utilidades.convertirCadenaHoraEnTiempo(d.sesion.horaFin));
+    //     return coordenadaHoraFin - coordenadaHoraInicio-altoCabeceraSesion;
+    //   })
+    //   .attr('width', (d: any) => Parametros.parametrosGrafico.escalas.escalaHorizontal.bandwidth())
+    //   .attr('fill', 'yellow')
+    //   .attr('opacity', '0')
+    //   .attr('rx', 2)
+    //   .attr('ry', 2);
 
 
     panelCuerpoSesionConActividades.append('clipPath')
@@ -525,10 +525,10 @@ export class HorarioG {
         as.actividades.forEach(
           actividad => {
             const panelActividad = d3.select('g#panelActividad_' + actividad.idActividad);
-            this.renderizarActividadesSeccionZonaSeleccionActividad(panelActividad, actividad);
             this.renderizarSeccionesPanelesActividades(panelActividad, actividad, 1, actividad.grupos?.map(grupo => grupo.codigo));
             this.renderizarSeccionesPanelesActividades(panelActividad,actividad,2, actividad.docentes?.map(docente => docente.alias));
-            this.renderizarSeccionesPanelesActividades(panelActividad,actividad,3, actividad.dependencia?[actividad.dependencia.codigo]:[]);
+            this.renderizarSeccionesPanelesActividades(panelActividad, actividad, 3, actividad.dependencia ? [actividad.dependencia.codigo] : []);
+            this.renderizarActividadesSeccionZonaSeleccionActividad(panelActividad, actividad);
           }
         )
 
@@ -538,26 +538,24 @@ export class HorarioG {
       // -------------------------------------------------------------------
 
       const porcentajeAnchoZonaSeleccion = Parametros.parametrosGrafico.actividades.porcentajeZonaSeleccionActividad;
-        panelesActividades.append('rect')
+      panelesActividades.select('.panelActividadZonaSeleccion').append('rect')
           .attr('class', 'rectActividad')
           .attr('width', parseFloat(anchoSesion) * porcentajeAnchoZonaSeleccion / 100)
-          .attr('fill', 'white')
           .attr('height', altoPanelActividadesEnActividadSesiones)
-          .attr('opacity', '0')
-          .attr('stroke', 'white')
-        .on("click", (d: any, i: any, e: any) => {
+          .attr('fill', '#fafafa')
+          .on("click", (d: any, i: any, e: any) => {
 
-          const marcadaActividadActualComoSeleccionada = d3.select('g#panelActividad_' + i.idActividad).attr('class').split(' ').includes('actividadSeleccionada');
-          d.ctrlKey ? null : Utilidades.desmarcarActividadesComoSeleccionadas(this.actividadesG);
+            const marcadaActividadActualComoSeleccionada = d3.select('g#panelActividad_' + i.idActividad).attr('class').split(' ').includes('actividadSeleccionada');
+            d.ctrlKey ? null : Utilidades.desmarcarActividadesComoSeleccionadas(this.actividadesG);
 
-          marcadaActividadActualComoSeleccionada ?
-            d3.selectAll('g#panelActividad_' + i.idActividad).attr('class', 'panelActividad actividadSeleccionada') :
-            d3.select('g#panelActividad_' + i.idActividad).attr('class', 'panelActividad');
+            marcadaActividadActualComoSeleccionada ?
+              d3.selectAll('g#panelActividad_' + i.idActividad).attr('class', 'panelActividad actividadSeleccionada') :
+              d3.select('g#panelActividad_' + i.idActividad).attr('class', 'panelActividad');
 
-          d3.select('g#panelActividad_' + i.idActividad).attr('class').split(' ').includes('actividadSeleccionada') ?
-            Utilidades.desmarcarActividadesComoSeleccionadas(this.actividadesG,[i.idActividad]) :
-            Utilidades.marcarActividadesComoSeleccionadas([i.idActividad]);
-        });
+            d3.select('g#panelActividad_' + i.idActividad).attr('class').split(' ').includes('actividadSeleccionada') ?
+              Utilidades.desmarcarActividadesComoSeleccionadas(this.actividadesG,[i.idActividad]) :
+              Utilidades.marcarActividadesComoSeleccionadas([i.idActividad]);
+          });
 
 
     }
@@ -577,11 +575,14 @@ export class HorarioG {
     .attr('class', 'panelActividadZonaSeleccion')
     .attr('id', 'panelActividadZonaSeleccion_' + actividad.idActividad)
 
+    const porcentajeAnchoZonaSeleccion = Parametros.parametrosGrafico.actividades.porcentajeZonaSeleccionActividad;
 
-    panelZonaSeleccionActividad.append('rect')
-      .attr('height', panelActividadBBox.height)
-      .attr('width', panelActividadBBox.width)
-      .attr('fill', '#b1b1b1');
+    // panelZonaSeleccionActividad.append('rect')
+    // .attr('class', 'rectActividadZonaSeleccion')
+    //   .attr('id', 'rectActividadZonaSeleccion_' + actividad.idActividad)
+    //   .attr('height', panelActividadBBox.height)
+    //   .attr('width', panelActividadBBox.width*porcentajeAnchoZonaSeleccion/100)
+    //   .attr('fill', '#b1b1b1');
   };
   private renderizarSeccionesPanelesActividades(panelActividad: any, actividad: ActividadG, numeroSeccion: number, listaCadenas: string[]) {
 
@@ -612,14 +613,10 @@ export class HorarioG {
       .attr('height', panelSeccionBBox.height)
       .attr('width', panelSeccionBBox.width)
 
-
     panelSeccion.append('rect')
       .attr('height', panelSeccionBBox.height)
       .attr('width', panelSeccionBBox.width)
       .attr('fill', '#D6EAF8');
-
-
-
 
     const panelContenidoSeccion = panelSeccion
       .append('g')
@@ -627,16 +624,20 @@ export class HorarioG {
       .attr('id', 'panelContenidoSeccion_' + numeroSeccion + '_' + actividad.idActividad)
 
 
-    const panelContenidolistaCadenas = this.renderizarContenidoPanelesSeccionesActividades(panelContenidoSeccion, listaCadenas);
 
     panelSeccion.append('rect')
+      .attr('id',  'rectActivarGestionActividad_' + numeroSeccion + '_' + actividad.idActividad )
+      .attr('class','rectActivarGestionActividad')
       .attr('height', panelSeccionBBox.height)
-      .attr('width', panelSeccionBBox.width*(100-Parametros.parametrosGrafico.actividades.porcentajeZonaSeleccionActividad)/100)
+      .attr('width', panelSeccionBBox.width * (100 - Parametros.parametrosGrafico.actividades.porcentajeZonaSeleccionActividad) / 100)
       .attr('opacity', '0')
 
       .on("click", (d: any, i: any, e: any) => {
           this.eventos$.next(i);
        });
+
+    const panelContenidolistaCadenas = this.renderizarContenidoPanelesSeccionesActividades(panelContenidoSeccion, listaCadenas);
+
 
 
   }
@@ -645,6 +646,8 @@ export class HorarioG {
 
     // Obtenemos las dimensiones y posicionamiento del panel Sección del contenido actual
     const panelSeccion = d3.select(panelContenidoSeccion.node().parentNode);
+
+
 
     const dps = {
       x: parseFloat(panelSeccion.attr('x')),
@@ -657,7 +660,20 @@ export class HorarioG {
 
     const seccionContenidoBBox = panelContenidoSeccion.node().getBBox();
 
-    if (dps.height < seccionContenidoBBox.height) this.anyadirScrollSeccion(panelContenidoSeccion);
+    if (dps.height < seccionContenidoBBox.height)
+    {
+
+      this.anyadirScrollSeccion(panelContenidoSeccion);
+      // localizamos el rectángulo que contiene el evento de selección.
+      // como vamos añadir scroll le reducimos el ancho.
+
+      const rectActivarGestionActividad = panelSeccion.select('.rectActivarGestionActividad');
+      rectActivarGestionActividad.attr('witdh', dps.width - 5);
+
+
+    }
+
+
 
   }
   private anyadirContenidoPanelesSeccion(panelContenidoSeccion: any, listaCadenas: string[]) {

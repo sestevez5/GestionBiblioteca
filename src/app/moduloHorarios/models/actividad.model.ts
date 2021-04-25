@@ -1,3 +1,4 @@
+import { Alumno } from './alumno.model';
 import { Dependencia } from './dependencia.model';
 import { PeriodoVigencia } from './peridoVigencia';
 import { Grupo } from './grupo.model';
@@ -14,6 +15,7 @@ export class Actividad {
   grupos: Grupo[];
   dependencia: Dependencia | undefined;
   periodoVigencia: PeriodoVigencia;
+  alumnos: Alumno[]  // Lazy load
 
   public actualizarActividad(actividad: Actividad): void {
     this.detalleActividad = actividad.detalleActividad
@@ -24,8 +26,6 @@ export class Actividad {
     this.asignaturas = actividad.asignaturas;
     this.periodoVigencia = actividad.periodoVigencia;
  }
-
-
 }
 
 

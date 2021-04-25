@@ -1,5 +1,6 @@
+import { Alumno } from './../models/alumno.model';
 import { Actividad } from './../models/actividad.model';
-import { filter, first } from 'rxjs/operators';
+import { filter, first, mergeMap } from 'rxjs/operators';
 
 // angular
 import { Injectable } from '@angular/core';
@@ -226,6 +227,8 @@ export class HorarioService {
 
   obtenerActividad(idActividad: string): Observable<Actividad> {
 
+
+
     const IActividad$ = new Subject<IActividad>();
     this.fireBaseDB.doc<IActividad>(`actividades/${idActividad}`).valueChanges()
       .pipe(
@@ -234,19 +237,29 @@ export class HorarioService {
           if (!value) {
             return (IActividad$ as Observer<any>).error("Error")
           }
-            IActividad$.next(value);
+          IActividad$.next(value);
         })
-    ).subscribe();
+      ).subscribe();
 
-    const aux$ = this.convertirObservableArrayIActividadesEnObservableArrayActividades(IActividad$.pipe(map(iActividad => [iActividad])));
-    return aux$.pipe(
-      map(
-        actividades => {
-          console.log('act0', actividades[0]);
-          return actividades[0]
-        }
-      )
-    );
+    var aux$: Observable<Actividad[]> = this.convertirObservableArrayIActividadesEnObservableArrayActividades(IActividad$.pipe(map(iActividad => [iActividad])));
+
+    const aux2$: Observable<Actividad> = aux$.pipe(map((actividades: Actividad[]) => actividades[0]));
+
+
+    const aux3$: Observable<Actividad> = aux2$.pipe(
+      mergeMap(
+        (actividad: Actividad) => this.obtenerAlumnosActividad(actividad)
+            .pipe(
+              map(alumnos => {
+                actividad.alumnos = alumnos;
+                return actividad;
+              }) // Fin map
+            ) // Fin pipe
+      )  // Fin mergemap
+    ) // Fin pipe
+
+    return aux3$;
+
   }
   obtenerActividades(entidadHorario?: EntidadHorario,  lunesSemanaSeleccionada?:Date): Observable<Actividad[]>{
 
@@ -288,10 +301,10 @@ export class HorarioService {
                 return actions.map(
                   act => {
 
-                const datos = act.payload.doc.data() as IActividad;
-                const idActividad = act.payload.doc.id;
-                    const iActividad = { idActividad, ...datos };
-                       return iActividad;
+                    const datos = act.payload.doc.data() as IActividad;
+                    const idActividad = act.payload.doc.id;
+                    return { ...datos, idActividad: idActividad };
+
               }
             )
           }
@@ -408,6 +421,29 @@ export class HorarioService {
     }
 
   }
+
+  obtenerAlumnosActividad(actividad: Actividad): Observable<Alumno[]>{
+
+    return this.fireBaseDB.collection('alumnos')
+    .snapshotChanges()
+      .pipe(
+        // Reconvertimos los datos a colecciones de Alumnos
+        map(
+            actions => actions.map(
+              act => {
+                const datos = act.payload.doc.data() as Alumno;
+                const idAlumno = act.payload.doc.id;
+                return { ...datos, idAlumno }
+                }) // Fin actions.map
+        ), // Fin primer map
+
+        // Aplicamos un filtro para quedarnos con los alumnos de algún grupo de la actividad.
+        map(alumnos =>
+          alumnos.filter(
+            alumno => actividad.grupos.map(grupo => grupo.idGrupo).includes(alumno.idGrupo)))  // Fin map
+        );
+  };
+
 
   obtenerDiaSemana(codigo: string): DiaSemana | undefined
   {

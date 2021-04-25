@@ -144,13 +144,15 @@ export class actividadesEffects {
 
                 map(
                   actividad => {
-                    return actividadesActions.cargarActividadOK({ actividad: actividad});
+                    console.log('effect actividad activa:', actividad);
+                     return actividadesActions.cargarActividadOK({ actividad: actividad});
                   }
 
                   ), // Fin map
 
                   catchError(
                     error => {
+
                       return of(actividadesActions.cargarActividadError({ error: 'error' }))
                     }
 

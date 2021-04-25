@@ -39,7 +39,6 @@ export class GestionHorarioComponent {
     // 1.- Solicitud de carga de entidades de tipo docente.
     this.store.dispatch(FromEntidadesHorarioActions.cargarEntidadesHorario({ tipoEntidad: EnumTipoEntidadHorario.DOCENTE }));
 
-
     // 2.- Solicitud de carga de los parámetros del horario.
     this.store.dispatch(FromActividadesActions.cargarParametrosHorario());
 
@@ -56,9 +55,7 @@ export class GestionHorarioComponent {
 
   AbrirVentanaModal(actividad: ActividadG) {
 
-    console.log('actividad al abrir: ', this.actividad);
-
-    this.modalRef = this.modalService.open(this.panelModal, {
+     this.modalRef = this.modalService.open(this.panelModal, {
       size: "xl",
       hideCloseButton: true,
       centered: false,

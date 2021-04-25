@@ -147,7 +147,7 @@ export class Utilidades
   static marcarActividadesComoSeleccionadas(identificadoresActividades: string[]) {
     identificadoresActividades.forEach(
       iact => {
-        const x = d3.select('g#panelActividad_' + iact)
+        const x = d3.select('g#panelActividad_' + iact).select('.panelActividadZonaSeleccion')
 
         const y: any = x.select('.rectActividad');
 

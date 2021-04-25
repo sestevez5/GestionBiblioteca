@@ -17,9 +17,6 @@ export class MostrarActividadComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-
-    console.log('actividad:---- ', this.actividad);
-
   }
 
 entidadesHorarioDocentes(): EntidadHorario[] {

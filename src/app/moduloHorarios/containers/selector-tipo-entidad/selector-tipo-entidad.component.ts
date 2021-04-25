@@ -38,11 +38,7 @@ export class SelectorTipoEntidadComponent implements OnInit {
     //   });
 
       this.store.pipe(select(FromEntidadesHorarioSelectors.selectTipoEntidadActiva))
-      .subscribe(tipoEntidadActiva1 => {
-        console.log('tea1: ', tipoEntidadActiva1)
-
-        this.tipoEntidadSeleccionada = tipoEntidadActiva1?.tipoEntidadHorario;
-      });
+      .subscribe(tipoEntidadActiva1 => this.tipoEntidadSeleccionada = tipoEntidadActiva1?.tipoEntidadHorario );
 
   }
 

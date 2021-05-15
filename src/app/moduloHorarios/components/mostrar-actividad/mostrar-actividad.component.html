@@ -45,6 +45,18 @@
     </div>
   </div>
 
+  <div class="seccionDatosActividad accesoAlumnado">
+    <div class="row">
+      <div class="col-12 d-flex">
+        <div class="ml-auto" (click)="onMostrarAlumnos()">
+          <i class="fas fa-2x fa-users ml-auto"></i>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
   <div class="seccionDatosActividad docentes">
     <div  class="cabecera d-flex align-items-center border-bottom">
       <p class="mb-0 py-1 text-center font-18">Docentes</p>
@@ -106,3 +118,37 @@
     </div>
   </div>
 </div>
+
+<modal #panelAlumnos (onOpen)="onAbrirVentanaModal()" (onClose)="onCerrarVentanaModal()" >
+  <!-- Cabecera -->
+  <modal-header>
+     <h3>Alumnado</h3>
+  </modal-header>
+
+  <!-- Cuerpo -->
+  <modal-content>
+    <div class="listaAlumnos">
+
+      <!-- <app-selector-lista-simple *ngIf="this.actividad.alumnos"
+      [items]="this.actividad.alumnos"
+      [camposConfig]=this.obtenerCamposConfig()
+      [modelo]="'celdas'"
+      >
+    </app-selector-lista-simple> -->
+
+
+  </div>
+
+
+
+
+  </modal-content>
+
+  <!-- Pie -->
+  <modal-footer>
+      <!-- <button type="button" class="btn btn-sm btn-secondary mr-3" (click)="onAceptarVentanaModal()" >Aceptar</button> -->
+      <button type="button" class="btn btn-sm btn-secondary" (click)="onCerrarVentanaModal()">Cerrar</button>
+  </modal-footer>
+
+</modal>
+

@@ -1,4 +1,5 @@
-import { ViewChild, ViewEncapsulation } from '@angular/core';
+import { Actividad } from './../../models/actividad.model';
+import { ViewChild, ViewEncapsulation, OnInit } from '@angular/core';
 import { ActividadG } from './../../models/actividadG.model';
 // Elementos del Framework
 import { Component, ElementRef } from '@angular/core';
@@ -9,7 +10,8 @@ import { EnumTipoEntidadHorario } from '../../models/tipoEntidadHorario.model';
 // Elementos relativos a. STORE
 import * as FromEntidadesHorarioActions from '../../store/entidadesHorario/entidadesHorario.actions';
 import * as FromActividadesActions from '../../store/actividades/actividades.actions';
-import { Store } from '@ngrx/store';
+import * as FromActividadesSelectors from '../../store/actividades/actividades.selectors';
+import { Store, select } from '@ngrx/store';
 import { ModuloHorarioRootState } from '../../store/index';
 import { ModalManager } from 'ngb-modal';
 
@@ -23,19 +25,19 @@ import { ModalManager } from 'ngb-modal';
   styleUrls: ['./gestion-horario.component.css'],
   encapsulation: ViewEncapsulation.None
 })
-export class GestionHorarioComponent {
+export class GestionHorarioComponent implements OnInit {
 
   @ViewChild("panelModal") panelModal: ElementRef;
   private modalRef: any;
 
-  actividad: ActividadG;
-
+  actividad: Actividad;
 
   constructor(private store: Store<ModuloHorarioRootState>, private modalService: ModalManager) {
     this.gestionarAccionesIniciales();
   }
 
   gestionarAccionesIniciales() {
+
     // 1.- Solicitud de carga de entidades de tipo docente.
     this.store.dispatch(FromEntidadesHorarioActions.cargarEntidadesHorario({ tipoEntidad: EnumTipoEntidadHorario.DOCENTE }));
 
@@ -47,18 +49,21 @@ export class GestionHorarioComponent {
 
   }
 
-  onActividadSeleccionada(actividad: ActividadG) {
-
-    this.actividad = actividad;
-    this.AbrirVentanaModal(this.actividad);
+  ngOnInit(): void {
+    this.store.pipe(select(FromActividadesSelectors.selectActividadActiva))
+      .subscribe( actividadActiva => this.actividad = actividadActiva)
   }
 
-  AbrirVentanaModal(actividad: ActividadG) {
+  onActividadSeleccionada(actividad: ActividadG) {
+    this.AbrirVentanaModal();
+  }
+
+  AbrirVentanaModal() {
 
      this.modalRef = this.modalService.open(this.panelModal, {
       size: "xl",
       hideCloseButton: true,
-      centered: false,
+      centered: true,
       backdrop: true,
       animation: true,
       keyboard: false,

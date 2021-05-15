@@ -32,7 +32,6 @@ import { CadenabusquedaComponent } from './components/cadenabusqueda/cadenabusqu
     SelectorMultipleDobleListaComponent,
     ItemSelectorMultipleDobleListaComponent,
     ItemSelectorListaSimpleComponent,
-
     SelectorListaSimpleComponent,
     CadenabusquedaComponent
   ],

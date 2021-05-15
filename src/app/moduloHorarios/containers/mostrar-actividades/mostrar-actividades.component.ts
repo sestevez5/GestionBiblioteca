@@ -8,6 +8,8 @@ import { HorarioG } from '../../models/graficoHorario/GraficoHorario';
 import { Component, Input, OnInit, OnChanges, Output, EventEmitter } from '@angular/core';
 
 import * as FromActividadesSelectors from '../../store/actividades/actividades.selectors';
+import * as FromActividadesActions from '../../store/actividades/actividades.actions';
+
 import {  map } from 'rxjs/operators';
 
 @Component({
@@ -33,7 +35,10 @@ export class MostrarActividadesComponent implements OnInit {
   ngOnInit(): void {
 
     this.horarioG = new HorarioG('div#horario');
-    this.horarioG.eventos$.subscribe(actividad => this.actividadSeleccionadaEvent.emit(actividad));
+    this.horarioG.eventos$.subscribe(actividad => {
+      this.actividadSeleccionadaEvent.emit(actividad);
+      this.store.dispatch( FromActividadesActions.cargarActividad({ idActividad: actividad.idActividad }))
+    });
     var Obs1$ = this.store.pipe(select(FromActividadesSelectors.selectParametrosHorario));
     var Obs2$ = this.store.pipe(select(FromActividadesSelectors.selectPlantillaActiva));
     var Obs3$ = this.store.pipe(select(FromActividadesSelectors.selectTodasLasActividades));

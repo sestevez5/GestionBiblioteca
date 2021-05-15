@@ -73,7 +73,7 @@ const icons = {
     NavigationComponent,
     BreadcrumbComponent,
     SidebarComponent,
-    IndexSubsistemaComponent,
+    IndexSubsistemaComponent
 
   ],
   imports: [

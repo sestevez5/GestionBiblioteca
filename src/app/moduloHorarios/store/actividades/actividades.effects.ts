@@ -135,16 +135,21 @@ export class actividadesEffects {
         mergeMap(
           action => {
 
+            console.log('value:', action);
+
             this.store.dispatch(PrincipalActions.cargandoDatos({ mensaje: "cargando actividad" }));
 
 
             return this.horarioService.obtenerActividad(action.idActividad)
               .pipe(
-                tap(value => this.store.dispatch(PrincipalActions.cargadoDatos())),
+                tap(value => {
+
+                  this.store.dispatch(PrincipalActions.cargadoDatos())
+                }),
 
                 map(
                   actividad => {
-                    console.log('effect actividad activa:', actividad);
+                    console.log('xx:', actividad);
                      return actividadesActions.cargarActividadOK({ actividad: actividad});
                   }
 
@@ -152,6 +157,7 @@ export class actividadesEffects {
 
                   catchError(
                     error => {
+                      console.log('yy:', error);
 
                       return of(actividadesActions.cargarActividadError({ error: 'error' }))
                     }

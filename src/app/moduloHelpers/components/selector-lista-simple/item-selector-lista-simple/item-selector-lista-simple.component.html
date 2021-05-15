@@ -1,4 +1,4 @@
-<li [class]="{'marcado': this.marcado}" class="list-group-item item" [ngStyle]="{'border-left-color': this.marcado? this.colorMarcado:null}" >
+<li *ngIf="this.modelo === 'lista'" [class]="{'marcado': this.marcado}" class="list-group-item item" [ngStyle]="{'border-left-color': this.marcado? this.colorMarcado:null}" >
 
   <div class="row d-flex flex-nowrap">
     <div *ngIf="this.conFoto" class="imagen p-0">
@@ -14,4 +14,21 @@
   </div>
 </li>
 
- <!-- p-3 mb-5 bg-white rounded -->
+<div *ngIf="this.modelo === 'celdas'" class="card" style="width: 100px">
+
+    <img *ngIf="this.conFoto && !this.item[this.camposConfig.imagen]" style="width: 100%; height: auto;" class="card-img-top" src='assets/images/general/NoPhoto.png' alt="user">
+    <img *ngIf="this.conFoto && this.item[this.camposConfig.imagen]" style="width: 100%; height: auto;" class="card-img-top"  [src]='this.item[this.camposConfig.imagen]' alt="user">
+
+  <div class="card-body">
+    <h5 class="card-title">Card title</h5>
+    <p class="card-text">
+      This is a longer card with supporting text below as a natural lead-in to
+      additional content. This content is a little bit longer.
+    </p>
+
+  </div>
+
+</div>
+
+
+

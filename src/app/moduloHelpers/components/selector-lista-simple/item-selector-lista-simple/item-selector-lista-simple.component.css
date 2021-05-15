@@ -40,3 +40,8 @@ img {
   font-weight: bold;
   font-size: medium;
 }
+
+.imagen {
+  width: 200;
+  height: 300;
+}

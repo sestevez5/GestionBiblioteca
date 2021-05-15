@@ -2,12 +2,22 @@
   height: 65vh;
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  grid-template-rows: 20% 65% 15%;
+  grid-template-rows: 15% 5% 65% 15%;
   gap: 8px;
   overflow-y:initial;
   background-color: white;
 
 }
+
+.fas:hover {
+  cursor: pointer;
+  color: black;
+}
+
+.fas
+ {
+   color: grey;
+ }
 
 .cabecera {
   height: 7%;
@@ -50,6 +60,11 @@ p {
   padding-left: 3px;
 }
 
+.accesoAlumnado {
+  grid-column-start: 1;
+  grid-column-end: 13;
+}
+
 .modal-header {
   padding: 8px;
 }
@@ -87,3 +102,9 @@ p {
 
 }
 
+
+.listaAlumnos {
+  height: 45vh;
+
+
+}

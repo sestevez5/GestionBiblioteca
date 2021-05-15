@@ -10,6 +10,7 @@ import { debounceTime, distinctUntilChanged, filter, first, skip } from 'rxjs/op
 })
 export class SelectorListaSimpleComponent implements OnChanges {
 
+  @Input() modelo: 'lista' | 'celdas' = 'lista'
   @Input() items: any[];
   @Input() camposConfig: camposSelectorSimple;
   @Input() anyadirBuscador = true;

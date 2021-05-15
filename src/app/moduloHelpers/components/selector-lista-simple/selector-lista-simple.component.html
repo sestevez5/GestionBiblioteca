@@ -1,16 +1,38 @@
 <app-cadenabusqueda *ngIf="this.anyadirBuscador" [tiempoEspera]=1000 [textoIndicativo]="'Introducir'" (cadenaBusqueda)="OnChangeCadenaBusqueda($event)"></app-cadenabusqueda>
 
-<div class="mt-2 panelListaSeleccion">
+<div *ngIf="this.modelo === 'lista'" class="mt-2 panelListaSeleccion">
   <ul class="list-group m-0 p-0">
     <div class="item" *ngFor="let item of this.itemsFiltrados" (click)="onSeleccionar(item)" >
       <app-item-selector-lista-simple
+      [modelo]="'lista'"
       [conFoto]="this.camposConfig.imagen"
       [marcado]="item === this.itemSeleccionado"
       [colorMarcado]=this.colorSeleccion
       [camposConfig]=this.camposConfig
-      [item]=item></app-item-selector-lista-simple>
+      [item]=item>
+    </app-item-selector-lista-simple>
     </div>
   </ul>
 </div>
+
+<div *ngIf="this.modelo === 'celdas'" class="mt-2 row">
+  <div class="col">
+  <div class="card-deck">
+    <ng-template ngFor let-item [ngForOf]="this.itemsFiltrados">
+      <app-item-selector-lista-simple
+      [modelo]="'celdas'"
+      [conFoto]="this.camposConfig.imagen"
+      [marcado]="item === this.itemSeleccionado"
+      [colorMarcado]=this.colorSeleccion
+      [camposConfig]=this.camposConfig
+      [item]=item>
+      </app-item-selector-lista-simple>
+
+    </ng-template>
+  </div>
+  </div>
+  </div>
+
+
 
 

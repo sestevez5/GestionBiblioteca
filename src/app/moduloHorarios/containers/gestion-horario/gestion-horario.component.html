@@ -9,7 +9,8 @@
   </div>
 
   <div class="seccion seccionSelectorPlantilla">
-    <app-selector-plantillas></app-selector-plantillas></div>
+    <app-selector-plantillas></app-selector-plantillas>
+  </div>
 
   <div class="seccion seccionSelectorSemanas">
     <app-selector-semanas></app-selector-semanas>
@@ -22,6 +23,7 @@
   <div class="seccion seccionActividadesEntidadSeleccionada">
     <app-mostrar-actividades (actividadSeleccionadaEvent)= 'onActividadSeleccionada($event)'></app-mostrar-actividades>
   </div>
+
 </div>
 
 <modal #panelModal (onOpen)="onAbrirVentanaModal()" (onClose)="onCerrarVentanaModal()" >
@@ -32,7 +34,7 @@
 
     <!-- Cuerpo -->
     <modal-content>
-        <app-gestionar-actividad *ngIf="this.actividad" [actividad] = this.actividad>
+        <app-gestionar-actividad>
 
         </app-gestionar-actividad>
 

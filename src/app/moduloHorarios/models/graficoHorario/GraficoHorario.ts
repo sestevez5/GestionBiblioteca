@@ -399,11 +399,11 @@ export class HorarioG {
 
      return panelCabeceraSesionConActividades;
   }
-  private renderizarBotonesPanelCabeceraSesionesActividades(pcca: any) {
+  private renderizarBotonesPanelCabeceraSesionesActividades(pcsa: any) {
     const anchoSesion = Parametros.parametrosGrafico.panelSesiones.anchoSesion ? Parametros.parametrosGrafico.panelSesiones.anchoSesion.toString() : '0';
     const altoCabeceraSesion = Parametros.parametrosGrafico.panelSesiones.altoCabecera;
     const desplazamientoHorizontal = parseFloat(anchoSesion) / 2 - 15;
-    const desplHorizontal2 = desplazamientoHorizontal+10
+    const desplHorizontal2 = desplazamientoHorizontal + 10
     const desplVertical1 = altoCabeceraSesion / 18;
     const desplVertical2 = altoCabeceraSesion / 2;
     const desplVertical3 = altoCabeceraSesion * 17 / 18;
@@ -411,7 +411,7 @@ export class HorarioG {
     const coordenadasTrianguloIzquierdo = [
       { 'x': parseFloat(anchoSesion) / 2 - desplazamientoHorizontal, 'y': desplVertical1 },
       { 'x': parseFloat(anchoSesion) / 2 - desplHorizontal2, 'y': desplVertical2 },
-      { 'x': parseFloat(anchoSesion) / 2  -desplazamientoHorizontal, 'y': desplVertical3 },
+      { 'x': parseFloat(anchoSesion) / 2 - desplazamientoHorizontal, 'y': desplVertical3 },
     ];
 
     const coordenadasTrianguloDerecho = [
@@ -421,22 +421,23 @@ export class HorarioG {
     ];
 
 
+
     // Obtener actividad
-
-
-    pcca.append("polygon")
-    .attr("points", coordenadasTrianguloIzquierdo.map(function (d: any) { return [d.x, d.y].join(","); }).join(" "))
-      .attr("fill", "white")
+    const trianguloIzquierdo = pcsa.append("polygon");
+    trianguloIzquierdo.attr("points", coordenadasTrianguloIzquierdo.map(function (d: any) { return [d.x, d.y].join(","); }).join(" "))
+      .attr("fill", "grey")
       .attr('class', 'botonCabeceraSesionActividades botonIzquierdoCabeceraSesionActividades')
-      .attr('id', (d: IActividadesSesion) => 'botonIzquierdoCabeceraSesionActividades'+d.sesion.idSesion)
-    .on("click", this.actualizarActividadVisibleDeUnaSesion.bind(this))
-    .on("mouseout", (d: any) => d3.select('body').style("cursor", "default"))
+      .attr('id', (d: IActividadesSesion) => 'botonIzquierdoCabeceraSesionActividades' + d.sesion.idSesion)
+      .on("click", this.actualizarActividadVisibleDeUnaSesion.bind(this))
+      .on("mouseout", (d: any) => d3.select('body').style("cursor", "default"))
       .on("mouseover", (d: any) => d3.select('body').style("cursor", "pointer"));
 
 
-    pcca.append("polygon")
+    const trianguloDerecho = pcsa.append("polygon");
+    pcsa.append("polygon")
       .attr('points', coordenadasTrianguloDerecho.map(function (d: any) { return [d.x, d.y].join(","); }).join(" "))
-      .attr('fill', "white")
+      .attr('fill', (d: IActividadesSesion) => d.actividades.length>1?'white':'grey'
+        )
       .attr('class', 'botonCabeceraSesionActividades botonDerechoCabeceraSesionActividades')
       .attr('id', (d: IActividadesSesion) => 'botonDerechoCabeceraSesionActividades'+d.sesion.idSesion)
       .on("click", this.actualizarActividadVisibleDeUnaSesion.bind(this))

@@ -1,7 +1,9 @@
+import { ModalManager } from 'ngb-modal';
 import { Asignatura } from './../../models/asignatura.model';
 import { EntidadHorario } from './../../models/entidadHorario.model';
 import { Actividad } from './../../models/actividad.model';
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ElementRef } from '@angular/core';
+import { ViewChild, ViewEncapsulation } from '@angular/core';
 
 @Component({
   selector: 'app-mostrar-actividad',
@@ -12,9 +14,12 @@ export class MostrarActividadComponent implements OnInit {
 
   @Input() actividad: Actividad;
 
+  @ViewChild("panelAlumnos") panelModal: ElementRef;
+  private modalRef: any;
 
 
-  constructor() { }
+
+  constructor(private modalService: ModalManager) { }
 
   ngOnInit(): void {
   }
@@ -55,6 +60,42 @@ entidadesHorarioGrupos(): EntidadHorario[] {
       case 'D': return 'Domingo'; break;
       default: return ''; break;
     }
+  }
+
+  onMostrarAlumnos() {
+
+    this.AbrirVentanaModal();
+
+  }
+      // ------------------------------------------
+  // Métodos no implementados.
+  // ------------------------------------------
+
+  AbrirVentanaModal() {
+
+    this.modalRef = this.modalService.open(this.panelModal, {
+     size: "xs",
+     hideCloseButton: true,
+     centered: true,
+     backdrop: true,
+     animation: true,
+     keyboard: false,
+     closeOnOutsideClick: true,
+     backdropClass: "modal-backdrop",
+   });
+
+ }
+  onAbrirVentanaModal() {}
+
+  onCerrarVentanaModal() {
+    this.modalService.close(this.modalRef);
+  }
+
+  obtenerCamposConfig(): object {
+
+
+    return { texto: 'idAlumno', leyenda: 'nombre', imagen:'foto' };
+
   }
 
 

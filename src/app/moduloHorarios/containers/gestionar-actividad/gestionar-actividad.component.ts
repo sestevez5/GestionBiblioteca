@@ -12,9 +12,7 @@ import * as FromActividadesActions from '../../store/actividades/actividades.act
   templateUrl: './gestionar-actividad.component.html',
   styleUrls: ['./gestionar-actividad.component.css']
 })
-export class GestionarActividadComponent implements OnInit, OnChanges {
-
-  @Input() actividad: Actividad;
+export class GestionarActividadComponent implements OnInit {
 
   actvidad1: Actividad;
 
@@ -26,12 +24,6 @@ export class GestionarActividadComponent implements OnInit, OnChanges {
 
     }
 
-  ngOnChanges(changes: SimpleChanges)
-  {
-
-    if (changes.actividad)
-      this.store.dispatch(FromActividadesActions.cargarActividad({ idActividad: this.actividad.idActividad }));
-    }
 
   ngOnInit(): void {
 
@@ -43,7 +35,7 @@ export class GestionarActividadComponent implements OnInit, OnChanges {
         }
     );
 
-    this.store.dispatch(FromActividadesActions.cargarActividad({ idActividad: this.actividad.idActividad }));
+    this.store.dispatch(FromActividadesActions.cargarActividad({ idActividad: this.actvidad1?.idActividad }));
 
 
 

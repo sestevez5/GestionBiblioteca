@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ItemSelectorMultipleDobleListaComponent } from './item-selector-multiple-doble-lista.component';
+import { ItemSelectorMultipleDobleListaComponent } from './item-selector-lista-simple-modeloLista.component';
 
 describe('ItemSelectorMultipleDobleListaComponent', () => {
   let component: ItemSelectorMultipleDobleListaComponent;

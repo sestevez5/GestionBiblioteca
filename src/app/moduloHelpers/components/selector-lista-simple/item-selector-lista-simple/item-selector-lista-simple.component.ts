@@ -9,6 +9,7 @@ import { camposSelectorSimple } from '../selector-lista-simple.component';
 })
 export class ItemSelectorListaSimpleComponent implements OnInit {
 
+  @Input() modelo: 'lista' | 'celdas' = 'lista'
   @Input() camposConfig: camposSelectorSimple;
   @Input() marcado = false;
   @Input() colorMarcado = '#ff0000';

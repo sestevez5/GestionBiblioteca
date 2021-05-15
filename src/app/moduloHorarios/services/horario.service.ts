@@ -227,8 +227,6 @@ export class HorarioService {
 
   obtenerActividad(idActividad: string): Observable<Actividad> {
 
-
-
     const IActividad$ = new Subject<IActividad>();
     this.fireBaseDB.doc<IActividad>(`actividades/${idActividad}`).valueChanges()
       .pipe(
@@ -424,24 +422,19 @@ export class HorarioService {
 
   obtenerAlumnosActividad(actividad: Actividad): Observable<Alumno[]>{
 
-    return this.fireBaseDB.collection('alumnos')
+   return this.fireBaseDB.collection<Alumno>('alumnos', ref => ref.where('idGrupo', 'in', actividad.grupos.length>0?actividad.grupos.map(grupo => grupo.idGrupo):['xxx']))
     .snapshotChanges()
       .pipe(
         // Reconvertimos los datos a colecciones de Alumnos
         map(
-            actions => actions.map(
-              act => {
-                const datos = act.payload.doc.data() as Alumno;
-                const idAlumno = act.payload.doc.id;
-                return { ...datos, idAlumno }
-                }) // Fin actions.map
-        ), // Fin primer map
-
-        // Aplicamos un filtro para quedarnos con los alumnos de algún grupo de la actividad.
-        map(alumnos =>
-          alumnos.filter(
-            alumno => actividad.grupos.map(grupo => grupo.idGrupo).includes(alumno.idGrupo)))  // Fin map
-        );
+          actions => actions.map(
+            act => {
+              const datos = act.payload.doc.data() as Alumno;
+              const idAlumno = act.payload.doc.id;
+              return { ...datos, idAlumno }
+            }) // Fin actions.map
+        )
+    );
   };
 
 

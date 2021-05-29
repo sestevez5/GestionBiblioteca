@@ -27,7 +27,7 @@ export class actividadesEffects {
         switchMap(
           action => {
 
-            this.store.dispatch(PrincipalActions.cargandoDatos({ mensaje: "cargando" }));
+            this.store.dispatch(PrincipalActions.cargandoDatos({ mensaje: "Cargando plantillas" }));
             return this.horarioService.obtenerPlantillas()
               .pipe(
                 map(
@@ -62,7 +62,7 @@ export class actividadesEffects {
         switchMap(
           action => {
 
-            this.store.dispatch(PrincipalActions.cargandoDatos({ mensaje: "cargando" }));
+            this.store.dispatch(PrincipalActions.cargandoDatos({ mensaje: "Cargando actividades semanales" }));
 
             return this.store.pipe(
                 select(FromEntidadesHorarioSelectors.selectEntidadHorarioActiva),
@@ -97,7 +97,7 @@ export class actividadesEffects {
         switchMap(
           action => {
 
-            this.store.dispatch(PrincipalActions.cargandoDatos({ mensaje: "cargando" }));
+            this.store.dispatch(PrincipalActions.cargandoDatos({ mensaje: "Cargando parámetros de horarios" }));
             return this.horarioService.obtenerParametrosHorario()
               .pipe(
                 map(
@@ -135,11 +135,7 @@ export class actividadesEffects {
         mergeMap(
           action => {
 
-            console.log('value:', action);
-
-            this.store.dispatch(PrincipalActions.cargandoDatos({ mensaje: "cargando actividad" }));
-
-
+            this.store.dispatch(PrincipalActions.cargandoDatos({ mensaje: "Cargando actividad" }));
             return this.horarioService.obtenerActividad(action.idActividad)
               .pipe(
                 tap(value => {
@@ -149,7 +145,7 @@ export class actividadesEffects {
 
                 map(
                   actividad => {
-                    console.log('xx:', actividad);
+
                      return actividadesActions.cargarActividadOK({ actividad: actividad});
                   }
 
@@ -157,7 +153,6 @@ export class actividadesEffects {
 
                   catchError(
                     error => {
-                      console.log('yy:', error);
 
                       return of(actividadesActions.cargarActividadError({ error: 'error' }))
                     }

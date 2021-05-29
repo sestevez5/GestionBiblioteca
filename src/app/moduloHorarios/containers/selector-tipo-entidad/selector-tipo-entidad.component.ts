@@ -10,6 +10,7 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: './selector-tipo-entidad.component.html',
   styleUrls: ['./selector-tipo-entidad.component.css']
 })
+
 export class SelectorTipoEntidadComponent implements OnInit {
 
   TiposEntidadesHorario = EnumTipoEntidadHorario;
@@ -23,24 +24,9 @@ export class SelectorTipoEntidadComponent implements OnInit {
 
   ngOnInit(): void {
     this.gestionarSubscripcionesStore();
-
   }
 
-  // ----------------------------------------------------------------
-  // Método que gestiona las subscripciones necesarias al Store.
-  // ----------------------------------------------------------------
-  gestionarSubscripcionesStore() {
 
-    // this.store.pipe(select(FromEntidadesHorarioSelectors.selectTipoEntidadActiva))
-    //   .subscribe(tipoEntidadActiva => {
-    //     console.log('tea: ', tipoEntidadActiva)
-    //     this.tipoEntidadSeleccionada = tipoEntidadActiva
-    //   });
-
-      this.store.pipe(select(FromEntidadesHorarioSelectors.selectTipoEntidadActiva))
-      .subscribe(tipoEntidadActiva1 => this.tipoEntidadSeleccionada = tipoEntidadActiva1?.tipoEntidadHorario );
-
-  }
 
   // ----------------------------------------------------------------
   // Métodos que atienden a las acciones del usuario
@@ -68,6 +54,15 @@ export class SelectorTipoEntidadComponent implements OnInit {
       break;
 
     }
+  }
+
+  // ----------------------------------------------------------------
+  // Métodos privados
+  // ----------------------------------------------------------------
+  gestionarSubscripcionesStore() {
+    this.store.pipe(select(FromEntidadesHorarioSelectors.selectTipoEntidadActiva))
+    .subscribe(tipoEntidadActiva1 => this.tipoEntidadSeleccionada = tipoEntidadActiva1?.tipoEntidadHorario );
+
   }
 
 }

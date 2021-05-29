@@ -45,8 +45,23 @@ export class SelectorSemanasComponent implements OnInit {
 
 
 
+
+
   // ----------------------------------------------------------------
-  // Método que gestiona las subscripciones necesarias al Store.
+  // Métodos que atienden a las acciones del usuario
+  // ----------------------------------------------------------------
+  onSeleccionarFecha(fecha: NgbDate) {
+
+    this.rangoSemanaSeleccionada = this.obtenerSemanaDeLaFecha(fecha);
+    this.store.dispatch(
+      FromActividadesActions.seleccionarSemana(
+        { lunesSemanaSeleccionada: this.convertirNgbDateEnFecha(this.rangoSemanaSeleccionada.inicio) }
+      ));
+  }
+
+
+  // ----------------------------------------------------------------
+  // Métodos privados
   // ----------------------------------------------------------------
   gestionarSubscripcionesStore() {
 
@@ -64,33 +79,6 @@ export class SelectorSemanasComponent implements OnInit {
 
   }
 
-  // ----------------------------------------------------------------
-  // Métodos que atienden a las acciones del usuario
-  // ----------------------------------------------------------------
-  onSeleccionarFecha(fecha: NgbDate) {
-
-    this.rangoSemanaSeleccionada = this.obtenerSemanaDeLaFecha(fecha);
-    this.store.dispatch(
-      FromActividadesActions.seleccionarSemana(
-        { lunesSemanaSeleccionada: this.convertirNgbDateEnFecha(this.rangoSemanaSeleccionada.inicio) }
-      ));
-  }
-
-  isHovered(date: NgbDate) {
-      return this.rangoSemanaSeleccionada.inicio && !this.rangoSemanaSeleccionada.fin && this.hoveredDate && date.after(this.rangoSemanaSeleccionada.inicio) && date.before(this.hoveredDate);
-  }
-
-  isInside(date: NgbDate) {
-    return this.rangoSemanaSeleccionada.fin && date.after(this.rangoSemanaSeleccionada.inicio) && date.before(this.rangoSemanaSeleccionada.fin);
-  }
-
-  isRange(date: NgbDate) {
-    return date.equals(this.rangoSemanaSeleccionada.inicio) || (this.rangoSemanaSeleccionada.fin && date.equals(this.rangoSemanaSeleccionada.fin)) || this.isInside(date) || this.isHovered(date);
-  }
-
-  // ----------------------------------------------------------------
-  // Métodos auxiliares
-  // ----------------------------------------------------------------
   private obtenerSemanaDeLaFecha(fecha: NgbDate): { inicio: NgbDate, fin: NgbDate }
   {
     const diaSemana = this.calendar.getWeekday(fecha);
@@ -117,6 +105,17 @@ export class SelectorSemanasComponent implements OnInit {
     return new NgbDate(fecha.getFullYear(), fecha.getMonth() + 1, fecha.getDate());
   }
 
+  isHovered(date: NgbDate) {
+    return this.rangoSemanaSeleccionada.inicio && !this.rangoSemanaSeleccionada.fin && this.hoveredDate && date.after(this.rangoSemanaSeleccionada.inicio) && date.before(this.hoveredDate);
+  }
+
+  isInside(date: NgbDate) {
+    return this.rangoSemanaSeleccionada.fin && date.after(this.rangoSemanaSeleccionada.inicio) && date.before(this.rangoSemanaSeleccionada.fin);
+  }
+
+  isRange(date: NgbDate) {
+    return date.equals(this.rangoSemanaSeleccionada.inicio) || (this.rangoSemanaSeleccionada.fin && date.equals(this.rangoSemanaSeleccionada.fin)) || this.isInside(date) || this.isHovered(date);
+  }
 
 
 

@@ -14,16 +14,15 @@
   </div>
 </li>
 
-<div *ngIf="this.modelo === 'celdas'" class="card" style="width: 100px">
+<div *ngIf="this.modelo === 'celdas'" class="card" style="width: 98px">
 
-    <img *ngIf="this.conFoto && !this.item[this.camposConfig.imagen]" style="width: 100%; height: auto;" class="card-img-top" src='assets/images/general/NoPhoto.png' alt="user">
-    <img *ngIf="this.conFoto && this.item[this.camposConfig.imagen]" style="width: 100%; height: auto;" class="card-img-top"  [src]='this.item[this.camposConfig.imagen]' alt="user">
+    <img *ngIf="this.conFoto && !this.item[this.camposConfig.imagen]" style="width: 95%; height: auto;" class="card-img-top" src='assets/images/general/NoPhoto.png' alt="user">
+    <img *ngIf="this.conFoto && this.item[this.camposConfig.imagen]" style="width: 95%; height: auto;" class="card-img-top"  [src]='this.item[this.camposConfig.imagen]' alt="user">
 
   <div class="card-body">
-    <h5 class="card-title">Card title</h5>
+    <h5 class="card-title">{{ this.item[this.camposConfig.texto] }}</h5>
     <p class="card-text">
-      This is a longer card with supporting text below as a natural lead-in to
-      additional content. This content is a little bit longer.
+      {{ this.item[this.camposConfig.leyenda] }}
     </p>
 
   </div>

@@ -26,12 +26,27 @@ export class SelectorEntidadesComponent implements OnInit {
   // Entidad que se ha seleccionado.
   entidadHorarioSeleccionada: any;
 
-   constructor(usuarios: AuthService, private store: Store<ModuloHorarioRootState>) {
-
-
+  constructor(usuarios: AuthService, private store: Store<ModuloHorarioRootState>) {
   }
 
   ngOnInit(): void {
+    this.gestionarSubscripcionesStore();
+  }
+
+
+  //--------------------------------------------------
+  // Métodos controladores de eventos
+  //--------------------------------------------------
+  onSeleccionarItem(item: any) {
+    const entidadHorario = item as EntidadHorario;
+    this.store.dispatch(FromEntidadesHorarioActions.seleccionarEntidadHorario({ entidadHorario: entidadHorario, tipoEntidadHorario: entidadHorario.tipoEntidad }))
+  }
+
+
+  //--------------------------------------------------
+  // Métodos privados
+  //--------------------------------------------------
+  private gestionarSubscripcionesStore() {
 
     this.store.pipe(select(FromEntidadesHorarioSelectors.selectTodasLasEntidadesHorario))
       .subscribe(entidadesHorario => this.entidades = entidadesHorario);
@@ -41,26 +56,16 @@ export class SelectorEntidadesComponent implements OnInit {
 
     this.store.pipe(select(FromEntidadesHorarioSelectors.selectTipoEntidadActiva))
       .subscribe(tipoEntidadActiva => {
+        this.tipoEntidadSeleccionada = tipoEntidadActiva ? tipoEntidadActiva : null;
+      });
 
-        this.tipoEntidadSeleccionada = tipoEntidadActiva?tipoEntidadActiva:null;
-
-      })
 
   }
 
-
-  onSeleccionarItem(item: any) {
-    const entidadHorario = item as EntidadHorario;
-    this.store.dispatch(FromEntidadesHorarioActions.seleccionarEntidadHorario({ entidadHorario: entidadHorario, tipoEntidadHorario: entidadHorario.tipoEntidad }))
-  }
-
-  obtenerCamposConfig(): object {
-
+  private obtenerCamposConfig(): object {
     if (this.tipoEntidadSeleccionada.tipoEntidadHorario === EnumTipoEntidadHorario.DOCENTE)
       return { texto: 'descripcion', imagen: 'imagen', leyenda: 'detalle' };
-
     return { texto: 'descripcion', leyenda: 'detalle' };
-
   }
 
 

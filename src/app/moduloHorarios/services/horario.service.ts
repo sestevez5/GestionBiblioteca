@@ -63,8 +63,8 @@ export class HorarioService {
   parametrosHorario: ParametrosHorario =
     {
       horaMinima: '08:00',
-      horaMaxima: '22:00',
-      diasSemanaHabiles: ['L','M','X','J','V'],
+      horaMaxima: '16:00',
+      diasSemanaHabiles: ['L','M','J','V'],
     };
 
   PeriodoVigencia: PeriodoVigencia[] = [
@@ -234,7 +234,8 @@ export class HorarioService {
         map(value => {
           if (!value) {
             return (IActividad$ as Observer<any>).error("Error")
-          }
+          };
+          value.idActividad = idActividad;
           IActividad$.next(value);
         })
       ).subscribe();
@@ -429,9 +430,12 @@ export class HorarioService {
         map(
           actions => actions.map(
             act => {
+              let alumno: Alumno;
               const datos = act.payload.doc.data() as Alumno;
               const idAlumno = act.payload.doc.id;
-              return { ...datos, idAlumno }
+              alumno = { ...datos, idAlumno }
+              console.log(alumno);
+              return alumno;
             }) // Fin actions.map
         )
     );

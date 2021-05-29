@@ -20,43 +20,26 @@ export class GestionarActividadComponent implements OnInit {
   constructor(
     private store: Store<ModuloHorarioRootState>,
     private route: ActivatedRoute,) {
-
-
     }
 
 
   ngOnInit(): void {
+    this.gestionarSubscripcionesStore()
+  }
+
+  //--------------------------------------------------
+  // Métodos privados
+  //--------------------------------------------------
+  private gestionarSubscripcionesStore() {
 
     this.store.pipe(select(FromActividadesSelectors.selectActividadActiva))
       .subscribe(
         actividadActiva => {
-          console.log('actividad Activa', actividadActiva);
-          this.actvidad1 = actividadActiva
+            this.actvidad1 = actividadActiva
         }
     );
 
     this.store.dispatch(FromActividadesActions.cargarActividad({ idActividad: this.actvidad1?.idActividad }));
-
-
-
-  //   // Caso en el que ha sido invocado a través de una URI
-  //   this.idActividad = this.route.snapshot.paramMap.get("id");
-
-  //   if (this.idActividad) {
-
-  //     this.store
-  //       .pipe(
-  //         select(FromActividadesSelectors.selectActividadActiva),
-  //         filter(actividad => !!actividad)
-  //       )
-  //       .subscribe(
-  //         actividadActiva => {
-  //           this.actividad = actividadActiva
-  //         }
-  //     );
-
-  //     this.store.dispatch(FromActividadesActions.cargarActividad({ idActividad: this.idActividad }))
-  //   }
-   }
+  }
 
 }

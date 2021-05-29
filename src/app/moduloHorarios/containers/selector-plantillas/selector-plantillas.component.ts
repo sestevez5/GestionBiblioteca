@@ -23,10 +23,16 @@ export class SelectorPlantillasComponent implements OnInit {
     this.gestionarSubscripcionesStore();
   }
 
+  // ----------------------------------------------------------------
+  // Métodos que atienden a las acciones del usuario
+  // ----------------------------------------------------------------
+  onPlantillaSeleccionada(plantillaSeleccionada: Plantilla) {
+    this.store.dispatch(FromActividadesActions.seleccionarPlantilla({ plantilla: plantillaSeleccionada }));
+  }
 
-  // ----------------------------------------------------------------
-  // Método que gestiona las subscripciones necesarias al Store.
-  // ----------------------------------------------------------------
+  //--------------------------------------------------
+  // Métodos privados
+  //--------------------------------------------------
   gestionarSubscripcionesStore() {
 
     // 1.- Subscripcion a la colección de plantillas disponibles
@@ -45,14 +51,6 @@ export class SelectorPlantillasComponent implements OnInit {
       .subscribe( plantillaActiva => plantillaActiva? this.plantillaActual = plantillaActiva: null)
 
   }
-
-  // ----------------------------------------------------------------
-  // Métodos que atienden a las acciones del usuario
-  // ----------------------------------------------------------------
-  onPlantillaSeleccionada(plantillaSeleccionada: Plantilla) {
-    this.store.dispatch(FromActividadesActions.seleccionarPlantilla({ plantilla: plantillaSeleccionada }));
-  }
-
 
 }
 

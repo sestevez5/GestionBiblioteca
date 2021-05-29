@@ -15,9 +15,8 @@
   </ul>
 </div>
 
-<div *ngIf="this.modelo === 'celdas'" class="mt-2 row">
-  <div class="col">
-  <div class="card-deck">
+<div *ngIf="this.modelo === 'celdas'" class="card-deck mt-2 panelListaSeleccion celdas">
+
     <ng-template ngFor let-item [ngForOf]="this.itemsFiltrados">
       <app-item-selector-lista-simple
       [modelo]="'celdas'"
@@ -29,8 +28,7 @@
       </app-item-selector-lista-simple>
 
     </ng-template>
-  </div>
-  </div>
+
   </div>
 
 

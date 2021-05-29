@@ -3,15 +3,22 @@
   /* background-color: darkgrey; */
   border-radius: 3px;
 
-  width:100%;
+  width:102%;
   white-space: nowrap;
   text-overflow: ellipsis;
   word-wrap: break-word;
   padding-right: 4px;
-  max-height: 95.2%;
+  max-height: 94%;
   overflow-y:auto;
 }
 
+.celdas {
+  /* background-color: darkgrey; */
+  width:102%;
+
+  max-height: 92%;
+
+}
 
 
 .container {
@@ -61,6 +68,8 @@
 .panelListaSeleccion::-webkit-scrollbar-track:active {
   /* background: #d4d4d4; */
 }
+
+
 
 
 

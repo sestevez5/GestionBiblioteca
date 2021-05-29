@@ -16,17 +16,26 @@ export class CabeceraEntidadHorarioComponent implements OnInit {
   entidadHorario: EntidadHorario | undefined;
   tipoEntidadActiva: TipoEntidadHorario | undefined
 
-  constructor(private store: Store<ModuloHorarioRootState>) { }
+  constructor(private store: Store<ModuloHorarioRootState>) {
+
+  }
 
   ngOnInit(): void {
+    this.gestionarSubscripcionesStore();
+  }
 
+  //--------------------------------------------------
+  // Métodos privados
+  //--------------------------------------------------
+  private gestionarSubscripcionesStore() {
+
+    // Obtener entidad activa
     this.store.pipe(select(FromEntidadesHorarioSelectors.selectEntidadHorarioActiva))
-      .subscribe(entidadHorarioActiva => this.entidadHorario = entidadHorarioActiva);
+    .subscribe(entidadHorarioActiva => this.entidadHorario = entidadHorarioActiva);
 
-      this.store.pipe(select(FromEntidadesHorarioSelectors.selectTipoEntidadActiva))
-      .subscribe(tipoEntidadActiva => this.tipoEntidadActiva = tipoEntidadActiva);
-
-
+    // Obtener tipo de entidad activa
+    this.store.pipe(select(FromEntidadesHorarioSelectors.selectTipoEntidadActiva))
+    .subscribe(tipoEntidadActiva => this.tipoEntidadActiva = tipoEntidadActiva);
   }
 
 }

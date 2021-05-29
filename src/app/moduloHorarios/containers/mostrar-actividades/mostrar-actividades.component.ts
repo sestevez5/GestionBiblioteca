@@ -39,11 +39,25 @@ export class MostrarActividadesComponent implements OnInit {
       this.actividadSeleccionadaEvent.emit(actividad);
       this.store.dispatch( FromActividadesActions.cargarActividad({ idActividad: actividad.idActividad }))
     });
+
+
+    this.gestionarSubscripcionesStore();
+
+
+  }
+
+
+
+  onActualizar() {
+  }
+
+  //--------------------------------------------------
+  // Métodos privados
+  //--------------------------------------------------
+  private gestionarSubscripcionesStore() {
     var Obs1$ = this.store.pipe(select(FromActividadesSelectors.selectParametrosHorario));
     var Obs2$ = this.store.pipe(select(FromActividadesSelectors.selectPlantillaActiva));
     var Obs3$ = this.store.pipe(select(FromActividadesSelectors.selectTodasLasActividades));
-
-
     var combine$ = combineLatest([Obs1$, Obs2$, Obs3$])
       .pipe(
         map(combination => {
@@ -51,7 +65,6 @@ export class MostrarActividadesComponent implements OnInit {
         })
       )
       .subscribe(
-
 
         combination => {
 
@@ -62,24 +75,6 @@ export class MostrarActividadesComponent implements OnInit {
           }
         }
       );
-
-
-
-  }
-
-
-
-  onActualizar() {
-    // const a = new Actividad();
-    // a.idActividad = '3'
-    // a.idSesion = 'P1M2'
-    // a.contenido = { contenido: 'prueba'}
-
-    // const ar = [];
-    // ar.push(a);
-    // this.horarioG.anyadirActualizarActividades(ar);
-
-
   }
 
 }

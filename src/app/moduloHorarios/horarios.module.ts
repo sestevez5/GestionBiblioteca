@@ -1,5 +1,6 @@
 
 import { entidadesHorarioEffects } from './store/entidadesHorario/entidadesHorario.effects';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 import { actividadesEffects } from './store/actividades/actividades.effects';
@@ -41,7 +42,8 @@ import { MostrarActividadComponent } from './components/mostrar-actividad/mostra
     HelperModule,
     NgbModule,
     FormsModule,
-    ModalModule
+    ModalModule,
+    ReactiveFormsModule
 
   ],
   declarations: [

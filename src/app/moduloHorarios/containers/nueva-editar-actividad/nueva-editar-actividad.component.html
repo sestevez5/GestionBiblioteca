@@ -1,1 +1,104 @@
-<p>nueva-editar-actividad works!</p>
+
+<button (click)="onAbrirVentanaModal()">Abrir ventana modal</button>
+<div *ngIf="this.actividad" class="row" class="datosActividad">
+
+
+<div class="seccionDatosActividad marcoTemporal">
+  marco temporal
+</div>
+
+
+<div class="seccionDatosActividad docentes">
+  <div  class="cabecera d-flex align-items-center border-bottom">
+    <p class="mb-0 py-1 text-center font-18">Docentes</p>
+  </div>
+
+
+
+  <div class="selector">
+    <app-selector-lista-simple
+    [anyadirBuscador]="false"
+    [items]="this.entidadesHorarioDocentes()"
+    [itemSeleccionado]=''
+    [camposConfig]="{ texto: 'descripcion', imagen: 'imagen', leyenda: 'detalle'}"
+    >
+    </app-selector-lista-simple>
+  </div>
+
+</div>
+
+<div class="seccionDatosActividad grupos">
+  <div class="cabecera d-flex align-items-center border-bottom">
+    <p class="mb-0 py-1 text-center font-18">Grupos</p>
+  </div>
+  <div class="selector">
+    <app-selector-lista-simple
+    [anyadirBuscador]="false"
+    [items]="this.entidadesHorarioGrupos()"
+    [itemSeleccionado]=''
+    [camposConfig]="{ texto: 'descripcion', leyenda: 'detalle'}"
+    >
+  </app-selector-lista-simple>
+  </div>
+</div>
+
+<div class="seccionDatosActividad asignaturas">
+  <div class="cabecera d-flex align-items-center border-bottom">
+    <p class="mb-0 py-1 text-center font-18">Asignaturas</p>
+  </div>
+
+    <app-selector-lista-simple
+    [anyadirBuscador]="false"
+    [items]="this.actividad.asignaturas"
+    [itemSeleccionado]=''
+    [camposConfig]="{ texto: 'denominacionLarga', leyenda: 'codigo'}"
+    >
+    </app-selector-lista-simple>
+</div>
+
+<div class="seccionDatosActividad informacionAdicional">
+  <div class="row">
+    <div class="col-md-3">
+      <p class="font-18">Detalle: </p>
+    </div>
+    <div class="col-md-9">
+        <p class="font-bold font-18">
+          {{this.actividad?.detalleActividad}}
+        </p>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<modal #panelModal (onOpen)="onAbrirVentanaModal()" (onClose)="onCerrarVentanaModal()" >
+  <!-- Cabecera -->
+  <modal-header>
+     <h3>Alumnado</h3>
+  </modal-header>
+
+  <!-- Cuerpo -->
+  <modal-content>
+    <div class="listaAlumnos">
+
+      hola
+      <!-- <app-selector-lista-simple *ngIf="this.actividad.alumnos"
+      [items]="this.actividad.alumnos"
+      [camposConfig]=this.obtenerCamposConfig()
+      [modelo]="'celdas'"
+      >
+    </app-selector-lista-simple> -->
+
+
+  </div>
+
+
+  </modal-content>
+
+  <!-- Pie -->
+  <modal-footer>
+      <!-- <button type="button" class="btn btn-sm btn-secondary mr-3" (click)="onAceptarVentanaModal()" >Aceptar</button> -->
+      <button type="button" class="btn btn-sm btn-secondary" (click)="onCerrarVentanaModal()">Cerrar</button>
+  </modal-footer>
+
+</modal>

@@ -1,3 +1,4 @@
+import { ListasSelectores } from '../models/listasSelectores.model';
 import { Alumno } from './../models/alumno.model';
 import { Actividad } from './../models/actividad.model';
 import { filter, first, mergeMap } from 'rxjs/operators';
@@ -104,8 +105,6 @@ export class HorarioService {
     this.docentes$ = new BehaviorSubject<Docente[]>([]);
     this.plantillas$ = new BehaviorSubject<Plantilla[]>([]);
     this.periodosVigencia$ = new BehaviorSubject<PeriodoVigencia[]>([]);
-
-
 
     this.obtenerDocentes()
       .subscribe(docentes => this.docentes$.next(docentes));
@@ -243,7 +242,6 @@ export class HorarioService {
     var aux$: Observable<Actividad[]> = this.convertirObservableArrayIActividadesEnObservableArrayActividades(IActividad$.pipe(map(iActividad => [iActividad])));
 
     const aux2$: Observable<Actividad> = aux$.pipe(map((actividades: Actividad[]) => actividades[0]));
-
 
     const aux3$: Observable<Actividad> = aux2$.pipe(
       mergeMap(
@@ -420,7 +418,6 @@ export class HorarioService {
     }
 
   }
-
   obtenerAlumnosActividad(actividad: Actividad): Observable<Alumno[]>{
 
    return this.fireBaseDB.collection<Alumno>('alumnos', ref => ref.where('idGrupo', 'in', actividad.grupos.length>0?actividad.grupos.map(grupo => grupo.idGrupo):['xxx']))
@@ -434,12 +431,32 @@ export class HorarioService {
               const datos = act.payload.doc.data() as Alumno;
               const idAlumno = act.payload.doc.id;
               alumno = { ...datos, idAlumno }
-              console.log(alumno);
               return alumno;
             }) // Fin actions.map
         )
     );
   };
+
+  obtenerListasSelectores(): Observable<ListasSelectores> {
+
+    const listasSelectores$ = new BehaviorSubject<ListasSelectores>(null);
+
+    this.combinacionEntidades$.subscribe(
+      combinacion => {
+        const listasSelectores: ListasSelectores = {
+          docentes: combinacion.docentes,
+          asignaturas: combinacion.asignaturas,
+          dependencias: combinacion.dependencias,
+          periodoVigencia: combinacion.periodosVigencia,
+          grupos: combinacion.grupos,
+          plantillas: combinacion.plantillas
+        }
+        listasSelectores$.next(listasSelectores)
+      }
+    );
+
+    return listasSelectores$;
+  }
 
 
   obtenerDiaSemana(codigo: string): DiaSemana | undefined

@@ -1,3 +1,5 @@
+import { MostrarActividadComponent } from './components/mostrar-actividad/mostrar-actividad.component';
+import { NuevaEditarActividadComponent } from './containers/nueva-editar-actividad/nueva-editar-actividad.component';
 import { GestionarActividadComponent } from './containers/gestionar-actividad/gestionar-actividad.component';
 import { GestionHorarioComponent } from './containers/gestion-horario/gestion-horario.component';
 import { IndexSubsistemaComponent } from './../shared/components/index-subsistema/index-subsistema.component';
@@ -13,7 +15,9 @@ const routes: Routes = [
     children: [
       { path: '', redirectTo: 'index', pathMatch: "full" },
       { path: 'index', component: GestionHorarioComponent },
-      { path: 'actividad/:id', component: GestionarActividadComponent },
+      { path: 'mostrarActividad/:id', component: MostrarActividadComponent },
+      { path: 'editarActividad/:id', component: MostrarActividadComponent },
+      { path: 'nuevaActividad/:id', component: MostrarActividadComponent },
 
     ]
   },

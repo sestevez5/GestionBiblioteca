@@ -1,3 +1,4 @@
+import { ListasSelectores } from './../../models/listasSelectores.model';
 import { EntidadHorario } from './../../models/entidadHorario.model';
 import { EnumTipoEntidadHorario } from '../../models/tipoEntidadHorario.model';
 import { Update } from '@ngrx/entity/src/models';
@@ -32,4 +33,8 @@ export const eliminarEntidadHorario        = createAction('[ENTIDADESHORARIO] el
 export const eliminarEntidadHorarioOK      = createAction('[ENTIDADESHORARIO] eliminación EntidadHorario OK', props<{ id: string }>());
 export const eliminarEntidadHorarioError   = createAction('[ENTIDADESHORARIO] eliminación EntidadHorario errónea', props<{ error: string }>());
 
+// carga de lista de selectores.
+export const cargarListaSelectores        = createAction('[ENTIDADESHORARIO] cargar lista de selectores');
+export const cargarListaSelectoresOK       = createAction('[ENTIDADESHORARIO] carga de lista de selectores OK', props<{ listaSelectores: ListasSelectores }>());
+export const cargarListaSelectoresError    = createAction('[ENTIDADESHORARIO] carga delista de selectores errónea', props<{ error: string }>());
 

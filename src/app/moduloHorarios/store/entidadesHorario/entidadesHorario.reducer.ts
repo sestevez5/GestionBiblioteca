@@ -161,6 +161,52 @@ export const entidadesHorarioReducer = createReducer(
       }
   ),
 
+  // -------------------------------------------------------------------------------
+  // CARGA de lista de selectores
+  // -------------------------------------------------------------------------------
+  // cargando entidadesHorario.
+  on(
+    entidadesHorarioActions.cargarListaSelectores,
+    (state, action) => {
+      return { ...state};
+    }
+  ),
+
+  // entidadesHorario cargados correctamente.
+  on(
+    entidadesHorarioActions.cargarListaSelectoresOK,
+    (state, action) => {
+
+      return { ...state, listaSelectores: action.listaSelectores}
+
+    }
+  ),
+
+  // error en la carga de entidadesHorario
+  on(
+    entidadesHorarioActions.cargarListaSelectoresError,
+    (state, action) => {
+      return { ...state};
+    }
+  ),
+
+
+
+  // -------------------------------------------------------------------------------
+  // SELECCIONAR ENTIDAD HORARIO
+  // -------------------------------------------------------------------------------
+   // cargando entidad Horario.
+   on(
+    entidadesHorarioActions.seleccionarEntidadHorario,
+    (state, action) => {
+      return {
+        ...state, entidadHorarioActiva: action.entidadHorario
+        // , tipoEntidadActiva: action.tipoEntidadHorario
+        , tipoEntidadActiva: new TipoEntidadHorario(action.tipoEntidadHorario)
+      };
+    }
+  ),
+
 
 )
 

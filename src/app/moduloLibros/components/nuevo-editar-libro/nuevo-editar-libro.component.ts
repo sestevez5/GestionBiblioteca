@@ -193,7 +193,7 @@ export class NuevoEditarLibroComponent implements OnInit, OnDestroy {
   }
 
   // ------------------------------------------
-  // Métodos auxiliares
+  // Métodos privados
   // ------------------------------------------
   private construirFormulario(libro: Libro | undefined) {
 

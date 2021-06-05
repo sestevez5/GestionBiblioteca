@@ -79,8 +79,6 @@ export class entidadesHorarioEffects {
 
   ); // fin createeffect
 
-
-
   seleccionarEntidadHorario$: Observable<Action> = createEffect(
     () =>
       this.action$.pipe(
@@ -117,6 +115,45 @@ export class entidadesHorarioEffects {
     ) // fin this.action$.pipe
 
   ); // fin createeffect
+
+  cargarListaSelectores$: Observable<Action> = createEffect(
+    () =>
+      this.action$.pipe(
+        ofType(FromEntidadesHorarioActions.cargarListaSelectores),
+
+        switchMap(
+          action => {
+
+            this.store.dispatch(PrincipalActions.cargandoDatos({ mensaje: "cargando lista de selectores" }));
+
+            return this.horarioService.obtenerListasSelectores()
+              .pipe(
+
+                map(
+                  listaSelectores => {
+                           this.store.dispatch(PrincipalActions.cargadoDatos());
+                    return FromEntidadesHorarioActions.cargarListaSelectoresOK({ listaSelectores:listaSelectores });
+                  }
+
+                ), // Fin map
+
+                catchError(
+                  error => {
+                    this.store.dispatch(PrincipalActions.cargadoDatos());
+                    return of(FromEntidadesHorarioActions.cargarListaSelectoresError({ error: 'error' }))
+                  }
+
+                )
+              ) // fin pipe
+
+                }
+      ) // Fin mergeMap
+
+    ) // fin this.action$.pipe
+
+  ); // fin createeffect
+
+
   constructor(
     private horarioService: HorarioService,
     private action$: Actions,

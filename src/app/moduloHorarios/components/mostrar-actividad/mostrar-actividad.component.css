@@ -1,12 +1,18 @@
 .datosActividad {
-  height: 65vh;
+  margin: 0px;
+  height: 100%;
+  width: 99.7%;
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   grid-template-rows: 15% 5% 65% 15%;
   gap: 8px;
   overflow-y:initial;
   background-color: white;
+  padding: 10px;
+}
 
+td {
+  padding-right: 10px;
 }
 
 .fas:hover {

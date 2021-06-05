@@ -88,13 +88,15 @@ export class GestionHorarioComponent implements OnInit {
     // 3.- Solicitud de carga de las plantillas disponibles.
     this.store.dispatch(FromActividadesActions.cargarPlantillas());
 
+    // 4.- Cargar listas entidades.
+    this.store.dispatch(FromEntidadesHorarioActions.cargarListaSelectores());
+
   }
 
   private gestionarSubscripcionesStore() {
     this.store.pipe(select(FromActividadesSelectors.selectActividadActiva))
       .pipe(
         filter((actividad: Actividad) => {
-          console.log('idactividadActual, actividad',this.idActividadActual, actividad)
           if (this.idActividadActual && actividad) {
             return actividad.idActividad === this.idActividadActual;
           }

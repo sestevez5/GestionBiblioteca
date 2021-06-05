@@ -1,0 +1,161 @@
+
+<div *ngIf="this.actividad" class="row" class="datosActividad">
+
+  <div class="seccionDatosActividad marcoTemporal">
+    <div class="row">
+      <div class="col-md-3">
+        <p class="font-18"> Tipo de actividad: </p>
+      </div>
+      <div class="col-md-9">
+          <p class="font-bold font-18">
+            Clase colectiva de una materia
+          </p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3">
+        <p class="font-18"> Sesión: </p>
+      </div>
+      <div class="col-md-9">
+          <p class="font-bold font-18">
+            {{ this.obtenerDenominacionDiaSemana(actividad?.sesion.diaSemana)+ ' desde las '+ this.actividad?.sesion.horaInicio +' hasta las ' +this.actividad?.sesion.horaFin }}
+          </p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3">
+        <p class="form-control-static font-18"> Periodo de vigencia: </p>
+      </div>
+      <div class="col-md-9">
+          <p class="font-bold form-control-static font-18">
+            {{ this.actividad.periodoVigencia.denominacion + ' ('}}
+            {{this.actividad.periodoVigencia.fechaInicio | date: 'dd/MM/yyyy' }} - {{this.actividad.periodoVigencia.fechaFin | date: 'dd/MM/yyyy' }} )
+          </p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3">
+        <p class="font-18">Dependencia: </p>
+      </div>
+      <div class="col-md-9">
+          <p class="font-bold font-18">
+            {{this.actividad?.dependencia.denominacionLarga+' ('+ this.actividad?.dependencia.codigo +')'}}
+          </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="seccionDatosActividad accesoAlumnado">
+    <div class="row">
+      <div class="col-12 d-flex">
+        <div class="ml-auto" (click)="onMostrarAlumnos()">
+          <i class="fas fa-2x fa-users ml-auto"></i>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="seccionDatosActividad docentes">
+
+    <div class="row">
+      <div  class="d-flex cabecera align-items-center border-bottom">
+        <p class="mb-0 py-1 font-18">Docentes</p>
+      </div>
+
+        <div class="ml-auto">
+          <i class="fas fa-1x fa-edit ml-auto"></i>
+        </div>
+      </div>
+
+
+    <div class="selector">
+      <app-selector-lista-simple
+      [anyadirBuscador]="false"
+      [items]="this.entidadesHorarioDocentes()"
+      [itemSeleccionado]=''
+      [camposConfig]="{ texto: 'descripcion', imagen: 'imagen', leyenda: 'detalle'}"
+      >
+      </app-selector-lista-simple>
+    </div>
+  </div>
+
+  <div class="seccionDatosActividad grupos">
+
+    <div class="cabecera d-flex align-items-center border-bottom">
+      <p class="mb-0 py-1 text-center font-18">Grupos</p>
+    </div>
+    <div class="selector">
+      <app-selector-lista-simple
+      [anyadirBuscador]="false"
+      [items]="this.entidadesHorarioGrupos()"
+      [itemSeleccionado]=''
+      [camposConfig]="{ texto: 'descripcion', leyenda: 'detalle'}"
+      >
+    </app-selector-lista-simple>
+    </div>
+  </div>
+
+  <div class="seccionDatosActividad asignaturas">
+
+    <div class="cabecera d-flex align-items-center border-bottom">
+      <p class="mb-0 py-1 text-center font-18">Asignaturas</p>
+    </div>
+
+      <app-selector-lista-simple
+      [anyadirBuscador]="false"
+      [items]="this.actividad.asignaturas"
+      [itemSeleccionado]=''
+      [camposConfig]="{ texto: 'denominacionLarga', leyenda: 'codigo'}"
+      >
+      </app-selector-lista-simple>
+
+  </div>
+
+  <div class="seccionDatosActividad informacionAdicional">
+    <div class="row">
+      <div class="col-md-3">
+        <p class="font-18">Detalle: </p>
+      </div>
+      <div class="col-md-9">
+          <p class="font-bold font-18">
+            {{this.actividad?.detalleActividad}}
+          </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<modal #panelAlumnos (onOpen)="onAbrirVentanaModal()" (onClose)="onCerrarVentanaModal()" >
+  <!-- Cabecera -->
+  <modal-header>
+     <h3>Alumnado</h3>
+  </modal-header>
+
+  <!-- Cuerpo -->
+  <modal-content>
+    <div class="listaAlumnos">
+
+      <app-selector-lista-simple *ngIf="this.actividad.alumnos"
+      [items]="this.actividad.alumnos"
+      [camposConfig]=this.obtenerCamposConfig()
+      [modelo]="'celdas'"
+      >
+    </app-selector-lista-simple>
+
+
+  </div>
+
+
+
+
+  </modal-content>
+
+  <!-- Pie -->
+  <modal-footer>
+      <!-- <button type="button" class="btn btn-sm btn-secondary mr-3" (click)="onAceptarVentanaModal()" >Aceptar</button> -->
+      <button type="button" class="btn btn-sm btn-secondary" (click)="onCerrarVentanaModal()">Cerrar</button>
+  </modal-footer>
+
+</modal>
+

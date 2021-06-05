@@ -1,3 +1,4 @@
+import { IActividad } from './IActividad.model';
 import { Alumno } from './alumno.model';
 import { Dependencia } from './dependencia.model';
 import { PeriodoVigencia } from './peridoVigencia';
@@ -25,7 +26,21 @@ export class Actividad {
     this.grupos = actividad.grupos;
     this.asignaturas = actividad.asignaturas;
     this.periodoVigencia = actividad.periodoVigencia;
- }
+  }
+
+  public obtenerIActividad(): IActividad {
+
+    return {
+      idActividad: this.idActividad,
+      idSesion: this.sesion.idSesion,
+      detalleActividad: this.detalleActividad,
+      grupos: this.grupos.map(grupo => grupo.idGrupo),
+      docentes: this.docentes.map(docente => docente.idDocente),
+      asignaturas: this.asignaturas.map(asignatura => asignatura.idAsignatura),
+      dependencia: this.dependencia.idDependencia,
+      idPeriodoVigencia: this.periodoVigencia.idPeriodoVigencia
+    }
+  }
 }
 
 

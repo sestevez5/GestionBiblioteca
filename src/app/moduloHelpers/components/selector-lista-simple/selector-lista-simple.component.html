@@ -6,7 +6,7 @@
       <app-item-selector-lista-simple
       [modelo]="'lista'"
       [conFoto]="this.camposConfig.imagen"
-      [marcado]="item === this.itemSeleccionado"
+      [marcado]="item === this.itemSeleccionadoPorDefecto"
       [colorMarcado]=this.colorSeleccion
       [camposConfig]=this.camposConfig
       [item]=item>
@@ -21,7 +21,7 @@
       <app-item-selector-lista-simple
       [modelo]="'celdas'"
       [conFoto]="this.camposConfig.imagen"
-      [marcado]="item === this.itemSeleccionado"
+      [marcado]="item === this.itemSeleccionadoPorDefecto"
       [colorMarcado]=this.colorSeleccion
       [camposConfig]=this.camposConfig
       [item]=item>

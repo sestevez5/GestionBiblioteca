@@ -447,7 +447,7 @@ export class HorarioService {
           docentes: combinacion.docentes,
           asignaturas: combinacion.asignaturas,
           dependencias: combinacion.dependencias,
-          periodoVigencia: combinacion.periodosVigencia,
+          periodosVigencia: combinacion.periodosVigencia,
           grupos: combinacion.grupos,
           plantillas: combinacion.plantillas
         }

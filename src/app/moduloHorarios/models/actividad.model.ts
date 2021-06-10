@@ -8,8 +8,8 @@ import { Docente } from './docente.model';
 import { Sesion } from './sesion';
 
 export class Actividad {
-  idActividad: string;
-  sesion: Sesion;
+  public idActividad: string;
+  public sesion: Sesion;
   detalleActividad: string;
   docentes: Docente[];
   asignaturas: Asignatura[];

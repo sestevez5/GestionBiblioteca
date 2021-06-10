@@ -9,7 +9,7 @@ export interface ListasSelectores {
   grupos: Grupo[];
   dependencias: Dependencia[];
   asignaturas: Asignatura[];
-  periodoVigencia: PeriodoVigencia[];
+  periodosVigencia: PeriodoVigencia[];
   plantillas: Plantilla[];
 
 }

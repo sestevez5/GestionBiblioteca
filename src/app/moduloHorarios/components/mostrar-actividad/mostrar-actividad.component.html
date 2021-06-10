@@ -1,4 +1,6 @@
+{{this.elementoSeleccionado | json }}
 <div *ngIf="this.actividad" class="row"  class="datosActividad">
+
   <div class="seccionDatosActividad marcoTemporal">
       <table>
         <tbody>
@@ -10,7 +12,7 @@
               <p class="font-bold font-18">Clase colectiva de una materia</p>
             </td>
             <td>
-              <i class="fas font-18 fa-edit ml-auto"></i>
+              <i  class="fas font-18 fa-edit ml-auto"></i>
             </td>
           </tr>
 
@@ -19,10 +21,14 @@
               <p class="font-18">Sesión:</p>
             </td>
             <td>
-              <p class="font-bold font-18">{{ this.obtenerDenominacionDiaSemana(actividad?.sesion.diaSemana)+ ' desde las '+ this.actividad?.sesion.horaInicio +' hasta las ' +this.actividad?.sesion.horaFin }}</p>
+              <p class="font-bold font-18">
+                {{ this.obtenerDenominacionDiaSemana(actividad?.sesion.diaSemana)+ ' desde las '+ this.actividad?.sesion.horaInicio +' hasta las ' +this.actividad?.sesion.horaFin }}
+              </p>
             </td>
             <td>
-              <i class="fas fa-1x fa-edit ml-auto font-18" ></i>
+              <i  class="fas fa-1x fa-edit ml-auto font-18"
+                  (click)="this.onAbrirSelector(EnumTiposSelectores.PLANTILLAS)">
+              </i>
             </td>
           </tr>
 
@@ -57,8 +63,7 @@
         </tbody>
 
       </table>
-    </div>
-
+  </div>
 
   <div class="seccionDatosActividad accesoAlumnado">
     <div class="row">
@@ -141,9 +146,14 @@
       </div>
     </div>
   </div>
+
 </div>
 
-<modal *ngIf="this.actividad" #panelAlumnos (onOpen)="onAbrirVentanaModal()" (onClose)="onCerrarVentanaModal()" >
+<!-- ---------------------------------------------------------------
+Definición del panel modal
+--------------------------------------------------------------- -->
+
+<modal  *ngIf="this.actividad" #panelSelector (onOpen)="onAbrirVentanaModal()" (onClose)="onCerrarVentanaModal()" >
   <!-- Cabecera -->
   <modal-header>
      <h3>Alumnado</h3>
@@ -151,27 +161,32 @@
 
   <!-- Cuerpo -->
   <modal-content>
+
     <div class="listaAlumnos">
 
-      <app-selector-lista-simple *ngIf="this.actividad.alumnos"
-      [items]="this.actividad.alumnos"
-      [camposConfig]=this.obtenerCamposConfig()
-      [modelo]="'celdas'"
+      <app-selector-lista-simple *ngIf="this.listaSelectores"
+      [items]="this.datosSelectorActivo"
+      [colorSeleccion]="'#222222'"
+      [camposConfig]="{texto: 'texto', leyenda: 'leyenda' }"
+      [itemSeleccionadoPorDefecto]="this.elementoPorDefectoEnSelector"
+      [admiteSeleccionInterna]=true
+      [modelo]="'lista'"
+      (SeleccionItems)="onSeleccionarItem($event)"
       >
     </app-selector-lista-simple>
-
-
-  </div>
-
+    </div>
 
 
 
   </modal-content>
 
+
   <!-- Pie -->
   <modal-footer>
       <!-- <button type="button" class="btn btn-sm btn-secondary mr-3" (click)="onAceptarVentanaModal()" >Aceptar</button> -->
       <button type="button" class="btn btn-sm btn-secondary" (click)="onCerrarVentanaModal()">Cerrar</button>
+      <button type="button" class="btn btn-sm btn-secondary" (click)="onAceptarVentanaModal()">Aceptar</button>
+      <button type="button" class="btn btn-sm btn-secondary" (click)="onCancelarVentanaModal()">Cancelar</button>
   </modal-footer>
 
 </modal>

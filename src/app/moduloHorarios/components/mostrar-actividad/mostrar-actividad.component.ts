@@ -1,5 +1,8 @@
+import { Plantilla } from './../../models/plantilla.model';
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { Sesion } from './../../models/sesion';
+import { EnumTiposSelectores } from './../../models/enumerados';
 import { filter } from 'rxjs/operators';
-
 import { ActivatedRoute, Router } from '@angular/router';
 import { HorarioService } from './../../services/horario.service';
 import { FormBuilder } from '@angular/forms';
@@ -15,6 +18,7 @@ import { ViewChild, ViewEncapsulation } from '@angular/core';
 import * as FromEntidadesHorarioSelectors from '../../store/entidadesHorario/entidadesHorario.selectors';
 import * as FromActividadesSelectors from '../../store/actividades/actividades.selectors';
 import * as FromActividadesActions from '../../store/actividades/actividades.actions';
+import * as FromEnumerados from '../../models/enumerados';
 
 @Component({
   selector: 'app-mostrar-actividad',
@@ -23,16 +27,32 @@ import * as FromActividadesActions from '../../store/actividades/actividades.act
 })
 export class MostrarActividadComponent implements OnInit {
 
+  //Esto es un artificio para poder disponer de tipos de enumerados en la plantilla
+  //No es posible sin este truco.
+  EnumModosPanelActividad = FromEnumerados.EnumModosPanelActividad;
+  EnumTiposSelectores = FromEnumerados.EnumTiposSelectores;
+
   @Input() actividad: Actividad;
-  modoPanelActividad: 'modoCreacion' | 'modoEdicion' | 'modoMostrar' = 'modoMostrar';
+
+  // Registramos el modo en el que estamos trabajando.
+  // Hya comportamientos diferenciados en báse a este parámetro
+  modoPanelActividad: FromEnumerados.EnumModosPanelActividad;
+
+
+
+  // En el caso de que se invoque al componente desde una URI, no se dispone del dato
   idActividad: string;
+
+    // Los selectores comparten el mismo control. En función de este valor se carga distinto contenido
+  tipoSelector: FromEnumerados.EnumTiposSelectores = FromEnumerados.EnumTiposSelectores.PERIODOSVIGENCIA;
   listaSelectores: ListasSelectores;
 
-  @ViewChild("panelAlumnos") panelModal: ElementRef;
+  datosSelectorActivo: any[];  // Contiene la colección de elementos que llena el selector.
+  elementoPorDefectoEnSelector: any;
+  elementoSeleccionado: any;
+
+  @ViewChild("panelSelector") panelModal: ElementRef;
   private modalRef: any;
-
-
-
 
   constructor(
     private fb: FormBuilder,
@@ -41,31 +61,32 @@ export class MostrarActividadComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private modalService: ModalManager) {
-
     }
 
   ngOnInit(): void {
+
     this.route.url.subscribe(
       url => {
 
         if (url) {
           switch (url[0].path) {
             case 'mostrarActividad':
-              this.modoPanelActividad = 'modoMostrar';
+              this.modoPanelActividad = FromEnumerados.EnumModosPanelActividad.MOSTRAR;
               this.cargarActividad();
             break;
 
             case 'editarActividad':
-              this.modoPanelActividad = 'modoEdicion';
-              this.cargarActividad()
+              this.modoPanelActividad = FromEnumerados.EnumModosPanelActividad.EDITAR;
+              this.cargarActividad();
+              //this.store.dispatch()
             break;
 
             case 'nuevaActividad':
-              this.modoPanelActividad = 'modoCreacion';
+              this.modoPanelActividad = FromEnumerados.EnumModosPanelActividad.CREAR;
             break;
 
             default: // Se ha invocado en modo modal desde index
-              this.modoPanelActividad = 'modoMostrar';
+              this.modoPanelActividad = FromEnumerados.EnumModosPanelActividad.MOSTRAR;
             break;
           }
         }
@@ -76,10 +97,7 @@ export class MostrarActividadComponent implements OnInit {
     //   cargarActividad()
 
     // }
-
-
-    console.log('actividad: ', this.actividad)
-    //this.gestionarSubscripcionesStore()
+    this.gestionarSubscripcionesStore()
 
   }
 
@@ -114,11 +132,14 @@ export class MostrarActividadComponent implements OnInit {
     return entidadesHorario;
   }
 
-
+  onAbrirSelector(tipoSelector: FromEnumerados.EnumTiposSelectores) {
+    this.actualizarDatosSelectorActivo(tipoSelector)
+    this.AbrirVentanaModal();
+  }
 
   entidadesHorarioGrupos(): EntidadHorario[] {
-  const entidadesHorario: EntidadHorario[] = [];
-  this.actividad.grupos.forEach(
+    const entidadesHorario: EntidadHorario[] = [];
+     this.actividad.grupos.forEach(
     grupo => {
       const entidadHorario = new EntidadHorario(grupo);
       entidadesHorario.push(entidadHorario);
@@ -126,8 +147,6 @@ export class MostrarActividadComponent implements OnInit {
 
   return entidadesHorario;
 }
-
-
   obtenerDenominacionDiaSemana(codigo: string): string {
     switch (codigo) {
       case 'L': return 'Lunes'; break;
@@ -143,7 +162,7 @@ export class MostrarActividadComponent implements OnInit {
 
   onMostrarAlumnos() {
 
-    this.AbrirVentanaModal();
+    //this.AbrirVentanaModal();
 
   }
   // ------------------------------------------
@@ -153,7 +172,7 @@ export class MostrarActividadComponent implements OnInit {
   AbrirVentanaModal() {
 
     this.modalRef = this.modalService.open(this.panelModal, {
-     size: "xs",
+     size: "lg",
      hideCloseButton: true,
      centered: true,
      backdrop: true,
@@ -164,16 +183,69 @@ export class MostrarActividadComponent implements OnInit {
    });
 
  }
-  onAbrirVentanaModal() {}
+
+  onAbrirVentanaModal() { }
 
   onCerrarVentanaModal() {
     this.modalService.close(this.modalRef);
   }
 
-  obtenerCamposConfig(): object {
+  actualizarDatosSelectorActivo( tipoSelector: FromEnumerados.EnumTiposSelectores) {
+    this.tipoSelector = tipoSelector;
+    switch (tipoSelector) {
+
+      case FromEnumerados.EnumTiposSelectores.PERIODOSVIGENCIA:
+
+        this.datosSelectorActivo = this.listaSelectores.periodosVigencia
+          .map(peridoVigencia => {
+            return {
+              id: peridoVigencia.idPeriodoVigencia,
+              texto: peridoVigencia.denominacion,
+              leyenda: peridoVigencia.fechaInicio.toDateString() + '-' + peridoVigencia.fechaInicio.toDateString()
+            }
+          });
 
 
-    return { texto: 'idAlumno', leyenda: 'nombre', imagen:'foto' };
+
+
+        break;
+
+      case FromEnumerados.EnumTiposSelectores.PLANTILLAS:
+
+
+        var sesiones: {id: string, texto: string}[] = [];
+
+        this.listaSelectores.plantillas
+          .map(
+            plantilla => {
+
+              const sesionesAdaptadas = plantilla.sesionesPlantilla
+                .map(sesion => {
+                  return {
+                    id: sesion.idSesion,
+                    texto: 'Plantilla ' + plantilla.denominacion + ' - ' + this.obtenerDenominacionDiaSemana(sesion.diaSemana) + ' -Desde ' + sesion.horaInicio + ' hasta ' + sesion.horaFin + ')'
+
+                  }
+                });
+              sesiones = sesiones.concat(sesionesAdaptadas);
+            }
+        );
+
+
+        this.datosSelectorActivo = sesiones;
+
+        this.elementoPorDefectoEnSelector = sesiones.filter( sesion => sesion.id === this.actividad.sesion.idSesion)[0]
+
+
+        break;
+
+      default:
+        console.log('otra cosa',tipoSelector);
+        break;
+    }
+
+
+
 
   }
 
@@ -190,10 +262,52 @@ export class MostrarActividadComponent implements OnInit {
   );
   }
 
+  onSeleccionarItem(item: any) {
+    this.elementoSeleccionado = item;
+  }
+
+  onAceptarVentanaModal() {
+    this.actividad.sesion = this.convertirItemSeleccionadoEnEntidad()
+
+  }
+
+  onCancelarVentanaModal() {
+
+  }
+
+  private convertirItemSeleccionadoEnEntidad(): Sesion {
+
+    switch (this.tipoSelector) {
+
+      case FromEnumerados.EnumTiposSelectores.PERIODOSVIGENCIA:
+
+
+      break;
+
+      case FromEnumerados.EnumTiposSelectores.PLANTILLAS:
+
+        var sesiones: Sesion[]=[];
+        this.listaSelectores.plantillas
+        .map( plantilla => {
+            sesiones = sesiones.concat(plantilla.sesionesPlantilla);
+          }
+        );
+
+        return sesiones.filter(sesion => sesion.idSesion === this.elementoSeleccionado.id)[0]
+
+      break;
+
+      default:
+
+      break;
+    }
+  }
+
+
+
 
 
 
 }
-
 
 

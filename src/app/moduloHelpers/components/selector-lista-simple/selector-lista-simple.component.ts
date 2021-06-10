@@ -8,27 +8,36 @@ import { debounceTime, distinctUntilChanged, filter, first, skip } from 'rxjs/op
   templateUrl: './selector-lista-simple.component.html',
   styleUrls: ['./selector-lista-simple.component.css']
 })
-export class SelectorListaSimpleComponent implements OnChanges {
+export class SelectorListaSimpleComponent implements OnInit, OnChanges {
 
   @Input() modelo: 'lista' | 'celdas' = 'lista'
   @Input() items: any[];
   @Input() camposConfig: camposSelectorSimple;
   @Input() anyadirBuscador = true;
-  @Input() colorSeleccion = '';
+  @Input() colorSeleccion:string = '';
+  @Input() itemSeleccionadoPorDefecto: any;
+  @Input() admiteSeleccionInterna: false;
   @Output() SeleccionItems: EventEmitter<any> = new EventEmitter();
 
   cadenaFiltro: string = '';
   itemsFiltrados: any[];
   // itemSeleccionado: any;
 
-  @Input() itemSeleccionado: any;
+  ngOnInit() {
+    console.log('colorSeleccion: ', this.colorSeleccion);
+  }
 
   ngOnChanges() {
     this.filtrarItems('');
   }
 
   onSeleccionar(item: any) {
-    this.SeleccionItems.emit(item);
+    if (this.admiteSeleccionInterna) {
+      this.itemSeleccionadoPorDefecto = item;
+      this.SeleccionItems.emit(item);
+
+    }
+
   }
 
   OnChangeCadenaBusqueda(cadena: string) {

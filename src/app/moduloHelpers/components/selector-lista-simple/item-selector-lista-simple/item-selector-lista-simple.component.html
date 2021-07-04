@@ -18,14 +18,12 @@
 
     <img *ngIf="this.conFoto && !this.item[this.camposConfig.imagen]" style="width: 95%; height: auto;" class="card-img-top" src='assets/images/general/NoPhoto.png' alt="user">
     <img *ngIf="this.conFoto && this.item[this.camposConfig.imagen]" style="width: 95%; height: auto;" class="card-img-top"  [src]='this.item[this.camposConfig.imagen]' alt="user">
-
-  <div class="card-body">
-    <h5 class="card-title">{{ this.item[this.camposConfig.texto] }}</h5>
-    <p class="card-text">
-      {{ this.item[this.camposConfig.leyenda] }}
-    </p>
-
-  </div>
+    <div class="card-body p-1">
+      <h5 class="card-title">{{ this.item[this.camposConfig.texto] }}</h5>
+      <p class="card-text">
+        {{ this.item[this.camposConfig.leyenda] }}
+      </p>
+    </div>
 
 </div>
 

@@ -1,3 +1,5 @@
+import { Dependencia } from './../../models/dependencia.model';
+import { PeriodoVigencia } from './../../models/peridoVigencia';
 import { Plantilla } from './../../models/plantilla.model';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { Sesion } from './../../models/sesion';
@@ -16,9 +18,12 @@ import { Actividad } from './../../models/actividad.model';
 import { Component, OnInit, Input, ElementRef } from '@angular/core';
 import { ViewChild, ViewEncapsulation } from '@angular/core';
 import * as FromEntidadesHorarioSelectors from '../../store/entidadesHorario/entidadesHorario.selectors';
+import * as FromEntidadesHorarioActions from '../../store/entidadesHorario/entidadesHorario.actions';
+
 import * as FromActividadesSelectors from '../../store/actividades/actividades.selectors';
 import * as FromActividadesActions from '../../store/actividades/actividades.actions';
 import * as FromEnumerados from '../../models/enumerados';
+import { ThrowStmt } from '@angular/compiler';
 
 @Component({
   selector: 'app-mostrar-actividad',
@@ -33,10 +38,15 @@ export class MostrarActividadComponent implements OnInit {
   EnumTiposSelectores = FromEnumerados.EnumTiposSelectores;
 
   @Input() actividad: Actividad;
+  // Se trabaja con la réplica por dos motivos
+  // 1) El Framework establece los objetos de entrada como objetos de solo lectura.
+  // 2) Se quiere ofrecer la opción de "cancelar", para lo que sería necesario disponer
+  // de los valores iniciales.
+  replicaActividad: Actividad;
 
   // Registramos el modo en el que estamos trabajando.
   // Hya comportamientos diferenciados en báse a este parámetro
-  modoPanelActividad: FromEnumerados.EnumModosPanelActividad;
+  @Input() modoPanelActividad: FromEnumerados.EnumModosPanelActividad = FromEnumerados.EnumModosPanelActividad.MOSTRAR;
 
 
 
@@ -72,125 +82,41 @@ export class MostrarActividadComponent implements OnInit {
           switch (url[0].path) {
             case 'mostrarActividad':
               this.modoPanelActividad = FromEnumerados.EnumModosPanelActividad.MOSTRAR;
-              this.cargarActividad();
+              this.cargarActividadPorURI();
+
+
             break;
 
             case 'editarActividad':
               this.modoPanelActividad = FromEnumerados.EnumModosPanelActividad.EDITAR;
-              this.cargarActividad();
+              this.cargarActividadPorURI();
+
               //this.store.dispatch()
             break;
 
             case 'nuevaActividad':
               this.modoPanelActividad = FromEnumerados.EnumModosPanelActividad.CREAR;
-            break;
+               break;
 
             default: // Se ha invocado en modo modal desde index
               this.modoPanelActividad = FromEnumerados.EnumModosPanelActividad.MOSTRAR;
+              this.replicaActividad = JSON.parse(JSON.stringify(this.actividad));
+
             break;
           }
         }
       });
 
-    // if (this.modoPanelActividad === 'modoMostrar' || this.modoPanelActividad === 'modoEdicion') {
-    //   this.idActividad = this.route.snapshot.paramMap.get("id");
-    //   cargarActividad()
 
-    // }
     this.gestionarSubscripcionesStore()
 
   }
 
-  private cargarActividad() {
-    this.idActividad = this.route.snapshot.paramMap.get("id");
-    if (this.idActividad) {
-      this.store
-        .pipe(
-          select(FromActividadesSelectors.selectActividadActiva),
-          filter(actividad => !!actividad)
-        )
-        .subscribe(
-          actividadActiva => {
-            console.log(actividadActiva);
-            this.actividad = actividadActiva;
-            //this.construirFormulario(this.actividad)
-          }
-        );
 
-      this.store.dispatch(FromActividadesActions.cargarActividad({ idActividad: this.idActividad }));
-    }
-  }
-
-  entidadesHorarioDocentes(): EntidadHorario[] {
-    const entidadesHorario: EntidadHorario[] = [];
-    this.actividad.docentes.forEach(
-      docente => {
-        const entidadHorario = new EntidadHorario(docente);
-        entidadesHorario.push(entidadHorario);
-      });
-
-    return entidadesHorario;
-  }
-
-  onAbrirSelector(tipoSelector: FromEnumerados.EnumTiposSelectores) {
-    this.actualizarDatosSelectorActivo(tipoSelector)
-    this.AbrirVentanaModal();
-  }
-
-  entidadesHorarioGrupos(): EntidadHorario[] {
-    const entidadesHorario: EntidadHorario[] = [];
-     this.actividad.grupos.forEach(
-    grupo => {
-      const entidadHorario = new EntidadHorario(grupo);
-      entidadesHorario.push(entidadHorario);
-    });
-
-  return entidadesHorario;
-}
-  obtenerDenominacionDiaSemana(codigo: string): string {
-    switch (codigo) {
-      case 'L': return 'Lunes'; break;
-      case 'M': return 'Martes'; break;
-      case 'X': return 'Miércoles'; break;
-      case 'J': return 'Jueves'; break;
-      case 'V': return 'Viernes'; break;
-      case 'S': return 'Sábado'; break;
-      case 'D': return 'Domingo'; break;
-      default: return ''; break;
-    }
-  }
-
-  onMostrarAlumnos() {
-
-    //this.AbrirVentanaModal();
-
-  }
-  // ------------------------------------------
-  // Métodos no implementados.
-  // ------------------------------------------
-
-  AbrirVentanaModal() {
-
-    this.modalRef = this.modalService.open(this.panelModal, {
-     size: "lg",
-     hideCloseButton: true,
-     centered: true,
-     backdrop: true,
-     animation: true,
-     keyboard: false,
-     closeOnOutsideClick: true,
-     backdropClass: "modal-backdrop",
-   });
-
- }
-
-  onAbrirVentanaModal() { }
-
-  onCerrarVentanaModal() {
-    this.modalService.close(this.modalRef);
-  }
-
-  actualizarDatosSelectorActivo( tipoSelector: FromEnumerados.EnumTiposSelectores) {
+  //--------------------------------------------------
+  // Métodos privados
+  //--------------------------------------------------
+  private actualizarDatosSelectorActivo( tipoSelector: FromEnumerados.EnumTiposSelectores) {
     this.tipoSelector = tipoSelector;
     switch (tipoSelector) {
 
@@ -204,15 +130,9 @@ export class MostrarActividadComponent implements OnInit {
               leyenda: peridoVigencia.fechaInicio.toDateString() + '-' + peridoVigencia.fechaInicio.toDateString()
             }
           });
-
-
-
-
         break;
 
       case FromEnumerados.EnumTiposSelectores.PLANTILLAS:
-
-
         var sesiones: {id: string, texto: string}[] = [];
 
         this.listaSelectores.plantillas
@@ -233,55 +153,73 @@ export class MostrarActividadComponent implements OnInit {
 
 
         this.datosSelectorActivo = sesiones;
-
-        this.elementoPorDefectoEnSelector = sesiones.filter( sesion => sesion.id === this.actividad.sesion.idSesion)[0]
+        this.elementoPorDefectoEnSelector = sesiones.filter( sesion => sesion.id === this.replicaActividad.sesion.idSesion)[0]
 
 
         break;
+
+      case FromEnumerados.EnumTiposSelectores.DEPENDENCIAS:
+
+          this.datosSelectorActivo = this.listaSelectores.dependencias
+            .map(dependencia => {
+              return {
+                id: dependencia.idDependencia,
+                texto: dependencia.denominacionLarga,
+                leyenda: dependencia.codigo
+              }
+            });
+      break;
 
       default:
-        console.log('otra cosa',tipoSelector);
-        break;
+      break;
     }
 
 
 
 
   }
+  private cargarActividadPorURI() {
+    this.idActividad = this.route.snapshot.paramMap.get("id");
+    if (this.idActividad) {
+      this.store
+        .pipe(
+          select(FromActividadesSelectors.selectActividadActiva),
+          filter(actividad => !!actividad)
+        )
+        .subscribe(
+          actividadActiva => {
+            console.log(actividadActiva);
+            this.actividad = actividadActiva;
+            this.replicaActividad = JSON.parse(JSON.stringify(this.actividad));;
+          }
+        );
 
-  //--------------------------------------------------
-  // Métodos privados
-  //--------------------------------------------------
+      this.store.dispatch(FromActividadesActions.cargarActividad({ idActividad: this.idActividad }));
+    }
+  }
   private gestionarSubscripcionesStore() {
     this.store.pipe(select(FromEntidadesHorarioSelectors.selectListaSelectores))
-     .subscribe(
-      listaSelectores => {
-         this.listaSelectores = listaSelectores;
-         console.log('lista de selectores: ',this.listaSelectores)
-      }
-  );
-  }
+      .subscribe(
+        listaSelectores =>
+        {
+          if (listaSelectores)   this.listaSelectores = listaSelectores;
 
-  onSeleccionarItem(item: any) {
-    this.elementoSeleccionado = item;
-  }
+        }
 
-  onAceptarVentanaModal() {
-    this.actividad.sesion = this.convertirItemSeleccionadoEnEntidad()
+
+    );
+    if (!this.listaSelectores) {
+      this.store.dispatch(FromEntidadesHorarioActions.cargarListaSelectores());
+    }
 
   }
-
-  onCancelarVentanaModal() {
-
-  }
-
-  private convertirItemSeleccionadoEnEntidad(): Sesion {
-
+  private convertirItemSeleccionadoEnEntidad(): Sesion | PeriodoVigencia | Dependencia {
     switch (this.tipoSelector) {
 
       case FromEnumerados.EnumTiposSelectores.PERIODOSVIGENCIA:
 
-
+        return this.listaSelectores.periodosVigencia
+          .filter(periodoVigenca => periodoVigenca.idPeriodoVigencia === this.elementoSeleccionado.id)[0];
       break;
 
       case FromEnumerados.EnumTiposSelectores.PLANTILLAS:
@@ -292,9 +230,14 @@ export class MostrarActividadComponent implements OnInit {
             sesiones = sesiones.concat(plantilla.sesionesPlantilla);
           }
         );
+        return sesiones
+          .filter(sesion => sesion.idSesion === this.elementoSeleccionado.id)[0]
 
-        return sesiones.filter(sesion => sesion.idSesion === this.elementoSeleccionado.id)[0]
+      break;
 
+      case FromEnumerados.EnumTiposSelectores.DEPENDENCIAS:
+          return this.listaSelectores.dependencias
+            .filter(dependencia => dependencia.idDependencia === this.elementoSeleccionado.id)[0];
       break;
 
       default:
@@ -303,8 +246,117 @@ export class MostrarActividadComponent implements OnInit {
     }
   }
 
+  private obtenerDenominacionDiaSemana(codigo: string): string {
+    switch (codigo) {
+      case 'L': return 'Lunes'; break;
+      case 'M': return 'Martes'; break;
+      case 'X': return 'Miércoles'; break;
+      case 'J': return 'Jueves'; break;
+      case 'V': return 'Viernes'; break;
+      case 'S': return 'Sábado'; break;
+      case 'D': return 'Domingo'; break;
+      default: return ''; break;
+    }
+  }
+
+  private entidadesHorarioDocentes(): EntidadHorario[] {
+    const entidadesHorario: EntidadHorario[] = [];
+    this.replicaActividad.docentes.forEach(
+      docente => {
+        const entidadHorario = new EntidadHorario(docente);
+        entidadesHorario.push(entidadHorario);
+      });
+
+    return entidadesHorario;
+  }
+
+  private entidadesHorarioGrupos(): EntidadHorario[] {
+    const entidadesHorario: EntidadHorario[] = [];
+     this.replicaActividad.grupos.forEach(
+    grupo => {
+      const entidadHorario = new EntidadHorario(grupo);
+      entidadesHorario.push(entidadHorario);
+    });
+
+  return entidadesHorario;
+  }
 
 
+  // ------------------------------------------
+  // Métodos de respuesta a acciones de la plantilla.
+  // ------------------------------------------
+
+  // Responde a la acción de solicitur de apertura de cualquier selector
+  onAbrirSelector(tipoSelector: FromEnumerados.EnumTiposSelectores) {
+    this.actualizarDatosSelectorActivo(tipoSelector)
+    this.AbrirVentanaModal();
+  }
+
+  onMostrarAlumnos() {
+    this.tipoSelector = null;
+    console.log(this.actividad.alumnos.map(
+      alumno => {
+        return { nombre: alumno.nombre, apellido1: alumno.primerApellido , apellido2: alumno.segundoApellido
+      }
+        }
+
+    ))
+    this.AbrirVentanaModal();
+
+
+  }
+  // Abre la ventana modal de selectores asociados
+  AbrirVentanaModal() {
+
+    this.modalRef = this.modalService.open(this.panelModal, {
+     size: "lg",
+     hideCloseButton: true,
+     centered: true,
+     backdrop: true,
+     animation: true,
+     keyboard: false,
+     closeOnOutsideClick: true,
+     backdropClass: "modal-backdrop",
+   });
+
+  }
+
+  // Cierra la ventana modal de selectores asociados.
+  onCerrarVentanaModal() {
+    this.modalService.close(this.modalRef);
+  }
+
+  // Registra en el componente el elemento seleccionado por el usuarios
+  onSeleccionarItem(item: any) {
+    this.elementoSeleccionado = item;
+  }
+
+  // Responde al botón aceptar de los selectores
+  onAceptarVentanaModal() {
+    switch (this.tipoSelector) {
+      case FromEnumerados.EnumTiposSelectores.PLANTILLAS:
+        this.replicaActividad.sesion = this.convertirItemSeleccionadoEnEntidad() as Sesion;
+      break;
+
+      case FromEnumerados.EnumTiposSelectores.PERIODOSVIGENCIA:
+        this.replicaActividad.periodoVigencia = this.convertirItemSeleccionadoEnEntidad() as PeriodoVigencia;
+        break;
+
+      case FromEnumerados.EnumTiposSelectores.DEPENDENCIAS:
+        this.replicaActividad.dependencia = this.convertirItemSeleccionadoEnEntidad() as Dependencia;
+      break;
+
+      default:
+        break;
+    }
+
+    this.onCerrarVentanaModal();
+  }
+
+  onCancelarVentanaModal() {
+
+    this.onCerrarVentanaModal();
+  }
 
 
 

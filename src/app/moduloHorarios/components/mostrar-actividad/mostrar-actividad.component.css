@@ -31,7 +31,7 @@ td {
 }
 
 .selector {
-  height: 93%;
+  height: 90%;
 }
 
 .item {
@@ -102,6 +102,7 @@ p {
 }
 
 .informacionAdicional {
+  padding-top: 7px;
   grid-column-start: 1;
   grid-column-end: 13;
 
@@ -109,8 +110,6 @@ p {
 }
 
 
-.listaAlumnos {
-  height: 45vh;
-
-
+.contenido {
+  height: 40vh;
 }

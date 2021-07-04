@@ -1,5 +1,5 @@
 .gestionHorario {
-  height: 100%;
+  height: 99%;
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   grid-template-rows: 1fr 20fr;
@@ -8,13 +8,21 @@
 
 }
 
+/* .seccion {
+  border-color: tomato;
+  border-width: 1px;
+  border-style: dashed;
+} */
 
 
 .modal-body {
   padding: 10px;
+
 }
 .modal-content {
   border-radius: 7px 7px 7px 7px;
+
+
 }
 .modal-header {
   background-color: #ddd;

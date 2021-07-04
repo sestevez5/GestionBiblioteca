@@ -26,7 +26,9 @@
 
 </div>
 
-<modal #panelModal (onOpen)="onAbrirVentanaModal()" (onClose)="onCerrarVentanaModal()" >
+<div style="height: 200px;">
+
+<modal #panelModal (onOpen)="onAbrirVentanaModal()" (onClose)="onCerrarVentanaModal()" class="panelModal" >
     <!-- Cabecera -->
     <modal-header>
        <h3>Detalle de la actividad</h3>
@@ -45,3 +47,4 @@
     </modal-footer>
 
 </modal>
+</div>

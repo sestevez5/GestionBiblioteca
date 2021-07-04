@@ -1,13 +1,17 @@
-<!-- Menú de opciones -->
-<div class="row">
-  <div class="col-12 d-flex">
-    <div class="ml-auto">
-      <i class="fas fa-2x mr-3 fa-trash-alt"></i>
-      <i class="fas fa-2x fa-edit ml-auto"></i>
+<div class="gestionarActividad">
+  <!-- Menú de opciones -->
+  <div class="row">
+    <div class="col-12 d-flex">
+      <div class="ml-auto">
+        <i class="fas fa-2x mr-3 fa-trash-alt"></i>
+        <i class="fas fa-2x fa-edit ml-auto"></i>
 
+      </div>
     </div>
   </div>
-</div>
 
-<!-- información de la actividad -->
-<app-mostrar-actividad *ngIf="this.actvidad1" [actividad]="this.actvidad1"></app-mostrar-actividad>
+  <!-- información de la actividad -->
+  <div class="seccionMostrarActividad">
+    <app-mostrar-actividad *ngIf="this.actvidad1" [actividad]="this.actvidad1"></app-mostrar-actividad>
+  </div>
+</div>

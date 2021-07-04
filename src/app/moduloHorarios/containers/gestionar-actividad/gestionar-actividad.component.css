@@ -1,3 +1,10 @@
+.gestionarActividad {
+  height: 600px;
+}
+
+.seccionMostrarActividad{
+  height: 90%;
+}
 .fas:hover {
   cursor: pointer;
   color: black;
@@ -7,3 +14,4 @@
  {
    color: grey;
  }
+

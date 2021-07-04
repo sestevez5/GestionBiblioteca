@@ -1,35 +1,37 @@
-<app-cadenabusqueda *ngIf="this.anyadirBuscador" [tiempoEspera]=1000 [textoIndicativo]="'Introducir'" (cadenaBusqueda)="OnChangeCadenaBusqueda($event)"></app-cadenabusqueda>
+<div class="selectorListaSimple">
+  <app-cadenabusqueda *ngIf="this.anyadirBuscador" [tiempoEspera]=1000 [textoIndicativo]="'Introducir'" (cadenaBusqueda)="OnChangeCadenaBusqueda($event)"></app-cadenabusqueda>
 
-<div *ngIf="this.modelo === 'lista'" class="mt-2 panelListaSeleccion">
-  <ul class="list-group m-0 p-0">
-    <div class="item" *ngFor="let item of this.itemsFiltrados" (click)="onSeleccionar(item)" >
-      <app-item-selector-lista-simple
-      [modelo]="'lista'"
-      [conFoto]="this.camposConfig.imagen"
-      [marcado]="item === this.itemSeleccionadoPorDefecto"
-      [colorMarcado]=this.colorSeleccion
-      [camposConfig]=this.camposConfig
-      [item]=item>
-    </app-item-selector-lista-simple>
-    </div>
-  </ul>
-</div>
-
-<div *ngIf="this.modelo === 'celdas'" class="card-deck mt-2 panelListaSeleccion celdas">
-
-    <ng-template ngFor let-item [ngForOf]="this.itemsFiltrados">
-      <app-item-selector-lista-simple
-      [modelo]="'celdas'"
-      [conFoto]="this.camposConfig.imagen"
-      [marcado]="item === this.itemSeleccionadoPorDefecto"
-      [colorMarcado]=this.colorSeleccion
-      [camposConfig]=this.camposConfig
-      [item]=item>
+  <div *ngIf="this.modelo === 'lista'" class="mt-2 panelListaSeleccion">
+    <ul class="list-group m-0 p-0">
+      <div class="item" *ngFor="let item of this.itemsFiltrados" (click)="onSeleccionar(item)" >
+        <app-item-selector-lista-simple
+        [modelo]="'lista'"
+        [conFoto]="this.camposConfig.imagen"
+        [marcado]="item === this.itemSeleccionadoPorDefecto"
+        [colorMarcado]=this.colorSeleccion
+        [camposConfig]=this.camposConfig
+        [item]=item>
       </app-item-selector-lista-simple>
+      </div>
+    </ul>
+  </div>
 
-    </ng-template>
+  <div *ngIf="this.modelo === 'celdas'" class="card-deck mt-2 panelListaSeleccion">
+
+      <div *ngFor="let item of this.itemsFiltrados" >
+        <app-item-selector-lista-simple
+        [modelo]="'celdas'"
+        [conFoto]="this.camposConfig.imagen"
+        [marcado]="item === this.itemSeleccionadoPorDefecto"
+        [colorMarcado]=this.colorSeleccion
+        [camposConfig]=this.camposConfig
+        [item]=item>
+        </app-item-selector-lista-simple>
+
+      </div>
 
   </div>
+</div>
 
 
 

@@ -45,7 +45,7 @@ export class Parametros {
       altoCabecera: 11,
       anchoSesion: undefined,
       colorCabecera:'#e1e1e1',
-      colorCuerpo:'#eeeeee'
+      colorCuerpo:'#aaaaaa'
 
     },
 

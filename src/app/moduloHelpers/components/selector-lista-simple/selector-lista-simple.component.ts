@@ -16,7 +16,7 @@ export class SelectorListaSimpleComponent implements OnInit, OnChanges {
   @Input() anyadirBuscador = true;
   @Input() colorSeleccion:string = '';
   @Input() itemSeleccionadoPorDefecto: any;
-  @Input() admiteSeleccionInterna: false;
+  @Input() admiteSeleccionInterna: boolean = true;
   @Output() SeleccionItems: EventEmitter<any> = new EventEmitter();
 
   cadenaFiltro: string = '';
@@ -33,7 +33,7 @@ export class SelectorListaSimpleComponent implements OnInit, OnChanges {
 
   onSeleccionar(item: any) {
     if (this.admiteSeleccionInterna) {
-      this.itemSeleccionadoPorDefecto = item;
+       this.itemSeleccionadoPorDefecto = item;
       this.SeleccionItems.emit(item);
 
     }

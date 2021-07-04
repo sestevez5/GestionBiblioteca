@@ -125,8 +125,7 @@ export class entidadesHorarioEffects {
           action => {
 
             this.store.dispatch(PrincipalActions.cargandoDatos({ mensaje: "cargando lista de selectores" }));
-
-            return this.horarioService.obtenerListasSelectores()
+              return this.horarioService.obtenerListasSelectores()
               .pipe(
 
                 map(

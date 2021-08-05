@@ -38,7 +38,6 @@ export class SelectorEntidadesComponent implements OnInit {
   // Métodos controladores de eventos
   //--------------------------------------------------
   onSeleccionarItem(item: any) {
-    console.log('item',item);
     const entidadHorario = item as EntidadHorario;
     this.store.dispatch(FromEntidadesHorarioActions.seleccionarEntidadHorario({ entidadHorario: entidadHorario, tipoEntidadHorario: entidadHorario.tipoEntidad }))
   }

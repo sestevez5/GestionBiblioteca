@@ -4,7 +4,7 @@
   width: 99.7%;
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  grid-template-rows: 15% 5% 65% 15%;
+  grid-template-rows: 20% 5% 60% 15%;
   gap: 8px;
   overflow-y:initial;
   background-color: white;

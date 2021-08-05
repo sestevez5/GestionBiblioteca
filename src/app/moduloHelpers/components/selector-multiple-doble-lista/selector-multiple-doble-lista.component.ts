@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import {
   CdkDragDrop,
   moveItemInArray,
@@ -11,9 +11,10 @@ import {
   templateUrl: './selector-multiple-doble-lista.component.html',
   styleUrls: ['./selector-multiple-doble-lista.component.css']
 })
-export class SelectorMultipleDobleListaComponent implements OnInit {
+export class SelectorMultipleDobleListaComponent implements OnInit, OnChanges {
 
   @Input() items: any[];
+  @Input() itemsPreseleccionados: any[];
   @Input() camposConfig: camposSelectorDoble;
   @Output() SeleccionItems: EventEmitter<any[]> = new EventEmitter();
 
@@ -21,13 +22,29 @@ export class SelectorMultipleDobleListaComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit(): void {
+  ngOnChanges() {
+    console.log('change');
+    this.itemsPreseleccionados?.forEach(itemPreseleccionado => {
 
-    this.items.forEach(item => {
-      return {...item, seleccionado:false, marcado: false}
+      this.items.filter(item => item === itemPreseleccionado).forEach(
+        item => this.onSeleccionar(item)
+      )
     }
 
-    )
+    );
+
+  }
+  ngOnInit(): void {
+
+    console.log('init docentes');
+
+    this.items?.forEach(item => {
+      return { ...item, seleccionado: false, marcado: false }
+    });
+
+
+
+    console.log('items seleccionados:', this.itemsSeleccionados());
   }
 
   onSeleccionar(item: any) {

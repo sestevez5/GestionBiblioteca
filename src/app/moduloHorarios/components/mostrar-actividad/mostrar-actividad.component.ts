@@ -1,3 +1,5 @@
+import { Grupo } from './../../models/grupo.model';
+import { Docente } from './../../models/docente.model';
 import { Dependencia } from './../../models/dependencia.model';
 import { PeriodoVigencia } from './../../models/peridoVigencia';
 import { Plantilla } from './../../models/plantilla.model';
@@ -58,8 +60,10 @@ export class MostrarActividadComponent implements OnInit {
   listaSelectores: ListasSelectores;
 
   datosSelectorActivo: any[];  // Contiene la colección de elementos que llena el selector.
-  elementoPorDefectoEnSelector: any;
-  elementoSeleccionado: any;
+  elementoPorDefectoEnSelectorSimple: any;
+  elementosPorDefectoEnSelectorMultiple: any;
+  elementosSeleccionados: any = [];
+  selectorMultiple: boolean = false;
 
   @ViewChild("panelSelector") panelModal: ElementRef;
   private modalRef: any;
@@ -83,8 +87,6 @@ export class MostrarActividadComponent implements OnInit {
             case 'mostrarActividad':
               this.modoPanelActividad = FromEnumerados.EnumModosPanelActividad.MOSTRAR;
               this.cargarActividadPorURI();
-
-
             break;
 
             case 'editarActividad':
@@ -122,6 +124,8 @@ export class MostrarActividadComponent implements OnInit {
 
       case FromEnumerados.EnumTiposSelectores.PERIODOSVIGENCIA:
 
+        this.selectorMultiple = false;
+
         this.datosSelectorActivo = this.listaSelectores.periodosVigencia
           .map(peridoVigencia => {
             return {
@@ -130,9 +134,16 @@ export class MostrarActividadComponent implements OnInit {
               leyenda: peridoVigencia.fechaInicio.toDateString() + '-' + peridoVigencia.fechaInicio.toDateString()
             }
           });
-        break;
+
+          this.elementoPorDefectoEnSelectorSimple = this.datosSelectorActivo.filter(periodoVigencia => this.replicaActividad.periodoVigencia.idPeriodoVigencia === periodoVigencia.id)[0];
+
+
+      break;
 
       case FromEnumerados.EnumTiposSelectores.PLANTILLAS:
+
+        this.selectorMultiple = false;
+
         var sesiones: {id: string, texto: string}[] = [];
 
         this.listaSelectores.plantillas
@@ -153,12 +164,13 @@ export class MostrarActividadComponent implements OnInit {
 
 
         this.datosSelectorActivo = sesiones;
-        this.elementoPorDefectoEnSelector = sesiones.filter( sesion => sesion.id === this.replicaActividad.sesion.idSesion)[0]
+        this.elementoPorDefectoEnSelectorSimple = sesiones.filter( sesion => sesion.id === this.replicaActividad.sesion.idSesion)[0]
 
-
-        break;
+       break;
 
       case FromEnumerados.EnumTiposSelectores.DEPENDENCIAS:
+
+        this.selectorMultiple = false;
 
           this.datosSelectorActivo = this.listaSelectores.dependencias
             .map(dependencia => {
@@ -168,7 +180,67 @@ export class MostrarActividadComponent implements OnInit {
                 leyenda: dependencia.codigo
               }
             });
+
+        this.elementoPorDefectoEnSelectorSimple = this.datosSelectorActivo.filter(dependencia => this.replicaActividad.dependencia.idDependencia === dependencia.id)[0];
       break;
+
+      case FromEnumerados.EnumTiposSelectores.DOCENTES:
+
+        this.selectorMultiple = true;
+
+        this.datosSelectorActivo = this.listaSelectores.docentes
+          .map(docente=> {
+            return {
+              id: docente.idDocente,
+              texto: docente.nombre,
+              leyenda: docente.alias
+            }
+          });
+
+        this.elementosPorDefectoEnSelectorMultiple = this.datosSelectorActivo.filter(docente => this.replicaActividad.docentes.some(docenteActividad => docenteActividad.idDocente === docente.id));
+
+
+        break;
+
+        case FromEnumerados.EnumTiposSelectores.GRUPOS:
+
+          this.selectorMultiple = true;
+
+          this.datosSelectorActivo = this.listaSelectores.grupos
+            .map(grupo=> {
+              return {
+                id: grupo.idGrupo,
+                texto: grupo.denominacionLarga,
+                leyenda: grupo.codigo
+              }
+            });
+
+          this.elementosPorDefectoEnSelectorMultiple = this.datosSelectorActivo.filter(grupo => this.replicaActividad.grupos.some(grupoActividad => grupoActividad.idGrupo === grupo.id));
+
+        break;
+
+        case FromEnumerados.EnumTiposSelectores.ASIGNATURAS:
+
+          this.selectorMultiple = true;
+
+          this.datosSelectorActivo = this.listaSelectores.asignaturas
+            .map(asignatura=> {
+              return {
+                id: asignatura.idAsignatura,
+                texto: asignatura.denominacionLarga,
+                leyenda: asignatura.codigo
+              }
+            });
+
+          this.elementosPorDefectoEnSelectorMultiple = this.datosSelectorActivo.filter(asignatura => this.replicaActividad.asignaturas.some(asignaturaActividad => asignaturaActividad.idAsignatura === asignatura.id));
+
+        break;
+
+
+
+
+
+
 
       default:
       break;
@@ -213,13 +285,13 @@ export class MostrarActividadComponent implements OnInit {
     }
 
   }
-  private convertirItemSeleccionadoEnEntidad(): Sesion | PeriodoVigencia | Dependencia {
+  private convertirItemSeleccionadoEnEntidad(): Sesion | PeriodoVigencia | Dependencia | Docente[] | Grupo[] | Asignatura[] {
     switch (this.tipoSelector) {
 
       case FromEnumerados.EnumTiposSelectores.PERIODOSVIGENCIA:
 
         return this.listaSelectores.periodosVigencia
-          .filter(periodoVigenca => periodoVigenca.idPeriodoVigencia === this.elementoSeleccionado.id)[0];
+          .filter(periodoVigenca => periodoVigenca.idPeriodoVigencia === this.elementosSeleccionados[0].id)[0];
       break;
 
       case FromEnumerados.EnumTiposSelectores.PLANTILLAS:
@@ -230,14 +302,37 @@ export class MostrarActividadComponent implements OnInit {
             sesiones = sesiones.concat(plantilla.sesionesPlantilla);
           }
         );
+
         return sesiones
-          .filter(sesion => sesion.idSesion === this.elementoSeleccionado.id)[0]
+          .filter(sesion => sesion.idSesion === this.elementosSeleccionados[0].id)[0]
 
       break;
 
       case FromEnumerados.EnumTiposSelectores.DEPENDENCIAS:
-          return this.listaSelectores.dependencias
-            .filter(dependencia => dependencia.idDependencia === this.elementoSeleccionado.id)[0];
+
+        return this.listaSelectores.dependencias
+          .filter(dependencia => dependencia.idDependencia === this.elementosSeleccionados[0].id)[0];
+        break;
+
+      case FromEnumerados.EnumTiposSelectores.DOCENTES:
+
+        return this.listaSelectores.docentes
+          .filter(docente => this.elementosSeleccionados.some((docenteSeleccionado:any) => docenteSeleccionado.id === docente.idDocente));
+
+        break;
+
+      case FromEnumerados.EnumTiposSelectores.GRUPOS:
+
+        return this.listaSelectores.grupos
+          .filter(grupo => this.elementosSeleccionados.some((grupoSeleccionado:any) => grupoSeleccionado.id === grupo.idGrupo));
+
+        break;
+
+      case FromEnumerados.EnumTiposSelectores.ASIGNATURAS:
+
+        return this.listaSelectores.asignaturas
+          .filter(asignatura => this.elementosSeleccionados.some((asignaturaSeleccionada:any) => asignaturaSeleccionada.id === asignatura.idAsignatura));
+
       break;
 
       default:
@@ -261,6 +356,7 @@ export class MostrarActividadComponent implements OnInit {
 
   private entidadesHorarioDocentes(): EntidadHorario[] {
     const entidadesHorario: EntidadHorario[] = [];
+
     this.replicaActividad.docentes.forEach(
       docente => {
         const entidadHorario = new EntidadHorario(docente);
@@ -268,6 +364,10 @@ export class MostrarActividadComponent implements OnInit {
       });
 
     return entidadesHorario;
+  }
+
+  private idsEntidadesHorario(entidadesHorario: EntidadHorario[]) {
+    return entidadesHorario.map(entidadesHorario => entidadesHorario.id);
   }
 
   private entidadesHorarioGrupos(): EntidadHorario[] {
@@ -288,7 +388,7 @@ export class MostrarActividadComponent implements OnInit {
 
   // Responde a la acción de solicitur de apertura de cualquier selector
   onAbrirSelector(tipoSelector: FromEnumerados.EnumTiposSelectores) {
-    this.actualizarDatosSelectorActivo(tipoSelector)
+    this.actualizarDatosSelectorActivo(tipoSelector);
     this.AbrirVentanaModal();
   }
 
@@ -328,37 +428,49 @@ export class MostrarActividadComponent implements OnInit {
 
   // Registra en el componente el elemento seleccionado por el usuarios
   onSeleccionarItem(item: any) {
-    this.elementoSeleccionado = item;
+    Array.isArray(item)?this.elementosSeleccionados = item:this.elementosSeleccionados = [item];
   }
 
   // Responde al botón aceptar de los selectores
   onAceptarVentanaModal() {
     switch (this.tipoSelector) {
+
       case FromEnumerados.EnumTiposSelectores.PLANTILLAS:
         this.replicaActividad.sesion = this.convertirItemSeleccionadoEnEntidad() as Sesion;
       break;
 
       case FromEnumerados.EnumTiposSelectores.PERIODOSVIGENCIA:
         this.replicaActividad.periodoVigencia = this.convertirItemSeleccionadoEnEntidad() as PeriodoVigencia;
-        break;
+      break;
 
       case FromEnumerados.EnumTiposSelectores.DEPENDENCIAS:
         this.replicaActividad.dependencia = this.convertirItemSeleccionadoEnEntidad() as Dependencia;
       break;
 
-      default:
+      case FromEnumerados.EnumTiposSelectores.DOCENTES:
+        this.replicaActividad.docentes = this.convertirItemSeleccionadoEnEntidad() as Docente[];
+      break;
+
+      case FromEnumerados.EnumTiposSelectores.GRUPOS:
+        this.replicaActividad.grupos = this.convertirItemSeleccionadoEnEntidad() as Grupo[];
         break;
+
+      case FromEnumerados.EnumTiposSelectores.ASIGNATURAS:
+        this.replicaActividad.asignaturas = this.convertirItemSeleccionadoEnEntidad() as Asignatura[];
+        console.log(this.replicaActividad.asignaturas);
+      break;
+
+
+      default:
+      break;
     }
 
     this.onCerrarVentanaModal();
   }
 
   onCancelarVentanaModal() {
-
     this.onCerrarVentanaModal();
   }
-
-
 
 }
 

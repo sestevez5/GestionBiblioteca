@@ -1,15 +1,13 @@
 <h2>Componente: Selector múltiple basado en dos listas</h2>
+
 <app-selector-multiple-doble-lista
   [items]="this.libros"
   [camposConfig]="{ texto: 'titulo', imagen: 'foto', leyenda: 'autores'}"
   (SeleccionItems)= "onItemsSeleccionados($event)"
   >
-
 </app-selector-multiple-doble-lista>
 <br>
 <h2>Consumidor del componente (DEMO)</h2>
-
-
 
 <div class="d-flex flex-wrap">
   <div style="width: 300px;" *ngFor="let libro of this.librosSeleccionados" class="card m-1">

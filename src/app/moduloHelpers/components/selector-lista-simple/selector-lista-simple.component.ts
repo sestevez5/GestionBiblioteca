@@ -1,5 +1,5 @@
 import { BehaviorSubject } from 'rxjs';
-import { Component, OnInit, Input, Output, EventEmitter, AfterViewInit, OnChanges } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, AfterViewInit, OnChanges, SimpleChanges } from '@angular/core';
 import { debounceTime, distinctUntilChanged, filter, first, skip } from 'rxjs/operators';
 
 
@@ -16,24 +16,32 @@ export class SelectorListaSimpleComponent implements OnInit, OnChanges {
   @Input() anyadirBuscador = true;
   @Input() colorSeleccion:string = '';
   @Input() itemSeleccionadoPorDefecto: any;
+
   @Input() admiteSeleccionInterna: boolean = true;
   @Output() SeleccionItems: EventEmitter<any> = new EventEmitter();
 
   cadenaFiltro: string = '';
   itemsFiltrados: any[];
-  // itemSeleccionado: any;
+  itemSeleccionado: any;
+
 
   ngOnInit() {
     console.log('colorSeleccion: ', this.colorSeleccion);
   }
 
-  ngOnChanges() {
+  ngOnChanges(changes: SimpleChanges) {
     this.filtrarItems('');
+
+
+    if (changes.itemSeleccionadoPorDefecto && this.itemSeleccionadoPorDefecto) {
+      this.items.filter(item => item === this.itemSeleccionadoPorDefecto)
+        .forEach(item => this.itemSeleccionado = item);
+    }
   }
 
   onSeleccionar(item: any) {
     if (this.admiteSeleccionInterna) {
-       this.itemSeleccionadoPorDefecto = item;
+       this.itemSeleccionado = item;
       this.SeleccionItems.emit(item);
 
     }

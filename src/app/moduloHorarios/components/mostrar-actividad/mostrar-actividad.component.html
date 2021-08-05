@@ -84,7 +84,7 @@
 
     <div>
       <div  class="d-flex cabecera align-items-center border-bottom">
-        <p class="mb-0 py-1 font-18">Docentes <span class="ml-3"> <i class="fas fa-1x fa-edit ml-auto"></i></span></p>
+        <p class="mb-0 py-1 font-18">Docentes <span class="ml-3"> <i class="fas fa-1x fa-edit ml-auto" (click)="this.onAbrirSelector(EnumTiposSelectores.DOCENTES)"></i></span></p>
       </div>
     </div>
 
@@ -104,7 +104,7 @@
 
     <div>
       <div  class="d-flex cabecera align-items-center border-bottom">
-        <p class="mb-0 py-1 font-18">Grupos <span class="ml-3"> <i class="fas fa-1x fa-edit ml-auto"></i></span></p>
+        <p class="mb-0 py-1 font-18">Grupos <span class="ml-3"> <i class="fas fa-1x fa-edit ml-auto" (click)="this.onAbrirSelector(EnumTiposSelectores.GRUPOS)"></i></span></p>
       </div>
     </div>
     <div class="selector">
@@ -122,14 +122,14 @@
 
     <div>
       <div  class="d-flex cabecera align-items-center border-bottom">
-        <p class="mb-0 py-1 font-18">Asignaturas<span class="ml-3"> <i class="fas fa-1x fa-edit ml-auto"></i></span></p>
+        <p class="mb-0 py-1 font-18">Asignaturas<span class="ml-3"> <i class="fas fa-1x fa-edit ml-auto"  (click)="this.onAbrirSelector(EnumTiposSelectores.ASIGNATURAS)"></i></span></p>
       </div>
     </div>
 
     <div class="selector">
       <app-selector-lista-simple
       [anyadirBuscador]="false"
-      [items]="this.actividad.asignaturas"
+      [items]="this.replicaActividad.asignaturas"
       [itemSeleccionado]=''
       [camposConfig]="{ texto: 'denominacionLarga', leyenda: 'codigo'}"
       >
@@ -166,25 +166,33 @@ Definición del panel modal para la selección de entidades
   <modal-content>
 
     <div class="contenido">
+      {{this.elementoPorDefectoEnSelectorSimple?.id}}
 
-      <app-selector-lista-simple *ngIf="this.listaSelectores && this.tipoSelector"
+      <!-- Se muestra un selector simple de tipo lista. -->
+      <app-selector-lista-simple *ngIf="this.listaSelectores && this.tipoSelector && !this.selectorMultiple"
       [items]="this.datosSelectorActivo"
       [colorSeleccion]="'#222222'"
       [camposConfig]="{texto: 'texto', leyenda: 'leyenda' }"
-      [itemSeleccionadoPorDefecto]="this.elementoPorDefectoEnSelector"
+      [itemSeleccionadoPorDefecto]="this.elementoPorDefectoEnSelectorSimple"
       [admiteSeleccionInterna]=true
       [modelo]="'lista'"
       (SeleccionItems)="onSeleccionarItem($event)"
-      >
-    </app-selector-lista-simple>
+      ></app-selector-lista-simple>
 
-
-     <app-selector-lista-simple *ngIf="this.actividad.alumnos && !this.tipoSelector"
+      <!-- Se muestra un selector simple de tipo celdas -->
+      <app-selector-lista-simple *ngIf="this.actividad.alumnos && !this.tipoSelector"
       [items]="this.actividad.alumnos"
       [camposConfig]="{texto: 'nombre', imagen:'foto' }"
       [modelo]="'celdas'"
-      >
-    </app-selector-lista-simple>
+      ></app-selector-lista-simple>
+
+
+      <app-selector-multiple-doble-lista *ngIf="this.listaSelectores && this.tipoSelector && this.selectorMultiple"
+      [items]="this.datosSelectorActivo"
+      [itemsPreseleccionados]="this.elementosPorDefectoEnSelectorMultiple"
+      [camposConfig]="{texto: 'texto', leyenda: 'leyenda' }"
+      (SeleccionItems)= "onSeleccionarItem($event)"
+      ></app-selector-multiple-doble-lista>
 
     </div>
 

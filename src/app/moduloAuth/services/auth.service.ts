@@ -64,8 +64,7 @@ export class AuthService {
 
         // Generación incorrecta: Nuestro observer emitirá el error con la misma información.
         error => {
-          console.log("error.", error);
-          (usuario$ as Observer<any>).error(error)
+                  (usuario$ as Observer<any>).error(error)
         }
       );
 

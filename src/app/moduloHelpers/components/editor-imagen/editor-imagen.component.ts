@@ -27,7 +27,6 @@ export class EditorImagenComponent implements OnChanges {
       }
     }
 
-    console.log(changes.imagenOriginal);
 
   }
 

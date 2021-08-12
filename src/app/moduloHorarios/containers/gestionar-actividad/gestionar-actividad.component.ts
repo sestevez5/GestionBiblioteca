@@ -1,5 +1,5 @@
 import { filter } from 'rxjs/operators';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Actividad } from './../../models/actividad.model';
 import { ModuloHorarioRootState } from './../../store/index';
 import { select, Store } from '@ngrx/store';
@@ -14,12 +14,13 @@ import * as FromActividadesActions from '../../store/actividades/actividades.act
 })
 export class GestionarActividadComponent implements OnInit {
 
-  actvidad1: Actividad;
+  actividad: Actividad;
 
 
   constructor(
     private store: Store<ModuloHorarioRootState>,
-    private route: ActivatedRoute,) {
+    private route: ActivatedRoute,
+    private router: Router) {
     }
 
 
@@ -35,11 +36,15 @@ export class GestionarActividadComponent implements OnInit {
     this.store.pipe(select(FromActividadesSelectors.selectActividadActiva))
       .subscribe(
         actividadActiva => {
-            this.actvidad1 = actividadActiva
+            this.actividad = actividadActiva
         }
     );
 
-    this.store.dispatch(FromActividadesActions.cargarActividad({ idActividad: this.actvidad1?.idActividad }));
+    this.store.dispatch(FromActividadesActions.cargarActividad({ idActividad: this.actividad?.idActividad }));
+  }
+
+  onEditarActividad(actividad: Actividad) {
+    this.router.navigate(['horarios','editarActividad',actividad.idActividad], { queryParams: { returnUrl: 'horarios/index'}});
   }
 
 }

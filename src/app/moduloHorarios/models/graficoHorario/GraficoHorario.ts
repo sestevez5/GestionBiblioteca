@@ -138,6 +138,9 @@ export class HorarioG {
     const panelHorario = svg.append('g')
       .attr('id', 'panelHorario')
       .attr('transform', `translate(${coordenadaXPanel},${coordenadaYPanel})`)
+      .attr('width', Parametros.parametrosGrafico.panelHorario.anchoPanelHorario)
+      .attr('height', Parametros.parametrosGrafico.panelHorario.altoPanelHorario)
+
 
     //-------------------------------------------------
     // Rectángulo asociado
@@ -346,22 +349,6 @@ export class HorarioG {
       .attr('id', d => 'panelSesionActividades' + d.sesion.idSesion)
       .attr('data-actividades', d => d.actividades.map(act => act.idActividad).join(','))
       .attr('data-actividadVisible', d => d.actividades[0].idActividad)
-
-    // panelSesionActividades.append('rect')
-    //   .attr('height', d => {
-    //     const coordenadaHoraInicio = Parametros.parametrosGrafico.escalas.escalaVertical(HorarioG.convertirCadenaHoraEnTiempo(d.sesion.horaInicio));
-    //     const coordenadaHoraFin = Parametros.parametrosGrafico.escalas.escalaVertical(HorarioG.convertirCadenaHoraEnTiempo(d.sesion.horaFin));
-    //     return coordenadaHoraFin - coordenadaHoraInicio;
-    //   })
-    //   .attr('width', d => Parametros.parametrosGrafico.escalas.escalaHorizontal.bandwidth())
-    //   .attr('fill', 'red')
-    //   .attr('opacity', '0.4')
-    //   .attr('rx', 2)
-    //   .attr('ry', 2);
-
-
-
-
     return panelSesionActividades;
 
   }
@@ -488,7 +475,7 @@ export class HorarioG {
 
     panelCuerpoSesionConActividades
       .attr("clip-path", (d: any) => {
-        //console.log('rectangulo recortador: ', 'rectanguloRecortador' + d.sesion.idSesion);
+
         return `url(#${'rectanguloRecortador' + d.sesion.idSesion})`
       })
 
@@ -527,9 +514,10 @@ export class HorarioG {
           actividad => {
             const panelActividad = d3.select('g#panelActividad_' + actividad.idActividad);
             this.renderizarSeccionesPanelesActividades(panelActividad, actividad, 1, actividad.grupos?.map(grupo => grupo.codigo));
-            this.renderizarSeccionesPanelesActividades(panelActividad,actividad,2, actividad.docentes?.map(docente => docente.alias));
+            this.renderizarSeccionesPanelesActividades(panelActividad, actividad, 2, actividad.docentes?.map(docente => docente.alias));
             this.renderizarSeccionesPanelesActividades(panelActividad, actividad, 3, actividad.dependencia ? [actividad.dependencia.codigo] : []);
             this.renderizarActividadesSeccionZonaSeleccionActividad(panelActividad, actividad);
+
           }
         )
 
@@ -537,7 +525,6 @@ export class HorarioG {
       // -------------------------------------------------------------------
       // Añadimos el rectángulo
       // -------------------------------------------------------------------
-
       const porcentajeAnchoZonaSeleccion = Parametros.parametrosGrafico.actividades.porcentajeZonaSeleccionActividad;
       panelesActividades.select('.panelActividadZonaSeleccion').append('rect')
           .attr('class', 'rectActividad')
@@ -557,6 +544,12 @@ export class HorarioG {
               Utilidades.desmarcarActividadesComoSeleccionadas(this.actividadesG,[i.idActividad]) :
               Utilidades.marcarActividadesComoSeleccionadas([i.idActividad]);
           });
+
+      // -------------------------------------------------------------------
+      // Añadimos funcionalidad drag and drop
+      // -------------------------------------------------------------------
+      this.anyadirFuncionalidadDragAndDrop(panelesActividades);
+
 
 
     }
@@ -743,7 +736,6 @@ export class HorarioG {
     const drag = d3.drag()
       .on("drag", function (event, d: any) {
 
-        console.log("drag valorinicial:", d.valorInicial);
         // Acotamos sus posibles valores.
         d.y = clamp(event.y-d.valorInicial, 0, maxDesplazamientoScroll);
 
@@ -797,6 +789,75 @@ export class HorarioG {
         return `translate(${(i-(posActual))*parseFloat(anchoSesion)},0)`
       })
 
+  }
+
+  private anyadirFuncionalidadDragAndDrop(panelesActividades: any) {
+
+
+    panelesActividades.call(
+      d3.drag()
+        .on("start", this.dragstarted)
+        .on("drag", this.dragged)
+        .on("end", this.dragended));
+
+
+  }
+
+  private dragstarted(event:any,d:any) {
+
+    //----------------------------------------------------------------------------------------------------
+    //Paso 1: Creamos un clon de la actividad que vamos a mover (variable actividadClon)
+    //----------------------------------------------------------------------------------------------------
+    var actividadClon: any = d3.select('g#panelActividad_' + event.subject.idActividad).clone(true);
+    // Tendrá el mismo nombre con el sufijo 'Clone'
+    actividadClon.attr('id', 'panelActividadClone_' + event.subject.idActividad);
+
+    // Hay que recortarla. Nótese que el recorte lo daba la sesión y ahora no hay sesión
+    actividadClon.attr('clip-path','url(#rectanguloRecortadorParaClon)')
+
+    actividadClon.append('clipPath')
+      .attr('id', 'rectanguloRecortadorParaClon')
+      .append('rect')
+      .attr('height', actividadClon.attr('height'))
+      .attr('width', actividadClon.attr('width'));
+
+    //----------------------------------------------------------------------------------------------------
+    //Paso 2: La actividad clonada será hija directa del nodo panel horario.
+    //----------------------------------------------------------------------------------------------------
+    var panelHorario: any = d3.select('g#panelHorario');
+    panelHorario.node().appendChild(actividadClon.node());
+
+    //----------------------------------------------------------------------------------------------------
+    //Paso 3: Establecer variables iniciales
+    //----------------------------------------------------------------------------------------------------
+    d.valorInicialX = event.x;
+    d.valorInicialY = event.y;
+    d.alto = panelHorario.attr('height');
+    d.ancho = panelHorario.attr('width') - actividadClon.attr('width');
+    d.sesiones = d3.selectAll('.panelSesion');
+
+    console.log(d.sesiones.data());
+
+
+
+  }
+    private dragged(event:any, d:any) {
+    d.x = clamp(event.x - d.valorInicialX, 0, d.ancho);
+    d.y = clamp(event.y - d.valorInicialY, 0, d.alto);
+
+    var y = d3.select('g#panelActividadClone_' + d.idActividad).attr('transform', 'translate(' + d.x + ',' + d.y + ')');
+
+     function clamp(x:any, lo:any, hi:any) {
+      return x < lo ? lo : x > hi ? hi : x;
+    }
+
+;
+
+  }
+
+  private dragended() {
+    // d3.select(this).attr("stroke", null);
+    console.log('dragended');
   }
 
 }

@@ -5,7 +5,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./multiselect.component.css']
 })
 export class MultiselectComponent implements OnInit {
-  
+
   cities: string[] = [];
   selectedItems: string[] = [];
   singleselectedItems: string[] = [];
@@ -33,9 +33,9 @@ export class MultiselectComponent implements OnInit {
     };
   }
   onItemSelect(item: any) {
-    console.log(item);
+
   }
   onSelectAll(items: any) {
-    console.log(items);
+
   }
 }

@@ -1,4 +1,4 @@
-import { filter } from 'rxjs/operators';
+import { filter, first } from 'rxjs/operators';
 import { Actividad } from './../../models/actividad.model';
 import { ViewChild, ViewEncapsulation, OnInit } from '@angular/core';
 import { ActividadG } from './../../models/actividadG.model';
@@ -42,15 +42,14 @@ export class GestionHorarioComponent implements OnInit {
   // Métodos para gestionar la ventan modal
   // ------------------------------------------
   AbrirVentanaModal() {
-     this.modalRef = this.modalService.open(this.panelModal, {
+    this.modalRef = this.modalService.open(this.panelModal, {
       size: "xl",
       hideCloseButton: true,
       centered: true,
-      backdrop: true,
-      animation: true,
+      backdrop: 'static',
       keyboard: false,
-      closeOnOutsideClick: true,
-      backdropClass: "modal-backdrop",
+
+
     });
 
   }
@@ -71,7 +70,6 @@ export class GestionHorarioComponent implements OnInit {
   onActividadSeleccionada(actividad: ActividadG) {
     this.idActividadActual = actividad.idActividad;
     this.actividadCargada = false;
-
   }
 
   //--------------------------------------------------
@@ -79,17 +77,30 @@ export class GestionHorarioComponent implements OnInit {
   //--------------------------------------------------
   private activarAccionesIniciales() {
 
-    // 1.- Solicitud de carga de entidades de tipo docente.
-    this.store.dispatch(FromEntidadesHorarioActions.cargarEntidadesHorario({ tipoEntidad: EnumTipoEntidadHorario.DOCENTE }));
+    this.store.pipe(select(FromActividadesSelectors.selectTotalActividades))
+      .pipe(
+        first()
+      )
+    .subscribe(
+      count => {
+        if (count === 0) {
+                // 1.- Solicitud de carga de entidades de tipo docente.
+          this.store.dispatch(FromEntidadesHorarioActions.cargarEntidadesHorario({ tipoEntidad: EnumTipoEntidadHorario.DOCENTE }));
 
-    // 2.- Solicitud de carga de los parámetros del horario.
-    this.store.dispatch(FromActividadesActions.cargarParametrosHorario());
+          // 2.- Solicitud de carga de los parámetros del horario.
+          this.store.dispatch(FromActividadesActions.cargarParametrosHorario());
 
-    // 3.- Solicitud de carga de las plantillas disponibles.
-    this.store.dispatch(FromActividadesActions.cargarPlantillas());
+          // 3.- Solicitud de carga de las plantillas disponibles.
+          this.store.dispatch(FromActividadesActions.cargarPlantillas());
 
-    // 4.- Cargar listas entidades.
-    this.store.dispatch(FromEntidadesHorarioActions.cargarListaSelectores());
+          // 4.- Cargar listas entidades.
+          this.store.dispatch(FromEntidadesHorarioActions.cargarListaSelectores());
+
+        }
+      }
+  );
+
+
 
   }
 
@@ -106,7 +117,6 @@ export class GestionHorarioComponent implements OnInit {
       )
     .subscribe(
       actividadActiva => {
-        console.log('estamos');
         this.AbrirVentanaModal();
       }
   );

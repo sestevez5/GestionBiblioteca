@@ -41,7 +41,6 @@ export class LoginEffects {
                 map( usuario => LoginActions.loginOK({ usuariologueado: usuario })), // Fin map
 
                 catchError(error => {
-                  console.log('error',error);
                   this.store.dispatch(PrincipalActions.cargadoDatos());
                   this.store.dispatch(PrincipalActions.generarMensajeUsuario({ mensajeUsuario: Utils.construirMensaje(error['code']) }));
                   return of(LoginActions.loginError({ error: 'error' }))

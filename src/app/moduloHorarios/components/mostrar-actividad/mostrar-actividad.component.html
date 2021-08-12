@@ -1,5 +1,10 @@
-<div *ngIf="this.actividad" class="row"  class="datosActividad">
-
+<div class="panelActividad">
+  <div class="cabeceraActividad" style="display: flex;"*ngIf="this.modoPanelActividad !== this.EnumModosPanelActividad.MOSTRAR" >
+      <h1>Editar actividad</h1>
+    <button _ngcontent-cls-c164="" type="button" class="btn btn-sm btn-secondary mr-3 ml-auto" style="height: min-content; align-self: center; text-align: right;" (click)="onAceptarEdicionCreacionActividad()">Aceptar</button>
+    <button _ngcontent-cls-c164="" type="button" class="btn btn-sm btn-secondary" style="height: min-content; align-self: center;" (click)="onCancelarEdicionCreacionActividad()">Cancelar</button>
+  </div>
+<div *ngIf="this.replicaActividad" class="row"  class="datosActividad">
   <div class="seccionDatosActividad marcoTemporal">
       <table>
         <tbody>
@@ -8,11 +13,14 @@
               <p class="font-18"> Tipo de actividad:</p>
             </td>
             <td>
-              <p class="font-bold font-18">Clase colectiva de una materia</p>
+              <i  *ngIf="this.modoPanelActividad !== this.EnumModosPanelActividad.MOSTRAR"
+                class="fas font-18 fa-edit ml-auto">
+              </i>
             </td>
             <td>
-              <i  class="fas font-18 fa-edit ml-auto"></i>
+              <p class="font-bold font-18">Clase colectiva de una materia</p>
             </td>
+
           </tr>
 
           <tr>
@@ -20,15 +28,17 @@
               <p class="font-18">Sesión:</p>
             </td>
             <td>
-              <p class="font-bold font-18">
-                {{ this.obtenerDenominacionDiaSemana(replicaActividad?.sesion.diaSemana)+ ' desde las '+ this.replicaActividad?.sesion.horaInicio +' hasta las ' +this.replicaActividad?.sesion.horaFin }}
-              </p>
-            </td>
-            <td>
-              <i  class="fas fa-1x fa-edit ml-auto font-18"
-                  (click)="this.onAbrirSelector(EnumTiposSelectores.PLANTILLAS)">
+              <i  *ngIf="this.modoPanelActividad !== this.EnumModosPanelActividad.MOSTRAR"
+                class="fas fa-1x fa-edit ml-auto font-18"
+                (click)="this.onAbrirSelector(EnumEntidadMantenimiento.PLANTILLAS)">
               </i>
             </td>
+            <td>
+              <p class="font-bold font-18">
+                {{  this.replicaActividad.sesion? this.obtenerDenominacionDiaSemana(replicaActividad?.sesion.diaSemana)+ ' desde las '+ this.replicaActividad?.sesion.horaInicio +' hasta las ' +this.replicaActividad?.sesion.horaFin : '[No definida]' }}
+              </p>
+            </td>
+
           </tr>
 
           <tr >
@@ -36,17 +46,23 @@
               <p class="font-18">Periodo de vigencia:</p>
             </td>
             <td>
-              <p class="font-bold form-control-static font-18">
-                {{ this.replicaActividad.periodoVigencia.denominacion + ' ('}}
-                {{this.replicaActividad.periodoVigencia.fechaInicio | date: 'dd/MM/yyyy' }} - {{this.replicaActividad.periodoVigencia.fechaFin | date: 'dd/MM/yyyy' }} )
-              </p>
-            </td>
-            <td>
-              <i class="fas font-18 fa-edit ml-auto"
-              (click)="this.onAbrirSelector(EnumTiposSelectores.PERIODOSVIGENCIA)">
+              <i *ngIf="this.modoPanelActividad !== this.EnumModosPanelActividad.MOSTRAR"
+              class="fas font-18 fa-edit ml-auto"
+              (click)="this.onAbrirSelector(EnumEntidadMantenimiento.PERIODOSVIGENCIA)">
 
               </i>
             </td>
+            <td>
+              <p *ngIf="this.replicaActividad.periodoVigencia" class="font-bold form-control-static font-18">
+                {{ this.replicaActividad.periodoVigencia.denominacion + ' ('}}
+                {{ this.replicaActividad.periodoVigencia.fechaInicio | date: 'dd/MM/yyyy' }} - {{this.replicaActividad.periodoVigencia.fechaFin | date: 'dd/MM/yyyy' }} )
+              </p>
+              <p *ngIf="!this.replicaActividad.periodoVigencia" class="font-bold form-control-static font-18">
+                [No definido]
+              </p>
+
+            </td>
+
           </tr>
 
           <tr>
@@ -54,15 +70,17 @@
               <p class="font-18">Dependencia:</p>
             </td>
             <td>
-              <p class="font-bold font-18">
-                {{this.replicaActividad?.dependencia.denominacionLarga+' ('+ this.replicaActividad?.dependencia.codigo +')'}}
-              </p>
-            </td>
-            <td>
-              <i class="fas font-18 fa-edit ml-auto"
-              (click)="this.onAbrirSelector(EnumTiposSelectores.DEPENDENCIAS)">
+              <i *ngIf="this.modoPanelActividad !== this.EnumModosPanelActividad.MOSTRAR"
+              class="fas font-18 fa-edit ml-auto"
+              (click)="this.onAbrirSelector(EnumEntidadMantenimiento.DEPENDENCIAS)">
             </i>
             </td>
+            <td>
+              <p class="font-bold font-18">
+                {{ this.replicaActividad.dependencia? this.replicaActividad.dependencia.denominacionLarga+' ('+ this.replicaActividad?.dependencia.codigo +')':'[No definida]'}}
+              </p>
+            </td>
+
           </tr>
         </tbody>
 
@@ -84,7 +102,14 @@
 
     <div>
       <div  class="d-flex cabecera align-items-center border-bottom">
-        <p class="mb-0 py-1 font-18">Docentes <span class="ml-3"> <i class="fas fa-1x fa-edit ml-auto" (click)="this.onAbrirSelector(EnumTiposSelectores.DOCENTES)"></i></span></p>
+        <p class="mb-0 py-1 font-18">Docentes
+          <span class="ml-3">
+            <i *ngIf="this.modoPanelActividad !== this.EnumModosPanelActividad.MOSTRAR"
+            class="fas fa-1x fa-edit ml-auto"
+            (click)="this.onAbrirSelector(EnumEntidadMantenimiento.DOCENTES)">
+            </i>
+          </span>
+        </p>
       </div>
     </div>
 
@@ -104,7 +129,14 @@
 
     <div>
       <div  class="d-flex cabecera align-items-center border-bottom">
-        <p class="mb-0 py-1 font-18">Grupos <span class="ml-3"> <i class="fas fa-1x fa-edit ml-auto" (click)="this.onAbrirSelector(EnumTiposSelectores.GRUPOS)"></i></span></p>
+        <p class="mb-0 py-1 font-18">Grupos
+          <span class="ml-3">
+            <i *ngIf="this.modoPanelActividad !== this.EnumModosPanelActividad.MOSTRAR"
+            class="fas fa-1x fa-edit ml-auto"
+            (click)="this.onAbrirSelector(EnumEntidadMantenimiento.GRUPOS)">
+            </i>
+          </span>
+        </p>
       </div>
     </div>
     <div class="selector">
@@ -122,7 +154,14 @@
 
     <div>
       <div  class="d-flex cabecera align-items-center border-bottom">
-        <p class="mb-0 py-1 font-18">Asignaturas<span class="ml-3"> <i class="fas fa-1x fa-edit ml-auto"  (click)="this.onAbrirSelector(EnumTiposSelectores.ASIGNATURAS)"></i></span></p>
+        <p class="mb-0 py-1 font-18">Asignaturas
+          <span class="ml-3">
+            <i *ngIf="this.modoPanelActividad !== this.EnumModosPanelActividad.MOSTRAR"
+            class="fas fa-1x fa-edit ml-auto"
+            (click)="this.onAbrirSelector(EnumEntidadMantenimiento.ASIGNATURAS)">
+            </i>
+          </span>
+        </p>
       </div>
     </div>
 
@@ -139,37 +178,58 @@
   </div>
 
   <div class="seccionDatosActividad informacionAdicional">
-    <div class="row">
-      <div class="col-md-3">
-        <p class="font-18">Detalle: <span class="ml-3"> <i class="fas fa-1x fa-edit ml-auto"></i></span></p>
-      </div>
-      <div class="col-md-9">
-          <p class="font-bold font-18">
-            {{this.actividad?.detalleActividad}}
-          </p>
-      </div>
-    </div>
+
+    <table>
+      <tbody>
+        <tr>
+          <td>
+            <p class="font-18"> Detalle:</p>
+          </td>
+          <td>
+            <i *ngIf="this.modoPanelActividad !== this.EnumModosPanelActividad.MOSTRAR"
+            class="fas font-18 fa-edit ml-auto"
+            (click)="this.onAbrirSelector(EnumEntidadMantenimiento.DETALLE)">
+            </i>
+          </td>
+          <td>
+            <p class="font-bold font-18">
+              {{this.replicaActividad?.detalleActividad}}
+            </p>
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
   </div>
+</div>
 
 </div>
+
+
 
 <!-- ---------------------------------------------------------------
 Definición del panel modal para la selección de entidades
 --------------------------------------------------------------- -->
-<modal  *ngIf="this.actividad" #panelSelector (onOpen)="onAbrirVentanaModal()" (onClose)="onCerrarVentanaModal()" >
+<modal  *ngIf="this.replicaActividad" #panelSelector (onOpen)="onAbrirVentanaModal()" (onClose)="onCerrarVentanaModal()" >
   <!-- Cabecera -->
   <modal-header>
-     <h3>Alumnado</h3>
+     <h3>{{this.textoCabeceraPanelMantenimiento}}</h3>
   </modal-header>
 
   <!-- Cuerpo -->
   <modal-content>
 
     <div class="contenido">
-      {{this.elementoPorDefectoEnSelectorSimple?.id}}
+
+      <app-editor-texto-plano *ngIf="this.entidadMantenimiento === EnumEntidadMantenimiento.DETALLE"
+      (textoSalida)="onSeleccionarItem($event)"></app-editor-texto-plano>
+
 
       <!-- Se muestra un selector simple de tipo lista. -->
-      <app-selector-lista-simple *ngIf="this.listaSelectores && this.tipoSelector && !this.selectorMultiple"
+      <app-selector-lista-simple *ngIf="this.listaSelectores && this.entidadMantenimiento && this.modalidadMantenimiento === EnumModalidadMantenimiento.SELECCIONSIMPLE"
       [items]="this.datosSelectorActivo"
       [colorSeleccion]="'#222222'"
       [camposConfig]="{texto: 'texto', leyenda: 'leyenda' }"
@@ -180,17 +240,17 @@ Definición del panel modal para la selección de entidades
       ></app-selector-lista-simple>
 
       <!-- Se muestra un selector simple de tipo celdas -->
-      <app-selector-lista-simple *ngIf="this.actividad.alumnos && !this.tipoSelector"
-      [items]="this.actividad.alumnos"
+      <app-selector-lista-simple *ngIf="this.replicaActividad.alumnos && !this.modalidadMantenimiento && !this.entidadMantenimiento"
+      [items]="this.replicaActividad.alumnos"
       [camposConfig]="{texto: 'nombre', imagen:'foto' }"
       [modelo]="'celdas'"
       ></app-selector-lista-simple>
 
 
-      <app-selector-multiple-doble-lista *ngIf="this.listaSelectores && this.tipoSelector && this.selectorMultiple"
+      <app-selector-multiple-doble-lista *ngIf="this.listaSelectores && this.entidadMantenimiento && this.modalidadMantenimiento === EnumModalidadMantenimiento.SELECCIONMULTIPLE"
       [items]="this.datosSelectorActivo"
       [itemsPreseleccionados]="this.elementosPorDefectoEnSelectorMultiple"
-      [camposConfig]="{texto: 'texto', leyenda: 'leyenda' }"
+      [camposConfig]="{texto: 'texto', leyenda: 'leyenda', imagen:'imagen' }"
       (SeleccionItems)= "onSeleccionarItem($event)"
       ></app-selector-multiple-doble-lista>
 

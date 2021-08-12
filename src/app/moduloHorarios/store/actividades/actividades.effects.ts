@@ -1,3 +1,4 @@
+import { IActividad } from './../../models/IActividad.model';
 import { ModuloHorarioRootState } from './../index';
 import { Router } from '@angular/router';
 import { RootState } from './../../../reducers/app.reducer';
@@ -155,6 +156,47 @@ export class actividadesEffects {
                     error => {
 
                       return of(actividadesActions.cargarActividadError({ error: 'error' }))
+                    }
+
+                )
+              ) // fin pipe
+
+                }
+      ) // Fin mergeMap
+
+    ) // fin this.action$.pipe
+
+  ); // fin createeffect
+
+
+  modificarActividad$: Observable<Action> = createEffect(
+    () =>
+      this.action$.pipe(
+        ofType(actividadesActions.modificarActividad),
+
+        mergeMap(
+          action => {
+
+            this.store.dispatch(PrincipalActions.cargandoDatos({ mensaje: "Editando actividad" }));
+            return this.horarioService.modificarActividad(action.actividad.idActividad, action.actividad)
+              .pipe(
+                tap(value => {
+
+                  this.store.dispatch(PrincipalActions.cargadoDatos())
+                }),
+
+                map(
+                  actividad => {
+
+                    return actividadesActions.modificarActividadOK({ actividad: { id: actividad.idActividad, changes: { ...actividad } } });
+                  }
+
+                  ), // Fin map
+
+                  catchError(
+                    error => {
+
+                      return of(actividadesActions.modificarActividadError({ error: 'error' }))
                     }
 
                 )

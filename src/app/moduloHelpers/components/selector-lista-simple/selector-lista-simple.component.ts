@@ -26,7 +26,7 @@ export class SelectorListaSimpleComponent implements OnInit, OnChanges {
 
 
   ngOnInit() {
-    console.log('colorSeleccion: ', this.colorSeleccion);
+
   }
 
   ngOnChanges(changes: SimpleChanges) {

@@ -1,13 +1,12 @@
 
 
 .item {
-  background-color:rgb(214, 244, 255);
+  background-color:white;
   border-radius: 4px;
   white-space: nowrap;
   text-overflow: ellipsis;
   word-wrap: break-word;
-  padding-top: 2px;
-  padding-bottom: 2px;
+  padding:2px;
 
 }
 
@@ -23,7 +22,7 @@ div {
 }
 
 img {
-  width: 30px;
+
   height: 45px;
   border-radius: 3px;
 }

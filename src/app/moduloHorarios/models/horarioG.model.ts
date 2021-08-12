@@ -533,7 +533,6 @@ export class HorarioG {
 
     panelCuerpoSesionConActividades
       .attr("clip-path", (d: any) => {
-        //console.log('rectangulo recortador: ', 'rectanguloRecortador' + d.sesion.idSesion);
         return `url(#${'rectanguloRecortador' + d.sesion.idSesion})`
       })
 
@@ -650,9 +649,6 @@ export class HorarioG {
   AnyadirContenidoPanelSeccion(panelTextoSeccion: any, listaCadenas: string[]) {
 
     const parentBBox = panelTextoSeccion.node().parentNode.getBBox();
-
-    console.log('parentBBox: ', parentBBox);
-
     const anchoTexto = parentBBox.height / 30;
     const anchoSeparacionTexto = anchoTexto / 3;
 

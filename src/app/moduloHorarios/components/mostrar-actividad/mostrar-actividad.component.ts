@@ -2,11 +2,8 @@ import { Grupo } from './../../models/grupo.model';
 import { Docente } from './../../models/docente.model';
 import { Dependencia } from './../../models/dependencia.model';
 import { PeriodoVigencia } from './../../models/peridoVigencia';
-import { Plantilla } from './../../models/plantilla.model';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { Sesion } from './../../models/sesion';
-import { EnumTiposSelectores } from './../../models/enumerados';
-import { filter } from 'rxjs/operators';
+import { filter, windowWhen } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HorarioService } from './../../services/horario.service';
 import { FormBuilder } from '@angular/forms';
@@ -19,13 +16,14 @@ import { EntidadHorario } from './../../models/entidadHorario.model';
 import { Actividad } from './../../models/actividad.model';
 import { Component, OnInit, Input, ElementRef } from '@angular/core';
 import { ViewChild, ViewEncapsulation } from '@angular/core';
+
 import * as FromEntidadesHorarioSelectors from '../../store/entidadesHorario/entidadesHorario.selectors';
 import * as FromEntidadesHorarioActions from '../../store/entidadesHorario/entidadesHorario.actions';
-
 import * as FromActividadesSelectors from '../../store/actividades/actividades.selectors';
 import * as FromActividadesActions from '../../store/actividades/actividades.actions';
 import * as FromEnumerados from '../../models/enumerados';
-import { ThrowStmt } from '@angular/compiler';
+import { stringify } from '@angular/compiler/src/util';
+
 
 @Component({
   selector: 'app-mostrar-actividad',
@@ -37,7 +35,9 @@ export class MostrarActividadComponent implements OnInit {
   //Esto es un artificio para poder disponer de tipos de enumerados en la plantilla
   //No es posible sin este truco.
   EnumModosPanelActividad = FromEnumerados.EnumModosPanelActividad;
-  EnumTiposSelectores = FromEnumerados.EnumTiposSelectores;
+  EnumEntidadMantenimiento = EnumEntidadMantenimiento;
+  EnumModalidadMantenimiento = EnumModalidadMantenimiento;
+
 
   @Input() actividad: Actividad;
   // Se trabaja con la réplica por dos motivos
@@ -45,10 +45,12 @@ export class MostrarActividadComponent implements OnInit {
   // 2) Se quiere ofrecer la opción de "cancelar", para lo que sería necesario disponer
   // de los valores iniciales.
   replicaActividad: Actividad;
+  @Input() modoPanelActividad: FromEnumerados.EnumModosPanelActividad = FromEnumerados.EnumModosPanelActividad.MOSTRAR;
 
   // Registramos el modo en el que estamos trabajando.
   // Hya comportamientos diferenciados en báse a este parámetro
-  @Input() modoPanelActividad: FromEnumerados.EnumModosPanelActividad = FromEnumerados.EnumModosPanelActividad.MOSTRAR;
+
+
 
 
 
@@ -56,7 +58,8 @@ export class MostrarActividadComponent implements OnInit {
   idActividad: string;
 
     // Los selectores comparten el mismo control. En función de este valor se carga distinto contenido
-  tipoSelector: FromEnumerados.EnumTiposSelectores = FromEnumerados.EnumTiposSelectores.PERIODOSVIGENCIA;
+  entidadMantenimiento: EnumEntidadMantenimiento = EnumEntidadMantenimiento.PERIODOSVIGENCIA;
+  modalidadMantenimiento: EnumModalidadMantenimiento = null;
   listaSelectores: ListasSelectores;
 
   datosSelectorActivo: any[];  // Contiene la colección de elementos que llena el selector.
@@ -64,6 +67,9 @@ export class MostrarActividadComponent implements OnInit {
   elementosPorDefectoEnSelectorMultiple: any;
   elementosSeleccionados: any = [];
   selectorMultiple: boolean = false;
+  textoCabeceraPanelMantenimiento = '';
+  returnUrl: string;
+
 
   @ViewChild("panelSelector") panelModal: ElementRef;
   private modalRef: any;
@@ -75,6 +81,15 @@ export class MostrarActividadComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private modalService: ModalManager) {
+
+      this.route.queryParams
+      .subscribe(params => {
+        if (params.returnUrl) {
+            this.returnUrl = params['returnUrl']
+          }
+      });
+
+
     }
 
   ngOnInit(): void {
@@ -92,13 +107,17 @@ export class MostrarActividadComponent implements OnInit {
             case 'editarActividad':
               this.modoPanelActividad = FromEnumerados.EnumModosPanelActividad.EDITAR;
               this.cargarActividadPorURI();
-
-              //this.store.dispatch()
             break;
 
             case 'nuevaActividad':
               this.modoPanelActividad = FromEnumerados.EnumModosPanelActividad.CREAR;
-               break;
+              this.replicaActividad = new Actividad();
+              this.replicaActividad.docentes = [];
+              this.replicaActividad.grupos = [];
+              this.replicaActividad.asignaturas = [];
+              this.replicaActividad.alumnos = [];
+
+            break;
 
             default: // Se ha invocado en modo modal desde index
               this.modoPanelActividad = FromEnumerados.EnumModosPanelActividad.MOSTRAR;
@@ -110,22 +129,24 @@ export class MostrarActividadComponent implements OnInit {
       });
 
 
+
+
+
     this.gestionarSubscripcionesStore()
 
   }
 
-
   //--------------------------------------------------
   // Métodos privados
   //--------------------------------------------------
-  private actualizarDatosSelectorActivo( tipoSelector: FromEnumerados.EnumTiposSelectores) {
-    this.tipoSelector = tipoSelector;
-    switch (tipoSelector) {
+  private actualizarentidadMantenimiento( entidadMantenimiento: EnumEntidadMantenimiento) {
+    this.entidadMantenimiento = entidadMantenimiento;
+    switch (entidadMantenimiento) {
 
-      case FromEnumerados.EnumTiposSelectores.PERIODOSVIGENCIA:
+      case EnumEntidadMantenimiento.PERIODOSVIGENCIA:
 
+        this.modalidadMantenimiento = EnumModalidadMantenimiento.SELECCIONSIMPLE;
         this.selectorMultiple = false;
-
         this.datosSelectorActivo = this.listaSelectores.periodosVigencia
           .map(peridoVigencia => {
             return {
@@ -135,14 +156,15 @@ export class MostrarActividadComponent implements OnInit {
             }
           });
 
-          this.elementoPorDefectoEnSelectorSimple = this.datosSelectorActivo.filter(periodoVigencia => this.replicaActividad.periodoVigencia.idPeriodoVigencia === periodoVigencia.id)[0];
-
+        this.elementoPorDefectoEnSelectorSimple = this.replicaActividad.periodoVigencia? this.datosSelectorActivo.filter(periodoVigencia => this.replicaActividad.periodoVigencia.idPeriodoVigencia === periodoVigencia.id)[0]: undefined;
+        this.textoCabeceraPanelMantenimiento = "Selector de periodos de vigencia";
 
       break;
 
-      case FromEnumerados.EnumTiposSelectores.PLANTILLAS:
+      case EnumEntidadMantenimiento.PLANTILLAS:
 
         this.selectorMultiple = false;
+        this.modalidadMantenimiento = EnumModalidadMantenimiento.SELECCIONSIMPLE;
 
         var sesiones: {id: string, texto: string}[] = [];
 
@@ -164,13 +186,15 @@ export class MostrarActividadComponent implements OnInit {
 
 
         this.datosSelectorActivo = sesiones;
-        this.elementoPorDefectoEnSelectorSimple = sesiones.filter( sesion => sesion.id === this.replicaActividad.sesion.idSesion)[0]
+        this.elementoPorDefectoEnSelectorSimple = this.replicaActividad.sesion? sesiones.filter(sesion => sesion.id === this.replicaActividad.sesion.idSesion)[0]:undefined;
+        this.textoCabeceraPanelMantenimiento = "Selector de sesiones";
 
        break;
 
-      case FromEnumerados.EnumTiposSelectores.DEPENDENCIAS:
+      case EnumEntidadMantenimiento.DEPENDENCIAS:
 
         this.selectorMultiple = false;
+        this.modalidadMantenimiento = EnumModalidadMantenimiento.SELECCIONSIMPLE
 
           this.datosSelectorActivo = this.listaSelectores.dependencias
             .map(dependencia => {
@@ -181,11 +205,15 @@ export class MostrarActividadComponent implements OnInit {
               }
             });
 
-        this.elementoPorDefectoEnSelectorSimple = this.datosSelectorActivo.filter(dependencia => this.replicaActividad.dependencia.idDependencia === dependencia.id)[0];
+        this.elementoPorDefectoEnSelectorSimple = this.replicaActividad.dependencia? this.datosSelectorActivo.filter(dependencia => this.replicaActividad.dependencia.idDependencia === dependencia.id)[0]: undefined;
+        this.textoCabeceraPanelMantenimiento = "Selector de dependencias";
       break;
 
-      case FromEnumerados.EnumTiposSelectores.DOCENTES:
+      case EnumEntidadMantenimiento.DOCENTES:
 
+
+
+        this.modalidadMantenimiento = EnumModalidadMantenimiento.SELECCIONMULTIPLE;
         this.selectorMultiple = true;
 
         this.datosSelectorActivo = this.listaSelectores.docentes
@@ -193,17 +221,19 @@ export class MostrarActividadComponent implements OnInit {
             return {
               id: docente.idDocente,
               texto: docente.nombre,
-              leyenda: docente.alias
+              leyenda: docente.alias,
+              imagen: docente.foto
             }
           });
 
         this.elementosPorDefectoEnSelectorMultiple = this.datosSelectorActivo.filter(docente => this.replicaActividad.docentes.some(docenteActividad => docenteActividad.idDocente === docente.id));
-
+        this.textoCabeceraPanelMantenimiento = "Selector de docentes";
 
         break;
 
-        case FromEnumerados.EnumTiposSelectores.GRUPOS:
+      case EnumEntidadMantenimiento.GRUPOS:
 
+        this.modalidadMantenimiento = EnumModalidadMantenimiento.SELECCIONMULTIPLE;
           this.selectorMultiple = true;
 
           this.datosSelectorActivo = this.listaSelectores.grupos
@@ -216,10 +246,11 @@ export class MostrarActividadComponent implements OnInit {
             });
 
           this.elementosPorDefectoEnSelectorMultiple = this.datosSelectorActivo.filter(grupo => this.replicaActividad.grupos.some(grupoActividad => grupoActividad.idGrupo === grupo.id));
-
+          this.textoCabeceraPanelMantenimiento = "Selector de grupos";
         break;
 
-        case FromEnumerados.EnumTiposSelectores.ASIGNATURAS:
+      case EnumEntidadMantenimiento.ASIGNATURAS:
+        this.modalidadMantenimiento = EnumModalidadMantenimiento.SELECCIONMULTIPLE;
 
           this.selectorMultiple = true;
 
@@ -233,14 +264,15 @@ export class MostrarActividadComponent implements OnInit {
             });
 
           this.elementosPorDefectoEnSelectorMultiple = this.datosSelectorActivo.filter(asignatura => this.replicaActividad.asignaturas.some(asignaturaActividad => asignaturaActividad.idAsignatura === asignatura.id));
-
+          this.textoCabeceraPanelMantenimiento = "Selector de asignaturas";
         break;
 
+      case EnumEntidadMantenimiento.DETALLE:
+        this.modalidadMantenimiento = EnumModalidadMantenimiento.MODIFICARTEXTOLIBRE;
 
-
-
-
-
+          this.selectorMultiple = false;
+          this.textoCabeceraPanelMantenimiento = "Detalle de la actividad";
+        break;
 
       default:
       break;
@@ -260,9 +292,8 @@ export class MostrarActividadComponent implements OnInit {
         )
         .subscribe(
           actividadActiva => {
-            console.log(actividadActiva);
             this.actividad = actividadActiva;
-            this.replicaActividad = JSON.parse(JSON.stringify(this.actividad));;
+            this.replicaActividad = JSON.parse(JSON.stringify(this.actividad));
           }
         );
 
@@ -270,6 +301,8 @@ export class MostrarActividadComponent implements OnInit {
     }
   }
   private gestionarSubscripcionesStore() {
+
+
     this.store.pipe(select(FromEntidadesHorarioSelectors.selectListaSelectores))
       .subscribe(
         listaSelectores =>
@@ -284,17 +317,19 @@ export class MostrarActividadComponent implements OnInit {
       this.store.dispatch(FromEntidadesHorarioActions.cargarListaSelectores());
     }
 
-  }
-  private convertirItemSeleccionadoEnEntidad(): Sesion | PeriodoVigencia | Dependencia | Docente[] | Grupo[] | Asignatura[] {
-    switch (this.tipoSelector) {
 
-      case FromEnumerados.EnumTiposSelectores.PERIODOSVIGENCIA:
+
+  }
+  private convertirItemSeleccionadoEnEntidad(): Sesion | PeriodoVigencia | Dependencia | Docente[] | Grupo[] | Asignatura[] | string {
+    switch (this.entidadMantenimiento) {
+
+      case EnumEntidadMantenimiento.PERIODOSVIGENCIA:
 
         return this.listaSelectores.periodosVigencia
           .filter(periodoVigenca => periodoVigenca.idPeriodoVigencia === this.elementosSeleccionados[0].id)[0];
       break;
 
-      case FromEnumerados.EnumTiposSelectores.PLANTILLAS:
+      case EnumEntidadMantenimiento.PLANTILLAS:
 
         var sesiones: Sesion[]=[];
         this.listaSelectores.plantillas
@@ -308,32 +343,37 @@ export class MostrarActividadComponent implements OnInit {
 
       break;
 
-      case FromEnumerados.EnumTiposSelectores.DEPENDENCIAS:
+      case EnumEntidadMantenimiento.DEPENDENCIAS:
 
         return this.listaSelectores.dependencias
           .filter(dependencia => dependencia.idDependencia === this.elementosSeleccionados[0].id)[0];
         break;
 
-      case FromEnumerados.EnumTiposSelectores.DOCENTES:
+      case EnumEntidadMantenimiento.DOCENTES:
 
         return this.listaSelectores.docentes
           .filter(docente => this.elementosSeleccionados.some((docenteSeleccionado:any) => docenteSeleccionado.id === docente.idDocente));
 
         break;
 
-      case FromEnumerados.EnumTiposSelectores.GRUPOS:
+      case EnumEntidadMantenimiento.GRUPOS:
 
         return this.listaSelectores.grupos
           .filter(grupo => this.elementosSeleccionados.some((grupoSeleccionado:any) => grupoSeleccionado.id === grupo.idGrupo));
 
         break;
 
-      case FromEnumerados.EnumTiposSelectores.ASIGNATURAS:
+      case EnumEntidadMantenimiento.ASIGNATURAS:
 
         return this.listaSelectores.asignaturas
           .filter(asignatura => this.elementosSeleccionados.some((asignaturaSeleccionada:any) => asignaturaSeleccionada.id === asignatura.idAsignatura));
 
-      break;
+        break;
+
+        case EnumEntidadMantenimiento.DETALLE:
+          return this.elementosSeleccionados[0] as string;
+
+        break;
 
       default:
 
@@ -387,23 +427,15 @@ export class MostrarActividadComponent implements OnInit {
   // ------------------------------------------
 
   // Responde a la acción de solicitur de apertura de cualquier selector
-  onAbrirSelector(tipoSelector: FromEnumerados.EnumTiposSelectores) {
-    this.actualizarDatosSelectorActivo(tipoSelector);
+  onAbrirSelector(entidadMantenimiento: EnumEntidadMantenimiento) {
+    this.actualizarentidadMantenimiento(entidadMantenimiento);
     this.AbrirVentanaModal();
+
   }
 
   onMostrarAlumnos() {
-    this.tipoSelector = null;
-    console.log(this.actividad.alumnos.map(
-      alumno => {
-        return { nombre: alumno.nombre, apellido1: alumno.primerApellido , apellido2: alumno.segundoApellido
-      }
-        }
-
-    ))
+    this.entidadMantenimiento = null;
     this.AbrirVentanaModal();
-
-
   }
   // Abre la ventana modal de selectores asociados
   AbrirVentanaModal() {
@@ -412,11 +444,12 @@ export class MostrarActividadComponent implements OnInit {
      size: "lg",
      hideCloseButton: true,
      centered: true,
-     backdrop: true,
+     backdrop: 'static',
      animation: true,
      keyboard: false,
      closeOnOutsideClick: true,
      backdropClass: "modal-backdrop",
+
    });
 
   }
@@ -433,31 +466,34 @@ export class MostrarActividadComponent implements OnInit {
 
   // Responde al botón aceptar de los selectores
   onAceptarVentanaModal() {
-    switch (this.tipoSelector) {
+    switch (this.entidadMantenimiento) {
 
-      case FromEnumerados.EnumTiposSelectores.PLANTILLAS:
-        this.replicaActividad.sesion = this.convertirItemSeleccionadoEnEntidad() as Sesion;
+      case EnumEntidadMantenimiento.PLANTILLAS:
+        this.replicaActividad.sesion =  this.convertirItemSeleccionadoEnEntidad() as Sesion;
       break;
 
-      case FromEnumerados.EnumTiposSelectores.PERIODOSVIGENCIA:
+      case EnumEntidadMantenimiento.PERIODOSVIGENCIA:
         this.replicaActividad.periodoVigencia = this.convertirItemSeleccionadoEnEntidad() as PeriodoVigencia;
       break;
 
-      case FromEnumerados.EnumTiposSelectores.DEPENDENCIAS:
-        this.replicaActividad.dependencia = this.convertirItemSeleccionadoEnEntidad() as Dependencia;
+      case EnumEntidadMantenimiento.DEPENDENCIAS:
+        this.replicaActividad.dependencia =     this.convertirItemSeleccionadoEnEntidad() as Dependencia;
       break;
 
-      case FromEnumerados.EnumTiposSelectores.DOCENTES:
+      case EnumEntidadMantenimiento.DOCENTES:
         this.replicaActividad.docentes = this.convertirItemSeleccionadoEnEntidad() as Docente[];
       break;
 
-      case FromEnumerados.EnumTiposSelectores.GRUPOS:
+      case EnumEntidadMantenimiento.GRUPOS:
         this.replicaActividad.grupos = this.convertirItemSeleccionadoEnEntidad() as Grupo[];
         break;
 
-      case FromEnumerados.EnumTiposSelectores.ASIGNATURAS:
+      case EnumEntidadMantenimiento.ASIGNATURAS:
         this.replicaActividad.asignaturas = this.convertirItemSeleccionadoEnEntidad() as Asignatura[];
-        console.log(this.replicaActividad.asignaturas);
+      break;
+
+      case EnumEntidadMantenimiento.DETALLE:
+        this.replicaActividad.detalleActividad = this.convertirItemSeleccionadoEnEntidad() as string;
       break;
 
 
@@ -472,6 +508,59 @@ export class MostrarActividadComponent implements OnInit {
     this.onCerrarVentanaModal();
   }
 
+
+  onCancelarEdicionCreacionActividad()
+  {
+    this.router.navigateByUrl(this.returnUrl);
+
+  }
+
+  onAceptarEdicionCreacionActividad() {
+    switch (this.modoPanelActividad) {
+      case this.EnumModosPanelActividad.EDITAR:
+        this.store
+          .pipe(
+            select(FromActividadesSelectors.selectCreandoModificandoActividad),
+            filter(creandoModificandoActividad => !creandoModificandoActividad)
+          )
+          .subscribe(
+            creandoModificandoActividad => {
+
+              if (this.returnUrl) {
+                this.router.navigateByUrl(this.returnUrl);
+              }
+              else {
+                this.router.navigateByUrl('horarios/index');
+              }
+
+            }
+          );
+
+        this.store.dispatch(FromActividadesActions.modificarActividad({ actividad: this.replicaActividad }));
+        break;
+
+      default:
+        break;
+    }
+  }
+}
+
+
+enum EnumEntidadMantenimiento {
+  TIPOSACTIVIDADES,
+  PERIODOSVIGENCIA,
+  PLANTILLAS,
+  DEPENDENCIAS,
+  DOCENTES,
+  GRUPOS,
+  ASIGNATURAS,
+  DETALLE
+}
+
+enum EnumModalidadMantenimiento {
+  SELECCIONMULTIPLE,
+  SELECCIONSIMPLE,
+  MODIFICARTEXTOLIBRE,
 }
 
 

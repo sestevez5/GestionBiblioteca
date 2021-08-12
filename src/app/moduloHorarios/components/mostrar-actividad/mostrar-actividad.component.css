@@ -1,3 +1,13 @@
+.panelActividad {
+  height: 100%;
+  padding: 10px;
+  background-color: white;
+}
+
+.cabeceraActividad {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
 .datosActividad {
   margin: 0px;
   height: 100%;
@@ -7,8 +17,6 @@
   grid-template-rows: 20% 5% 60% 15%;
   gap: 8px;
   overflow-y:initial;
-  background-color: white;
-  padding: 10px;
 }
 
 td {
@@ -112,4 +120,17 @@ p {
 
 .contenido {
   height: 40vh;
+}
+
+table {
+  height: 100%;
+
+
+
+}
+
+td {
+
+  vertical-align: top;
+
 }

@@ -83,14 +83,13 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   onLogin() {
     const credenciales = this.form.value;
-    console.log(credenciales);
     this.store.dispatch(AuthActions.loging({ email: credenciales.email, password: credenciales.password }));
   }
 
   onRegistrarse() {
 
     this.router.navigate(['/crearUsuario',{ replaceUrl: true }],
-    ).then(r => console.log(r)).catch(error => console.log(error));
+    )
   }
 
 }

@@ -71,7 +71,7 @@ export class NuevaEditarActividadComponent implements OnInit, OnDestroy {
         )
         .subscribe(
           actividadActiva => {
-            console.log(actividadActiva);
+
             this.actividad = actividadActiva;
             this.construirFormulario(this.actividad)
           }
@@ -114,7 +114,6 @@ export class NuevaEditarActividadComponent implements OnInit, OnDestroy {
       }
     );
 
-    console.log(this.form);
 
   }
 
@@ -145,7 +144,6 @@ entidadesHorarioGrupos(): EntidadHorario[] {
   // ------------------------------------------
 
   AbrirVentanaModal() {
-    console.log('abriendo ventana modal');
 
     this.modalRef = this.modalService.open(this.panelModal, {
      size: "xs",

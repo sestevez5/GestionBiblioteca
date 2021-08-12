@@ -130,7 +130,6 @@ export class RegistroComponent implements OnInit, OnDestroy {
           .subscribe(
 
             usuarioActivo => {
-              console.log('modificando')
 
                   if (this.returnUrl) {
                     this.router.navigateByUrl(this.returnUrl);

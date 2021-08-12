@@ -46,8 +46,7 @@ export class UsuariosEffects {
                   usuario => {
                     this.store.dispatch(PrincipalActions.cargadoDatos());
                     this.router.navigateByUrl('/usuarios');
-                    console.log('usuariocreado:', usuario);
-                    return AuthActions.crearUsuarioOK({ usuario: usuario });
+                       return AuthActions.crearUsuarioOK({ usuario: usuario });
 
                   }
 
@@ -110,7 +109,6 @@ export class UsuariosEffects {
 
                   usuarios => {
                     this.store.dispatch(PrincipalActions.cargadoDatos());
-                    console.log('usuarios:', usuarios, action.fou);
                     return AuthActions.cargarUsuariosOK({ usuarios: usuarios });
                   }
 
@@ -180,9 +178,7 @@ export class UsuariosEffects {
 
         switchMap(
           action => {
-            console.log('effect modificarusuario');
-
-            this.store.dispatch(PrincipalActions.cargandoDatos({ mensaje: "cargando" }));
+               this.store.dispatch(PrincipalActions.cargandoDatos({ mensaje: "cargando" }));
             return this.authService.ModificarUsuario(action.usuario)
               .pipe(
 

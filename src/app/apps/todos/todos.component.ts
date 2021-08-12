@@ -93,11 +93,7 @@ export class TodosComponent implements OnInit {
     }
 
     deleteTodo(id: number) {
-        console.log(id);
         this.todos.splice(id, 1);
-
-
-
     }
 
     remainingList(): number {

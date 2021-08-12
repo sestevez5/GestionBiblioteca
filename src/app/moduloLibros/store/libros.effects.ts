@@ -89,7 +89,6 @@ export class LibrosEffects {
     () =>
       this.action$.pipe(
         ofType(LibrosActions.cargarLibros),
-        tap(z=>console.log('hemos llegado')),
 
         switchMap(
           action => {

@@ -41,7 +41,6 @@ export class UsuarioAutenticadoGuard implements CanActivate {
           }
           else {
             const c = 'login?returnUrl=' + state.url;
-            console.log(c);
 
             this.router.navigateByUrl('login?returnUrl='+state.url+'&x=2');
 

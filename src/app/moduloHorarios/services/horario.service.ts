@@ -7,7 +7,7 @@ import { filter, first, mergeMap } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 
 // rxjs
-import { Observable, BehaviorSubject, combineLatest, Observer, Subject } from 'rxjs'
+import { Observable, BehaviorSubject, combineLatest, Observer, Subject, from  } from 'rxjs'
 
 // firebase
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
@@ -223,7 +223,6 @@ export class HorarioService {
 
     return plantilla$;
   }
-
   obtenerActividad(idActividad: string): Observable<Actividad> {
 
     const IActividad$ = new Subject<IActividad>();
@@ -436,7 +435,6 @@ export class HorarioService {
         )
     );
   };
-
   obtenerListasSelectores(): Observable<ListasSelectores> {
 
     const listasSelectores$ = new BehaviorSubject<ListasSelectores>(null);
@@ -457,12 +455,13 @@ export class HorarioService {
 
     return listasSelectores$;
   }
-
-
   obtenerDiaSemana(codigo: string): DiaSemana | undefined
   {
     const diaSemana = this.diasSemana.filter(ds => ds.codigo === codigo);
     return diaSemana[0] ? diaSemana[0] : undefined;
+  }
+  modificarActividad(idActividad: string, actividad: Actividad): Observable<any> {
+    return from(this.fireBaseDB.collection('actividades').doc(idActividad).update(this.convertirActividadEnIActividad(actividad)));
   }
 
 
@@ -572,7 +571,6 @@ export class HorarioService {
     return entidadHorario$;
 
   }
-
   private convertirCadena8aracteres(cadena: string): Date {
 
     const anyo: string = cadena.substring(0, 4);
@@ -580,6 +578,22 @@ export class HorarioService {
     const dia: string = cadena.substring(6, 8);
 
     return new Date(parseInt(anyo), parseInt(mes), parseInt(dia));
+  }
+  private convertirActividadEnIActividad(actividad: Actividad): IActividad {
+
+    return {
+
+      idActividad: actividad.idActividad,
+      idSesion: actividad.sesion?.idSesion,
+      detalleActividad: actividad.detalleActividad,
+      grupos: actividad.grupos?.map( grupo => grupo.idGrupo),
+      docentes: actividad.docentes?.map( docente => docente.idDocente),
+      asignaturas: actividad.asignaturas?.map( asignatura => asignatura.idAsignatura),
+      dependencia: actividad.dependencia?.idDependencia,
+      idPeriodoVigencia: actividad.periodoVigencia?.idPeriodoVigencia
+
+    }
+
   }
 
 

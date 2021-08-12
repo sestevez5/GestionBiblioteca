@@ -136,9 +136,7 @@ export class NuevoEditarLibroComponent implements OnInit, OnDestroy {
 
       case 'Modificar': {
 
-        console.log('libro actual: ', libroActual);
-
-        this.libroActivo = this.store
+         this.libroActivo = this.store
           .pipe(
             select(FromLibrosSelectors.selectProcesandoAccion),
             filter(procesandoAccion => !procesandoAccion)

@@ -13,7 +13,7 @@ export class NgxChartComponent {
   dateData: any[];
   dateDataWithRange: any[];
 
-  
+
   range = false;
   // options
   showXAxis = true;
@@ -66,10 +66,10 @@ export class NgxChartComponent {
   curve = shape.curveLinear;
 
   select(data:string) {
-    console.log('Item clicked', data);
+
   }
 
   onLegendLabelClick(entry:string) {
-    console.log('Legend clicked', entry);
+  
   }
 }

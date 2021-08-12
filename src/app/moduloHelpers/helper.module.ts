@@ -20,6 +20,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { SelectorListaSimpleComponent } from './components/selector-lista-simple/selector-lista-simple.component';
 import { FormsModule } from '@angular/forms';
 import { CadenabusquedaComponent } from './components/cadenabusqueda/cadenabusqueda.component';
+import { EditorTextoPlanoComponent } from './components/editor-texto-plano/editor-texto-plano.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { CadenabusquedaComponent } from './components/cadenabusqueda/cadenabusqu
     ItemSelectorMultipleDobleListaComponent,
     ItemSelectorListaSimpleComponent,
     SelectorListaSimpleComponent,
-    CadenabusquedaComponent
+    CadenabusquedaComponent,
+    EditorTextoPlanoComponent
   ],
   imports: [
     CommonModule,
@@ -52,7 +54,7 @@ import { CadenabusquedaComponent } from './components/cadenabusqueda/cadenabusqu
     ObtenerImagenComponent,
     ConfirmacionAccionUsuarioComponent,
     SelectorMultipleDobleListaComponent,
-
+    EditorTextoPlanoComponent,
     SelectorListaSimpleComponent,
     CadenabusquedaComponent
   ]

@@ -116,7 +116,7 @@ export const actividadesReducer = createReducer(
   actividadesActions.modificarActividad,
   (state, action) => {
     return {
-      ...state, actividadActiva: action.actividad };
+      ...state, actividadActiva: action.actividad, creandoModificandoActividad: true };
   }
   ),
 
@@ -124,7 +124,8 @@ export const actividadesReducer = createReducer(
   on(
     actividadesActions.modificarActividadOK,
     (state, action) => {
-      return adapter.updateOne(action.actividad, { ...state, actividadActiva: undefined  })
+      return adapter.updateOne(action.actividad, { ...state, creandoModificandoActividad: false });
+
 
     }
   ),
@@ -133,7 +134,7 @@ export const actividadesReducer = createReducer(
   on(
     actividadesActions.modificarActividadError,
     (state, action) => {
-      return { ...state, actividadActiva: undefined };
+      return { ...state, creandoModificandoActividad: false};
     }
   ),
 

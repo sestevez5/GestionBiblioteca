@@ -55,7 +55,6 @@ export class DemoSelectorMultipleDobleListaComponent implements OnInit {
   }
 
   onItemsSeleccionados(librosSeleccionados: any[]) {
-    console.log(librosSeleccionados);
     this.librosSeleccionados = librosSeleccionados;
 
   }

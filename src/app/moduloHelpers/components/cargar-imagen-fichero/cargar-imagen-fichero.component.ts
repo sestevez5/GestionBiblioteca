@@ -42,7 +42,6 @@ export class CargarImagenComponent {
 
 
     if (file.type === 'image/png' || file.type === 'image/jpeg') {
-      console.log(file.type);
       const reader: FileReader = new FileReader();
       reader.readAsBinaryString(file);
       reader.onloadend = this.ConvertirImagenEnBase64.bind(this);

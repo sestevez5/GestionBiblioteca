@@ -23,8 +23,7 @@ export class SelectorMultipleDobleListaComponent implements OnInit, OnChanges {
   constructor() { }
 
   ngOnChanges() {
-    console.log('change');
-    this.itemsPreseleccionados?.forEach(itemPreseleccionado => {
+   this.itemsPreseleccionados?.forEach(itemPreseleccionado => {
 
       this.items.filter(item => item === itemPreseleccionado).forEach(
         item => this.onSeleccionar(item)
@@ -35,16 +34,9 @@ export class SelectorMultipleDobleListaComponent implements OnInit, OnChanges {
 
   }
   ngOnInit(): void {
-
-    console.log('init docentes');
-
     this.items?.forEach(item => {
       return { ...item, seleccionado: false, marcado: false }
     });
-
-
-
-    console.log('items seleccionados:', this.itemsSeleccionados());
   }
 
   onSeleccionar(item: any) {

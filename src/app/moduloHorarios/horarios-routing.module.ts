@@ -17,7 +17,7 @@ const routes: Routes = [
       { path: 'index', component: GestionHorarioComponent },
       { path: 'mostrarActividad/:id', component: MostrarActividadComponent },
       { path: 'editarActividad/:id', component: MostrarActividadComponent },
-      { path: 'nuevaActividad/:id', component: MostrarActividadComponent },
+      { path: 'nuevaActividad', component: MostrarActividadComponent },
 
     ]
   },

@@ -56,7 +56,7 @@ export class Parametros {
 
     actividades: {
       tamanyoTexto: '12',
-      porcentajeZonaSeleccionActividad: 3
+      porcentajeZonaSeleccionActividad: 6
     }
 
   }

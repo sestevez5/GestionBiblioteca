@@ -3,6 +3,7 @@ import { initialActividadesState } from './actividades.state';
 import { Action, createReducer, on } from '@ngrx/store';
 import * as actividadesActions from './actividades.actions';
 import { ACTIONS_SUBJECT_PROVIDERS } from '@ngrx/store/src/actions_subject';
+import { ScaleControlStyle } from '@agm/core';
 
 
 
@@ -24,9 +25,14 @@ export const actividadesReducer = createReducer(
   on(
     actividadesActions.crearActividadOK,
     (state, action) => {
+
+      console.log('antes');
+
       if (!action.actividad) {
         return state
       }
+
+
       return adapter.addOne(action.actividad, { ...state });
 
     }

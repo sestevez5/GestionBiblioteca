@@ -1,6 +1,6 @@
 <div class="panelActividad">
   <div class="cabeceraActividad" style="display: flex;"*ngIf="this.modoPanelActividad !== this.EnumModosPanelActividad.MOSTRAR" >
-      <h1>Editar actividad</h1>
+    <h1>{{this.modoPanelActividad === this.EnumModosPanelActividad.EDITAR?'editar':'Nueva'}} actividad</h1>
     <button _ngcontent-cls-c164="" type="button" class="btn btn-sm btn-secondary mr-3 ml-auto" style="height: min-content; align-self: center; text-align: right;" (click)="onAceptarEdicionCreacionActividad()">Aceptar</button>
     <button _ngcontent-cls-c164="" type="button" class="btn btn-sm btn-secondary" style="height: min-content; align-self: center;" (click)="onCancelarEdicionCreacionActividad()">Cancelar</button>
   </div>

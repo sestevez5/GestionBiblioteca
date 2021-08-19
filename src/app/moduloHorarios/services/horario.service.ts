@@ -461,7 +461,47 @@ export class HorarioService {
     return diaSemana[0] ? diaSemana[0] : undefined;
   }
   modificarActividad(idActividad: string, actividad: Actividad): Observable<any> {
-    return from(this.fireBaseDB.collection('actividades').doc(idActividad).update(this.convertirActividadEnIActividad(actividad)));
+
+    const iActividad: IActividad = this.convertirActividadEnIActividad(actividad);
+
+    delete iActividad['idActividad'];
+
+    iActividad.detalleActividad = iActividad.detalleActividad ? actividad.detalleActividad : '';
+    iActividad.dependencia = iActividad.dependencia ? iActividad.dependencia : '';
+    iActividad.idPeriodoVigencia = iActividad.idPeriodoVigencia ? iActividad.idPeriodoVigencia : '';
+    return from(this.fireBaseDB.collection('actividades').doc(idActividad).update(iActividad))
+      .pipe(map(value => actividad));
+  }
+
+
+
+  crearActividad(actividad: Actividad): Observable<any> {
+
+
+
+    const iActividad: IActividad = this.convertirActividadEnIActividad(actividad);
+
+    delete iActividad['idActividad'];
+
+    iActividad.detalleActividad = iActividad.detalleActividad ? actividad.detalleActividad : '';
+    iActividad.dependencia = iActividad.dependencia ? iActividad.dependencia : '';
+    iActividad.idPeriodoVigencia = iActividad.idPeriodoVigencia ? iActividad.idPeriodoVigencia : '';
+
+    return from(this.fireBaseDB.collection('actividades').add(iActividad))
+      .pipe(map(reference => {
+
+        console.log({ ...actividad, idActividad: reference.id })
+
+        return { ...actividad, idActividad: reference.id };
+    } ));
+
+
+
+
+  }
+
+  eliminarActividad(idActividad:string): Observable<any> {
+    return from(this.fireBaseDB.collection('actividades').doc(idActividad).delete());
   }
 
 

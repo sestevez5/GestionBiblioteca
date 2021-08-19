@@ -69,6 +69,7 @@ export class MostrarActividadComponent implements OnInit {
   selectorMultiple: boolean = false;
   textoCabeceraPanelMantenimiento = '';
   returnUrl: string;
+  sesionNuevaActividad: string;
 
 
   @ViewChild("panelSelector") panelModal: ElementRef;
@@ -86,7 +87,13 @@ export class MostrarActividadComponent implements OnInit {
       .subscribe(params => {
         if (params.returnUrl) {
             this.returnUrl = params['returnUrl']
-          }
+        }
+
+        if (params.idSesion) {
+          this.sesionNuevaActividad= params['idSesion']
+      }
+
+
       });
 
 
@@ -111,7 +118,12 @@ export class MostrarActividadComponent implements OnInit {
 
             case 'nuevaActividad':
               this.modoPanelActividad = FromEnumerados.EnumModosPanelActividad.CREAR;
+
+
               this.replicaActividad = new Actividad();
+              this.replicaActividad.detalleActividad = '';
+              this.replicaActividad.dependencia = null;
+
               this.replicaActividad.docentes = [];
               this.replicaActividad.grupos = [];
               this.replicaActividad.asignaturas = [];
@@ -307,7 +319,25 @@ export class MostrarActividadComponent implements OnInit {
       .subscribe(
         listaSelectores =>
         {
-          if (listaSelectores)   this.listaSelectores = listaSelectores;
+          if (listaSelectores) {
+            this.listaSelectores = listaSelectores;
+
+            if (this.modoPanelActividad === this.EnumModosPanelActividad.CREAR && this.sesionNuevaActividad) {
+
+              // se obtienen todas las sesiones.
+              const Sesiones: Sesion[]=[];
+
+              this.listaSelectores.plantillas.forEach(
+                plantilla => plantilla.sesionesPlantilla.forEach(
+                  sesion => Sesiones.push(sesion)
+                )
+              );
+
+              this.replicaActividad.sesion = Sesiones.filter(sesion => sesion.idSesion === this.sesionNuevaActividad)[0];
+
+            }
+          }
+
 
         }
 
@@ -516,33 +546,43 @@ export class MostrarActividadComponent implements OnInit {
   }
 
   onAceptarEdicionCreacionActividad() {
+
+    this.store
+    .pipe(
+      select(FromActividadesSelectors.selectCreandoModificandoActividad),
+      filter(creandoModificandoActividad => !creandoModificandoActividad)
+    )
+    .subscribe(
+      creandoModificandoActividad => {
+
+        if (this.returnUrl) {
+          this.router.navigateByUrl(this.returnUrl);
+        }
+        else {
+          this.router.navigateByUrl('horarios/index');
+        }
+
+      }
+    );
+
     switch (this.modoPanelActividad) {
+
+
       case this.EnumModosPanelActividad.EDITAR:
-        this.store
-          .pipe(
-            select(FromActividadesSelectors.selectCreandoModificandoActividad),
-            filter(creandoModificandoActividad => !creandoModificandoActividad)
-          )
-          .subscribe(
-            creandoModificandoActividad => {
-
-              if (this.returnUrl) {
-                this.router.navigateByUrl(this.returnUrl);
-              }
-              else {
-                this.router.navigateByUrl('horarios/index');
-              }
-
-            }
-          );
-
         this.store.dispatch(FromActividadesActions.modificarActividad({ actividad: this.replicaActividad }));
+        break;
+
+        case this.EnumModosPanelActividad.CREAR:
+          this.store.dispatch(FromActividadesActions.crearActividad({ actividad: this.replicaActividad }));
         break;
 
       default:
         break;
     }
   }
+
+
+
 }
 
 

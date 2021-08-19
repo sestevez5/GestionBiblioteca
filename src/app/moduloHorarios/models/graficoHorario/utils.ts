@@ -164,5 +164,4 @@ export class Utilidades
   static convertirTiempoEnCadenaHora: any = d3.timeFormat("%I:%M");
 
 
-
 }

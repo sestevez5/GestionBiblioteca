@@ -188,6 +188,7 @@ export class actividadesEffects {
                 map(
                   actividad => {
 
+                    console.log(actividad);
                     return actividadesActions.modificarActividadOK({ actividad: { id: actividad.idActividad, changes: { ...actividad } } });
                   }
 
@@ -197,6 +198,87 @@ export class actividadesEffects {
                     error => {
 
                       return of(actividadesActions.modificarActividadError({ error: 'error' }))
+                    }
+
+                )
+              ) // fin pipe
+
+                }
+      ) // Fin mergeMap
+
+    ) // fin this.action$.pipe
+
+  ); // fin createeffect
+
+  crearActividad$: Observable<Action> = createEffect(
+    () =>
+      this.action$.pipe(
+        ofType(actividadesActions.crearActividad),
+
+        mergeMap(
+          action => {
+
+            this.store.dispatch(PrincipalActions.cargandoDatos({ mensaje: "Creando actividad" }));
+            return this.horarioService.crearActividad(action.actividad)
+              .pipe(
+                tap(value => {
+
+                  this.store.dispatch(PrincipalActions.cargadoDatos())
+                }),
+
+                map(
+                  actividad => {
+                    return actividadesActions.crearActividadOK({ actividad: actividad });
+
+                  }
+
+                  ), // Fin map
+
+                  catchError(
+                    error => {
+
+                      console.log(error);
+                      return of(actividadesActions.crearActividadError({ error: 'error' }))
+                    }
+
+                )
+              ) // fin pipe
+
+                }
+      ) // Fin mergeMap
+
+    ) // fin this.action$.pipe
+
+  ); // fin createeffect
+
+  eliminarActividad$: Observable<Action> = createEffect(
+    () =>
+      this.action$.pipe(
+        ofType(actividadesActions.eliminarActividad),
+
+        mergeMap(
+          action => {
+
+            this.store.dispatch(PrincipalActions.cargandoDatos({ mensaje: "Creando actividad" }));
+            return this.horarioService.eliminarActividad(action.idActividad)
+              .pipe(
+                tap(value => {
+
+                  this.store.dispatch(PrincipalActions.cargadoDatos())
+                }),
+
+                map(
+                  idActividad => {
+                    return actividadesActions.eliminarActividadOK({ idActividad: idActividad });
+
+                  }
+
+                  ), // Fin map
+
+                  catchError(
+                    error => {
+
+                      return of(actividadesActions.eliminarActividadError({ error: 'error' }))
                     }
 
                 )

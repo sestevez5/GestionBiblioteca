@@ -1,3 +1,8 @@
+
+import { IActividad } from './../IActividad.model';
+import { Actividad } from './../actividad.model';
+import { sectionWiseTask } from './../../../apps/tasks/tasks-data';
+import { parametrosGrafico } from './../parametrosGrafico.model';
 import { select } from '@ngrx/store';
 import { DiaSemana } from '../diaSemana.model';
 import { IActividadesSesion } from '../actividadesSesion.model';
@@ -6,7 +11,6 @@ import { Sesion } from '../sesion';
 import { Plantilla } from '../plantilla.model';
 import { Subject } from 'rxjs';
 import { ActividadG, EstadoActividad } from '../actividadG.model';
-import { Actividad } from '../actividad.model';
 import * as d3 from 'd3';
 import { Parametros } from './parametros';
 import { Utilidades } from './utils';
@@ -19,7 +23,12 @@ export class HorarioG {
   elementoRaiz: any;
   plantilla: Plantilla;
   actividadesG: ActividadG[] = [];
-  eventos$ = new Subject<ActividadG>();
+  seleccionActividad$ = new Subject<ActividadG>();
+  moverActividad$ = new Subject<ActividadG>();
+  duplicarActividad$ = new Subject<ActividadG>();
+  eliminarActividad$ = new Subject<ActividadG>();
+  anyadirActividadEnSesion = new Subject<Sesion>();
+
 
   constructor(elementoRaiz: string) {
     this.elementoRaiz = elementoRaiz;
@@ -465,6 +474,7 @@ export class HorarioG {
     panelCuerpoSesionConActividades.append('clipPath')
       .attr('id', (d: any) => 'rectanguloRecortador' + d.sesion.idSesion)
       .append('rect')
+      .attr('id', (d:any) => 'rectRecortador' + d.sesion.idSesion)
       .attr('height', (d: any) => {
       const coordenadaHoraInicio = Parametros.parametrosGrafico.escalas.escalaVertical(Utilidades.convertirCadenaHoraEnTiempo(d.sesion.horaInicio));
       const coordenadaHoraFin = Parametros.parametrosGrafico.escalas.escalaVertical(Utilidades.convertirCadenaHoraEnTiempo(d.sesion.horaFin));
@@ -526,9 +536,13 @@ export class HorarioG {
       // Añadimos el rectángulo
       // -------------------------------------------------------------------
       const porcentajeAnchoZonaSeleccion = Parametros.parametrosGrafico.actividades.porcentajeZonaSeleccionActividad;
-      panelesActividades.select('.panelActividadZonaSeleccion').append('rect')
+
+      const anchoZonaSeleccion = parseFloat(anchoSesion) * Parametros.parametrosGrafico.actividades.porcentajeZonaSeleccionActividad / 100;
+
+
+      const rectZonaSeleccion = panelesActividades.select('.panelActividadZonaSeleccion').append('rect')
           .attr('class', 'rectActividad')
-          .attr('width', parseFloat(anchoSesion) * porcentajeAnchoZonaSeleccion / 100)
+          .attr('width', anchoZonaSeleccion)
           .attr('height', altoPanelActividadesEnActividadSesiones)
           .attr('fill', '#fafafa')
           .on("click", (d: any, i: any, e: any) => {
@@ -545,10 +559,49 @@ export class HorarioG {
               Utilidades.marcarActividadesComoSeleccionadas([i.idActividad]);
           });
 
+
+
+
+      const botonesMoverDuplicar = panelesActividades.select('.panelActividadZonaSeleccion').append('svg:foreignObject')
+        .attr("width", anchoZonaSeleccion + 'px')
+        .attr("height", altoPanelActividadesEnActividadSesiones + 'px')
+        .append("xhtml:div")
+        .style('text-align', 'center')
+        .style("font-size", (d: any) => {
+          return anchoZonaSeleccion / 1.5 + 'px';
+        })
+        .html('<i class="fas fa fa-expand-arrows-alt"></i><i class="fas fa fa-copy"></i>');
+
+        const botonEliminar = panelesActividades.select('.panelActividadZonaSeleccion').append('svg:foreignObject')
+        .attr("width", anchoZonaSeleccion + 'px')
+        .attr("height", altoPanelActividadesEnActividadSesiones + 'px')
+        .attr("y",altoPanelActividadesEnActividadSesiones-2*anchoZonaSeleccion)
+        .append("xhtml:div")
+        .style('text-align', 'center')
+        .style("font-size", (d: any) => {
+          return anchoZonaSeleccion / 1.5 + 'px';
+        })
+          .html('<i class="fas fa fa-trash" > </i><i class="fas fa fa-plus" > </i>')
+          .on("click", (d: any, i: any, e: any) => {
+            const botonEliminarActividadPulsado: boolean = d.srcElement.classList.contains('fa-trash') ? true : false;
+            const botonAnyadirActividadPulsado: boolean = d.srcElement.classList.contains('fa-plus') ? true : false;
+
+            if (botonEliminarActividadPulsado) { this.eliminarActividad$.next(i); };
+            if (botonAnyadirActividadPulsado) { this.anyadirActividadEnSesion.next(i.sesion)};
+
+
+          })
+
+
+      // .on("mouseout", (d: any) => d3.select('body').style("cursor", "default"))
+      // .on("mouseover", (d: any) => d3.select('body').style("cursor", "pointer") );
+
+
+
       // -------------------------------------------------------------------
       // Añadimos funcionalidad drag and drop
       // -------------------------------------------------------------------
-      this.anyadirFuncionalidadDragAndDrop(panelesActividades);
+      this.anyadirFuncionalidadDragAndDrop(botonesMoverDuplicar);
 
 
 
@@ -566,17 +619,14 @@ export class HorarioG {
       'width': panelActividad.attr('width')
     }
     const panelZonaSeleccionActividad = panelActividad.append('g')
-    .attr('class', 'panelActividadZonaSeleccion')
-    .attr('id', 'panelActividadZonaSeleccion_' + actividad.idActividad)
+      .attr('class', 'panelActividadZonaSeleccion')
+      .attr('id', 'panelActividadZonaSeleccion_' + actividad.idActividad);
+
+
 
     const porcentajeAnchoZonaSeleccion = Parametros.parametrosGrafico.actividades.porcentajeZonaSeleccionActividad;
 
-    // panelZonaSeleccionActividad.append('rect')
-    // .attr('class', 'rectActividadZonaSeleccion')
-    //   .attr('id', 'rectActividadZonaSeleccion_' + actividad.idActividad)
-    //   .attr('height', panelActividadBBox.height)
-    //   .attr('width', panelActividadBBox.width*porcentajeAnchoZonaSeleccion/100)
-    //   .attr('fill', '#b1b1b1');
+
   };
   private renderizarSeccionesPanelesActividades(panelActividad: any, actividad: ActividadG, numeroSeccion: number, listaCadenas: string[]) {
 
@@ -627,7 +677,7 @@ export class HorarioG {
       .attr('opacity', '0')
 
       .on("click", (d: any, i: any, e: any) => {
-          this.eventos$.next(i);
+          this.seleccionActividad$.next(i);
        });
 
     const panelContenidolistaCadenas = this.renderizarContenidoPanelesSeccionesActividades(panelContenidoSeccion, listaCadenas);
@@ -791,63 +841,142 @@ export class HorarioG {
 
   }
 
-  private anyadirFuncionalidadDragAndDrop(panelesActividades: any) {
+  private anyadirFuncionalidadDragAndDrop(elementoDom: any) {
 
 
-    panelesActividades.call(
+    elementoDom.call(
       d3.drag()
-        .on("start", this.dragstarted)
-        .on("drag", this.dragged)
-        .on("end", this.dragended));
+        .on("start", this.dragstarted.bind(this))
+        .on("drag", this.dragged.bind(this))
+        .on("end", this.dragended.bind(this))
+    );
 
 
   }
 
-  private dragstarted(event:any,d:any) {
+  private dragstarted(event: any, d: any) {
 
     //----------------------------------------------------------------------------------------------------
     //Paso 1: Creamos un clon de la actividad que vamos a mover (variable actividadClon)
-    //----------------------------------------------------------------------------------------------------
-    var actividadClon: any = d3.select('g#panelActividad_' + event.subject.idActividad).clone(true);
-    // Tendrá el mismo nombre con el sufijo 'Clone'
+    //---------------------------------------------------------------------------------------------------
+
+    // Creamos un duplicado de la actividad que vamos a deslazar
+    const actividadClon: any = d3.select('g#panelActividad_' + event.subject.idActividad).clone(true);
+
+    // Eliminamos los botones de acción de la actividad duplicada
+    actividadClon.select('foreignObject').remove();
+
+    // Cambiamos el valor de los atributos que procedan en la actividad duplicada.
     actividadClon.attr('id', 'panelActividadClone_' + event.subject.idActividad);
 
-    // Hay que recortarla. Nótese que el recorte lo daba la sesión y ahora no hay sesión
-    actividadClon.attr('clip-path','url(#rectanguloRecortadorParaClon)')
 
+    // Establecemos un recorte rectangular del tamaño de su sesión.
+    actividadClon.attr('clip-path','url(#rectanguloRecortadorParaClon)')
     actividadClon.append('clipPath')
       .attr('id', 'rectanguloRecortadorParaClon')
       .append('rect')
       .attr('height', actividadClon.attr('height'))
       .attr('width', actividadClon.attr('width'));
 
-    //----------------------------------------------------------------------------------------------------
-    //Paso 2: La actividad clonada será hija directa del nodo panel horario.
-    //----------------------------------------------------------------------------------------------------
-    var panelHorario: any = d3.select('g#panelHorario');
+    // La actividad clonada será hija directa de "PanelHorario"
+    const panelHorario: any = d3.select('g#panelHorario');
     panelHorario.node().appendChild(actividadClon.node());
 
-    //----------------------------------------------------------------------------------------------------
-    //Paso 3: Establecer variables iniciales
-    //----------------------------------------------------------------------------------------------------
-    d.valorInicialX = event.x;
-    d.valorInicialY = event.y;
-    d.alto = panelHorario.attr('height');
-    d.ancho = panelHorario.attr('width') - actividadClon.attr('width');
-    d.sesiones = d3.selectAll('.panelSesion');
 
-    console.log(d.sesiones.data());
 
+    //----------------------------------------------------------------------------------------------------
+    //Paso 2: Establecer variables iniciales
+    //----------------------------------------------------------------------------------------------------
+
+    // registramos en la variable 'd' el tipo de accion que terminaremos haciendo
+    // MOVERACTIVIDAD, DUPLICARACTIVIDAD
+
+    // </i><i class="fas fa fa-expand-arrows-alt"></i><i class="fas fa fa-copy"></i > <i class="fas fa fa-trash" >
+    if (event.sourceEvent.toElement.classList.contains('fa-expand-arrows-alt')) {
+      d.accion = 'MOVERACTIVIDAD'
+    }
+    else if (event.sourceEvent.toElement.classList.contains('fa-copy')) {
+      d.accion = 'DUPLICARACTIVIDAD'
+    }
+
+     d.valorInicialX = this.obtenerRectanguloAbsolutoSesion.bind(this, event.subject.sesion as Sesion)().AbsX;
+     d.valorInicialY = this.obtenerRectanguloAbsolutoSesion.bind(this, event.subject.sesion as Sesion)().AbsY;
+
+    actividadClon.attr('transform', 'translate(' + d.valorInicialX + ',' + d.valorInicialY + ')')
+
+    d.altoPanelHorario = panelHorario.attr('height');
+    d.anchoPanelHorario = panelHorario.attr('width') - actividadClon.attr('width');
+    d.altoActividadFlotante = actividadClon.attr('height');
+    d.anchoActividadFlotante = actividadClon.attr('width');
+    d.dx = d.valorInicialX;
+    d.dy = d.valorInicialY;
+
+    d.datosActividad = new Actividad();
+
+    d.datosActividad = {
+      idActividad: event.subject.idActividad,
+      sesion: event.subject.sesion,
+      detalleActividad: event.subject.detalleActividad,
+      docentes: event.subject.docentes,
+      asignaturas: event.subject.asignaturas,
+      grupos: event.subject.grupos,
+      dependencia: event.subject.dependencia,
+      periodoVigencia: event.subject.periodoVigencia,
+    };
+
+    d.puntoMedio =  {
+      puntoMedioX: parseFloat(d.dx)+parseFloat(d.anchoActividadFlotante) /2, puntoMedioY: parseFloat(d.dy)+parseFloat(d.altoActividadFlotante) /2
+    }
+
+
+
+    this.obtenerRectanguloAbsolutoSesiones.bind(this, d3.selectAll('.panelSesion').data() as Sesion[]);
+    d.datosGraficosSesiones = this.obtenerRectanguloAbsolutoSesiones.bind(this, d3.selectAll('.panelSesion').data() as Sesion[])();
+    d.altoCabecera = Parametros.parametrosGrafico.panelSesiones.altoCabecera;
+
+    panelHorario.append('rect')
+      .attr('id', 'marcoTransicionMoverActividad')
+      .attr('fill', 'rgba(3,5,6,0.3)')
+      .attr('stroke', 'orange')
+      .attr('stroke-linecap', 'butt')
+      .attr('stroke-width', '2')
 
 
   }
-    private dragged(event:any, d:any) {
-    d.x = clamp(event.x - d.valorInicialX, 0, d.ancho);
-    d.y = clamp(event.y - d.valorInicialY, 0, d.alto);
 
-    var y = d3.select('g#panelActividadClone_' + d.idActividad).attr('transform', 'translate(' + d.x + ',' + d.y + ')');
+  private dragged(event: any, d: any) {
 
-     function clamp(x:any, lo:any, hi:any) {
+
+    d.dx = clamp(d.dx+event.dx, 0, d.anchoPanelHorario);
+    d.dy = clamp(d.dy + event.dy, d.altoCabecera, d.altoPanelHorario - d.altoCabecera);
+
+    d.puntoMedio = {
+      puntoMedioX: parseFloat(d.dx)+parseFloat(d.anchoActividadFlotante) /2, puntoMedioY: parseFloat(d.dy)+parseFloat(d.altoActividadFlotante) /2
+    }
+
+
+    d.sesionSeleccionada1 = d.sesionSeleccionada
+    d.sesionSeleccionada = this.sesionSeleccionada.bind(this, d.puntoMedio, d.datosGraficosSesiones)();
+
+    if ( d.sesionSeleccionada && (d.sesionSeleccionada1 !== d.sesionSeleccionada || !d.sesionSeleccionada1)) {
+
+      d.datosActividad.sesion = this.plantilla.sesionesPlantilla.filter(sesion => sesion.idSesion === d.sesionSeleccionada.idSesion)[0];
+
+       d3.select('#marcoTransicionMoverActividad')
+        .attr('height', d.sesionSeleccionada.alto)
+        .attr('width', d.sesionSeleccionada.ancho)
+        .attr('x', d.sesionSeleccionada.AbsX)
+        .attr('y', d.sesionSeleccionada.AbsY)
+
+
+    }
+
+
+    const actividadFlotante = d3.select('g#panelActividadClone_' + d.idActividad).attr('transform', 'translate(' + d.dx + ',' + d.dy + ')')
+
+
+
+    function clamp(x:any, lo:any, hi:any) {
       return x < lo ? lo : x > hi ? hi : x;
     }
 
@@ -855,9 +984,60 @@ export class HorarioG {
 
   }
 
-  private dragended() {
-    // d3.select(this).attr("stroke", null);
-    console.log('dragended');
+  private dragended(event:any, d:any) {
+    d3.select('g#panelActividadClone_' + d.idActividad).remove();
+    d3.select('#marcoTransicionMoverActividad').remove();
+
+    if (d.accion === 'MOVERACTIVIDAD') {
+      this.moverActividad$.next(d.datosActividad);
+    }
+    else if (d.accion === 'DUPLICARACTIVIDAD') {
+      this.duplicarActividad$.next(d.datosActividad);
+    }
+
+    d.accion = undefined;
+
+
+
   }
+
+  private obtenerRectanguloAbsolutoSesiones(sesiones: Sesion[]): { idSesion: string; AbsX: number; AbsY: number; ancho: number; alto: number;}[] {
+
+    return sesiones.map( sesion => this.obtenerRectanguloAbsolutoSesion(sesion));
+  };
+
+  private obtenerRectanguloAbsolutoSesion(sesion: Sesion): { idSesion: string; AbsX: number; AbsY: number; ancho: number; alto: number;} {
+
+    const DiasSemanas = Utilidades.obtenerDiasSemanaHorario();
+
+    const diaSemanaSesion = DiasSemanas.filter(d => d.codigo === sesion.diaSemana)[0];
+    const anchoSesion = parseFloat(Parametros.parametrosGrafico.panelSesiones.anchoSesion ? Parametros.parametrosGrafico.panelSesiones.anchoSesion.toString() : '0');
+    const coordenadaHoraInicio = Parametros.parametrosGrafico.escalas.escalaVertical(Utilidades.convertirCadenaHoraEnTiempo(sesion.horaInicio));
+    const coordenadaHoraFin = Parametros.parametrosGrafico.escalas.escalaVertical(Utilidades.convertirCadenaHoraEnTiempo(sesion.horaFin));
+    const altoSesion = coordenadaHoraFin - coordenadaHoraInicio - Parametros.parametrosGrafico.panelSesiones.altoCabecera;
+    const AbsX = Parametros.parametrosGrafico.escalas.escalaHorizontal(diaSemanaSesion.denominacionLarga);
+    const AbsY = coordenadaHoraInicio+ + Parametros.parametrosGrafico.panelSesiones.altoCabecera;
+
+    return { idSesion:sesion.idSesion, AbsX: parseInt(AbsX), AbsY: parseInt(AbsY), ancho: anchoSesion, alto: altoSesion}
+
+  };
+
+
+  private sesionSeleccionada(puntoMedio: { puntoMedioX: number, puntoMedioY: number }, datosGraficosSesiones: { idSesion: string; AbsX: number; AbsY: number; ancho: number; alto: number; }[]): { idSesion: string; AbsX: number; AbsY: number; ancho: number; alto: number; } {
+
+
+    return datosGraficosSesiones.filter(
+      sesion => {
+
+        return sesion.AbsX <= puntoMedio.puntoMedioX && puntoMedio.puntoMedioX < sesion.AbsX + sesion.ancho && sesion.AbsY <= puntoMedio.puntoMedioY && puntoMedio.puntoMedioY < sesion.AbsY + sesion.alto
+      })[0]
+
+  }
+
+
+
+
+
+
 
 }

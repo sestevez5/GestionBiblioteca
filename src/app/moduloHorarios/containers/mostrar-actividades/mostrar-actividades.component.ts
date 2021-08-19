@@ -1,3 +1,5 @@
+import { Router } from '@angular/router';
+import { Actividad } from './../../models/actividad.model';
 import { ModuloHorarioRootState } from './../../store/index';
 import { Store, select } from '@ngrx/store';
 import { ParametrosHorario } from './../../models/parametrosHorario.model';
@@ -27,19 +29,36 @@ export class MostrarActividadesComponent implements OnInit {
 
 
   horarioG: HorarioG;
-  @Output() actividadSeleccionadaEvent= new EventEmitter<ActividadG>();
+  @Output() actividadSeleccionadaEvent = new EventEmitter<ActividadG>();
+  @Output() cambioSesionActividadEvent = new EventEmitter<Actividad>();
 
 
-  constructor(private store: Store<ModuloHorarioRootState>) { }
+  constructor(private store: Store<ModuloHorarioRootState>, private router: Router) { }
 
   ngOnInit(): void {
 
     this.horarioG = new HorarioG('div#horario');
-    this.horarioG.eventos$.subscribe(actividad => {
+    this.horarioG.seleccionActividad$.subscribe(actividad => {
       this.actividadSeleccionadaEvent.emit(actividad);
       this.store.dispatch( FromActividadesActions.cargarActividad({ idActividad: actividad.idActividad }))
     });
 
+    this.horarioG.moverActividad$.subscribe(actividad => {
+      this.cambioSesionActividadEvent.emit(actividad);
+      this.store.dispatch( FromActividadesActions.modificarActividad({ actividad: actividad }))
+    });
+
+    this.horarioG.duplicarActividad$.subscribe(actividad => {
+      this.store.dispatch( FromActividadesActions.crearActividad({ actividad: actividad }))
+    });
+
+    this.horarioG.eliminarActividad$.subscribe(actividad => {
+      this.store.dispatch( FromActividadesActions.eliminarActividad({ idActividad: actividad.idActividad }))
+    });
+
+    this.horarioG.anyadirActividadEnSesion.subscribe(sesion => {
+      this.router.navigate(['horarios','nuevaActividad'], { queryParams: { returnUrl: 'horarios/index', idSesion: sesion.idSesion} });
+    });
 
     this.gestionarSubscripcionesStore();
 

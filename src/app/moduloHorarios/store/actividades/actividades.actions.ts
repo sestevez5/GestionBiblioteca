@@ -32,7 +32,7 @@ export const cargarActividadesError    = createAction('[ACTIVIDADES] carga de ac
 // creación de un nuevo actividad.
 export const crearActividad           = createAction('[ACTIVIDADES] crear actividad', props<{ actividad: Actividad }>());
 export const crearActividadOK         = createAction('[ACTIVIDADES] creación de actividad OK', props<{ actividad: Actividad | undefined }>());
-export const crearActividadError     = createAction('[ACTIVIDADES] creación de actividad errónea', props<{ error: string }>());
+export const crearActividadError      = createAction('[ACTIVIDADES] creación de actividad errónea', props<{ error: string }>());
 
 // cargar actividad.
 export const cargarActividad          = createAction('[ACTIVIDADES] cargar actividad', props<{ idActividad: string }>());

@@ -46,9 +46,9 @@ export const selectLunesSemanaSeleccionada = createSelector(
   actividadesState => actividadesState.lunesSemanaSeleccionada
 );
 
-export const selectCreandoModificandoActividad = createSelector(
+export const selectGestionandoActividad = createSelector(
   selectActividades,
-  actividadesState => actividadesState.creandoModificandoActividad
+  actividadesState => actividadesState.gestionandoActividad
 )
 
 

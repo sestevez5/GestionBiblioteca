@@ -1,3 +1,5 @@
+import { ReglaNegocio } from './../../../moduloHelpers/models/reglaNegocio';
+import { Actividad } from './../../models/actividad.model';
 import { IActividad } from './../../models/IActividad.model';
 import { ModuloHorarioRootState } from './../index';
 import { Router } from '@angular/router';
@@ -7,7 +9,7 @@ import { Action, Store, select } from '@ngrx/store';
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, concatMap, switchMap, tap, mergeMap } from 'rxjs/operators';
-import { of, Observable } from 'rxjs';
+import { of, Observable, BehaviorSubject } from 'rxjs';
 import * as PrincipalActions from '../../../moduloPrincipal/store/comunicaciones/comunicaciones.actions';
 import * as actividadesActions from './actividades.actions';
 import * as FromEntidadesHorarioSelectors from '../entidadesHorario/entidadesHorario.selectors';
@@ -72,6 +74,7 @@ export class actividadesEffects {
                   map(
                     actividades => {
                       this.store.dispatch(PrincipalActions.cargadoDatos());
+
                       return actividadesActions.cargarActividadesOK({ actividades: actividades });
                     }),
                   catchError(
@@ -146,7 +149,6 @@ export class actividadesEffects {
 
                 map(
                   actividad => {
-
                      return actividadesActions.cargarActividadOK({ actividad: actividad});
                   }
 
@@ -155,6 +157,7 @@ export class actividadesEffects {
                   catchError(
                     error => {
 
+                      console.log(error);
                       return of(actividadesActions.cargarActividadError({ error: 'error' }))
                     }
 
@@ -188,7 +191,6 @@ export class actividadesEffects {
                 map(
                   actividad => {
 
-                    console.log(actividad);
                     return actividadesActions.modificarActividadOK({ actividad: { id: actividad.idActividad, changes: { ...actividad } } });
                   }
 
@@ -223,12 +225,53 @@ export class actividadesEffects {
               .pipe(
                 tap(value => {
 
-                  this.store.dispatch(PrincipalActions.cargadoDatos())
+                  console.log('hola');
+                      this.store.dispatch(PrincipalActions.cargadoDatos())
                 }),
 
                 map(
-                  actividad => {
-                    return actividadesActions.crearActividadOK({ actividad: actividad });
+                  (actividad_ReglasRotas: any) => {
+
+                    if (!actividad_ReglasRotas.tipoActividad) {
+
+                      const reglasRotas: ReglaNegocio[] = actividad_ReglasRotas as ReglaNegocio[];
+                      return PrincipalActions.anyadirReglasRotas({ reglasRotas: reglasRotas });
+                    }
+                    else {
+                      return actividadesActions.accionNulaActividad();
+
+                    }
+
+
+
+                   // Caso en el que el método ha devuelto una actividad
+                    // if (actividad.tipoActividad) {
+
+                    //   const a: Actividad = actividad as Actividad
+
+                    //   return this.store.select(FromEntidadesHorarioSelectors.selectEntidadHorarioActiva)
+                    //     .pipe(
+                    //       map(
+                    //         entidadActiva => {
+
+                    //           if (a.docentes.some(docente => docente.idDocente === entidadActiva.id)) {
+
+                    //             return actividadesActions.crearActividadOK({ actividad: a });
+                    //           } // fin if
+                    //           return actividadesActions.accionNulaActividad();
+                    //         }
+
+                    //       ) // fin map
+                    //     ) // fin pipe
+                    // }
+                    // else {
+
+                    //   new BehaviorSubject<any>(null).next(actividadesActions.accionNulaActividad())
+                    // }//fin if (actividad.tipoActividad)
+
+
+
+
 
                   }
 
@@ -237,7 +280,7 @@ export class actividadesEffects {
                   catchError(
                     error => {
 
-                      console.log(error);
+                      console.log('e:',error);
                       return of(actividadesActions.crearActividadError({ error: 'error' }))
                     }
 

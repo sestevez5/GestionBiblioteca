@@ -31,7 +31,7 @@ export const cargarActividadesError    = createAction('[ACTIVIDADES] carga de ac
 
 // creación de un nuevo actividad.
 export const crearActividad           = createAction('[ACTIVIDADES] crear actividad', props<{ actividad: Actividad }>());
-export const crearActividadOK         = createAction('[ACTIVIDADES] creación de actividad OK', props<{ actividad: Actividad | undefined }>());
+export const crearActividadOK         = createAction('[ACTIVIDADES] creación de actividad OK', props<{ actividad: Actividad }>());
 export const crearActividadError      = createAction('[ACTIVIDADES] creación de actividad errónea', props<{ error: string }>());
 
 // cargar actividad.
@@ -69,4 +69,11 @@ export const seleccionarSemana     = createAction('[SEMANAS] seleccionar semana'
 // ---------------------------------------------
 export const cargarParametrosHorario         = createAction('[PARAMETROS_HORARIO] cargar parámetros del horario');
 export const cargarParametrosHorarioOK       = createAction('[PARAMETROS_HORARIO] carga de parámetros del horario OK', props<{ parametrosHorario: ParametrosHorario }>());
-export const cargarParametrosHorarioError    = createAction('[PARAMETROS_HORARIO] carga de parámetros del horario errónea', props<{ error: string }>());
+export const cargarParametrosHorarioError = createAction('[PARAMETROS_HORARIO] carga de parámetros del horario errónea', props<{ error: string }>());
+
+//--------------------------------------------
+// Acción nula
+//--------------------------------------------
+export const accionNulaActividad          = createAction('[ACTIVIDADES] accion Nula');
+
+

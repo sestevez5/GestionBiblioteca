@@ -1,3 +1,4 @@
+import { ReglaNegocio } from './../../../moduloHelpers/models/reglaNegocio';
 import { mensajeUsuario } from './../../../shared/models/mensajeUsuario.model';
 import { createAction, props } from '@ngrx/store';
 
@@ -18,3 +19,13 @@ export const generarMensajeUsuario = createAction(
 export const descartarMensajeUsuario = createAction(
   '[PRINCIPAL] descartar mensaje al usuario'
 );
+
+export const anyadirReglasRotas = createAction(
+  '[PRINCIPAL] añadir reglas rotas',
+  props<{ reglasRotas: ReglaNegocio[] }>()
+);
+
+export const eliminarReglasRotas = createAction(
+  '[PRINCIPAL] eliminar reglas rotas'
+);
+

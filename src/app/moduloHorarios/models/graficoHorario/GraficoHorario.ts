@@ -65,6 +65,10 @@ export class HorarioG {
     );
 
     Utilidades.calcularFactorAnchoActividadesG(this.actividadesG, this.actividadesG);
+    Utilidades.calcularColoresActividadesG(this.actividadesG);
+
+
+
 
     this.renderizarPanelesActividades();
 
@@ -660,7 +664,7 @@ export class HorarioG {
     panelSeccion.append('rect')
       .attr('height', panelSeccionBBox.height)
       .attr('width', panelSeccionBBox.width)
-      .attr('fill', '#D6EAF8');
+      .attr('fill', actividad.color);
 
     const panelContenidoSeccion = panelSeccion
       .append('g')
@@ -922,6 +926,7 @@ export class HorarioG {
       grupos: event.subject.grupos,
       dependencia: event.subject.dependencia,
       periodoVigencia: event.subject.periodoVigencia,
+      tipoActividad: event.subject.tipoActividad,
     };
 
     d.puntoMedio =  {
@@ -988,10 +993,12 @@ export class HorarioG {
     d3.select('g#panelActividadClone_' + d.idActividad).remove();
     d3.select('#marcoTransicionMoverActividad').remove();
 
+
     if (d.accion === 'MOVERACTIVIDAD') {
       this.moverActividad$.next(d.datosActividad);
     }
     else if (d.accion === 'DUPLICARACTIVIDAD') {
+
       this.duplicarActividad$.next(d.datosActividad);
     }
 

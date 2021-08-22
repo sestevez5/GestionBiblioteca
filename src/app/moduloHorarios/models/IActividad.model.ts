@@ -7,4 +7,5 @@ export interface IActividad {
   asignaturas: string[];
   dependencia: string;
   idPeriodoVigencia: string;
+  idTipoActividad: string;
 }

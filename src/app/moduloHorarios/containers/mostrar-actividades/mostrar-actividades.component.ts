@@ -39,24 +39,28 @@ export class MostrarActividadesComponent implements OnInit {
 
     this.horarioG = new HorarioG('div#horario');
     this.horarioG.seleccionActividad$.subscribe(actividad => {
+      console.log('horarioG.seleccionActividad$');
       this.actividadSeleccionadaEvent.emit(actividad);
       this.store.dispatch( FromActividadesActions.cargarActividad({ idActividad: actividad.idActividad }))
     });
 
     this.horarioG.moverActividad$.subscribe(actividad => {
-      this.cambioSesionActividadEvent.emit(actividad);
+
       this.store.dispatch( FromActividadesActions.modificarActividad({ actividad: actividad }))
     });
 
     this.horarioG.duplicarActividad$.subscribe(actividad => {
+
       this.store.dispatch( FromActividadesActions.crearActividad({ actividad: actividad }))
     });
 
     this.horarioG.eliminarActividad$.subscribe(actividad => {
+
       this.store.dispatch( FromActividadesActions.eliminarActividad({ idActividad: actividad.idActividad }))
     });
 
     this.horarioG.anyadirActividadEnSesion.subscribe(sesion => {
+
       this.router.navigate(['horarios','nuevaActividad'], { queryParams: { returnUrl: 'horarios/index', idSesion: sesion.idSesion} });
     });
 

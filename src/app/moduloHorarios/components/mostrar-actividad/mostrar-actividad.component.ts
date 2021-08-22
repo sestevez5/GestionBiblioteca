@@ -1,3 +1,5 @@
+import { TipoMensaje } from './../../../shared/models/mensajeUsuario.model';
+import { TipoActividad } from './../../models/tipoActividad.model';
 import { Grupo } from './../../models/grupo.model';
 import { Docente } from './../../models/docente.model';
 import { Dependencia } from './../../models/dependencia.model';
@@ -123,11 +125,12 @@ export class MostrarActividadComponent implements OnInit {
               this.replicaActividad = new Actividad();
               this.replicaActividad.detalleActividad = '';
               this.replicaActividad.dependencia = null;
-
+              this.replicaActividad.tipoActividad = null;
               this.replicaActividad.docentes = [];
               this.replicaActividad.grupos = [];
               this.replicaActividad.asignaturas = [];
               this.replicaActividad.alumnos = [];
+
 
             break;
 
@@ -153,6 +156,7 @@ export class MostrarActividadComponent implements OnInit {
   //--------------------------------------------------
   private actualizarentidadMantenimiento( entidadMantenimiento: EnumEntidadMantenimiento) {
     this.entidadMantenimiento = entidadMantenimiento;
+    console.log('entidadMantenimiento:',this.entidadMantenimiento);
     switch (entidadMantenimiento) {
 
       case EnumEntidadMantenimiento.PERIODOSVIGENCIA:
@@ -172,6 +176,26 @@ export class MostrarActividadComponent implements OnInit {
         this.textoCabeceraPanelMantenimiento = "Selector de periodos de vigencia";
 
       break;
+
+
+      case EnumEntidadMantenimiento.TIPOSACTIVIDADES:
+
+        this.modalidadMantenimiento = EnumModalidadMantenimiento.SELECCIONSIMPLE;
+        this.selectorMultiple = false;
+        this.datosSelectorActivo = this.listaSelectores.tiposActividad
+          .map(tipoActividad => {
+            return {
+              id: tipoActividad.idTipoActividad,
+              texto: tipoActividad.denominacionLarga,
+              leyenda: tipoActividad.codigo
+            }
+          });
+
+        this.elementoPorDefectoEnSelectorSimple = this.replicaActividad.tipoActividad? this.datosSelectorActivo.filter(tipoActividad => this.replicaActividad.tipoActividad.idTipoActividad === tipoActividad.id)[0]: undefined;
+        this.textoCabeceraPanelMantenimiento = "Selector de tipos de actividad";
+
+
+        break;
 
       case EnumEntidadMantenimiento.PLANTILLAS:
 
@@ -319,6 +343,7 @@ export class MostrarActividadComponent implements OnInit {
       .subscribe(
         listaSelectores =>
         {
+  
           if (listaSelectores) {
             this.listaSelectores = listaSelectores;
 
@@ -350,14 +375,20 @@ export class MostrarActividadComponent implements OnInit {
 
 
   }
-  private convertirItemSeleccionadoEnEntidad(): Sesion | PeriodoVigencia | Dependencia | Docente[] | Grupo[] | Asignatura[] | string {
+  private convertirItemSeleccionadoEnEntidad(): Sesion | PeriodoVigencia | Dependencia | Docente[] | Grupo[] | Asignatura[] | TipoActividad | string {
     switch (this.entidadMantenimiento) {
 
       case EnumEntidadMantenimiento.PERIODOSVIGENCIA:
 
         return this.listaSelectores.periodosVigencia
           .filter(periodoVigenca => periodoVigenca.idPeriodoVigencia === this.elementosSeleccionados[0].id)[0];
-      break;
+        break;
+
+        case EnumEntidadMantenimiento.TIPOSACTIVIDADES:
+
+          return this.listaSelectores.tiposActividad
+            .filter(tiposActividad => tiposActividad.idTipoActividad === this.elementosSeleccionados[0].id)[0];
+        break;
 
       case EnumEntidadMantenimiento.PLANTILLAS:
 
@@ -500,7 +531,12 @@ export class MostrarActividadComponent implements OnInit {
 
       case EnumEntidadMantenimiento.PLANTILLAS:
         this.replicaActividad.sesion =  this.convertirItemSeleccionadoEnEntidad() as Sesion;
-      break;
+        break;
+
+        case EnumEntidadMantenimiento.TIPOSACTIVIDADES:
+        this.replicaActividad.tipoActividad = this.convertirItemSeleccionadoEnEntidad() as TipoActividad;
+
+        break;
 
       case EnumEntidadMantenimiento.PERIODOSVIGENCIA:
         this.replicaActividad.periodoVigencia = this.convertirItemSeleccionadoEnEntidad() as PeriodoVigencia;
@@ -549,11 +585,11 @@ export class MostrarActividadComponent implements OnInit {
 
     this.store
     .pipe(
-      select(FromActividadesSelectors.selectCreandoModificandoActividad),
-      filter(creandoModificandoActividad => !creandoModificandoActividad)
+      select(FromActividadesSelectors.selectGestionandoActividad),
+      filter(gestionandoActividad => !gestionandoActividad)
     )
     .subscribe(
-      creandoModificandoActividad => {
+      gestionandoActividad => {
 
         if (this.returnUrl) {
           this.router.navigateByUrl(this.returnUrl);
@@ -587,14 +623,15 @@ export class MostrarActividadComponent implements OnInit {
 
 
 enum EnumEntidadMantenimiento {
-  TIPOSACTIVIDADES,
-  PERIODOSVIGENCIA,
-  PLANTILLAS,
-  DEPENDENCIAS,
-  DOCENTES,
-  GRUPOS,
-  ASIGNATURAS,
-  DETALLE
+
+  PERIODOSVIGENCIA=1,
+  PLANTILLAS=2,
+  DEPENDENCIAS=3,
+  DOCENTES=4,
+  GRUPOS=5,
+  ASIGNATURAS=6,
+  DETALLE=7,
+  TIPOSACTIVIDADES=8
 }
 
 enum EnumModalidadMantenimiento {

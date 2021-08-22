@@ -1,3 +1,4 @@
+import { selectReglasRotas } from './../../moduloPrincipal/store/comunicaciones/comunicaciones.selectors';
 import { ModuloPrincipalRootState } from './../../moduloPrincipal/store/index';
 import { ToastContainerDirective,ToastrService } from 'ngx-toastr';
 import { mensajeUsuario, TipoMensaje } from './../../shared/models/mensajeUsuario.model';
@@ -10,6 +11,7 @@ import { Router } from '@angular/router';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 import { RootState } from 'src/app/reducers/app.reducer';
 import { Subscription, Observable } from 'rxjs';
+import { ReglaNegocio } from 'src/app/moduloHelpers/models/reglaNegocio';
 
 @Component({
   selector: 'app-full-layout',
@@ -24,6 +26,7 @@ export class FullComponent implements OnInit {
 
   estadoCarga$: Observable<estadoCarga>;
   mensajeUsuario$: Observable<mensajeUsuario>;
+  reglasRotas$: Observable<ReglaNegocio[]>;
   mostrarMensajeUsuario = false;
 
 
@@ -78,7 +81,10 @@ export class FullComponent implements OnInit {
         delay(0)
     );
 
-    // Observar si el sistema se encuentar realizando carga de datos.
+
+    //--------------------------------------------------------
+    // Gestión: Mostrar mensajes al usuario
+    //--------------------------------------------------------
     this.mensajeUsuario$ = this.store
       .pipe(
 
@@ -92,6 +98,24 @@ export class FullComponent implements OnInit {
         this.mostrarMensaje(mensaje);
       }
     );
+
+    //--------------------------------------------------------
+    // Gestión: Mostrar reglas rotas
+    //--------------------------------------------------------
+    this.reglasRotas$ = this.store
+      .pipe(
+
+        select(selectReglasRotas),
+        filter(reglasRotas => reglasRotas.length > 0),
+        delay(0)
+    );
+
+    this.reglasRotas$.subscribe(
+      reglasRotas => {
+        this.mostrarReglasRotas(reglasRotas);
+      }
+    );
+
   }
 
   mostrarMensaje(mensaje: mensajeUsuario) {
@@ -123,7 +147,113 @@ export class FullComponent implements OnInit {
 
 
        }  // Fin switch
+  }
+
+
+  mostrarReglasRotas(reglasRotas: ReglaNegocio[]) {
+
+
+    this.mostrarMensajeUsuario = true;
+
+
+
+        this.toastr.error(reglasRotas[0].denominacionLarga,
+          'La actividad 9 no puede insertarse al ser enviada por un elemento no válido en la agrupación de sentido común. Para ver más detalle debe accionarse otra cosa.',
+          {
+            disableTimeOut: true,
+            positionClass: '.toast-bottom-full-width'
+          })
+          .onTap
+          .pipe(take(1))
+          .subscribe(
+            value => this.mostrarMensajeUsuario = false
+    );
+    this.toastr.error(reglasRotas[0].denominacionLarga,
+      'La actividad 9 no puede insertarse al ser enviada por un elemento no válido en la agrupación de sentido común. Para ver más detalle debe accionarse otra cosa.',
+      {
+        disableTimeOut: true,
+        positionClass: 'toast-container'
+      })
+      .onTap
+      .pipe(take(1))
+      .subscribe(
+        value => this.mostrarMensajeUsuario = false
+    );
+    this.toastr.error(reglasRotas[0].denominacionLarga,
+      'La actividad 9 no puede insertarse al ser enviada por un elemento no válido en la agrupación de sentido común. Para ver más detalle debe accionarse otra cosa.',
+      {
+        disableTimeOut: true,
+        positionClass: 'inline'
+      })
+      .onTap
+      .pipe(take(1))
+      .subscribe(
+        value => this.mostrarMensajeUsuario = false
+    );
+    this.toastr.error(reglasRotas[0].denominacionLarga,
+      'La actividad 9 no puede insertarse al ser enviada por un elemento no válido en la agrupación de sentido común. Para ver más detalle debe accionarse otra cosa.',
+      {
+        disableTimeOut: true,
+        positionClass: 'inline'
+      })
+      .onTap
+      .pipe(take(1))
+      .subscribe(
+        value => this.mostrarMensajeUsuario = false
+    );
+    this.toastr.error(reglasRotas[0].denominacionLarga,
+      'La actividad 9 no puede insertarse al ser enviada por un elemento no válido en la agrupación de sentido común. Para ver más detalle debe accionarse otra cosa.',
+      {
+        disableTimeOut: true,
+        positionClass: 'inline'
+      })
+      .onTap
+      .pipe(take(1))
+      .subscribe(
+        value => this.mostrarMensajeUsuario = false
+    );
+    this.toastr.error(reglasRotas[0].denominacionLarga,
+      'La actividad 9 no puede insertarse al ser enviada por un elemento no válido en la agrupación de sentido común. Para ver más detalle debe accionarse otra cosa.',
+      {
+        disableTimeOut: true,
+        positionClass: 'inline'
+      })
+      .onTap
+      .pipe(take(1))
+      .subscribe(
+        value => this.mostrarMensajeUsuario = false
+    );
+    this.toastr.error(reglasRotas[0].denominacionLarga,
+      'La actividad 9 no puede insertarse al ser enviada por un elemento no válido en la agrupación de sentido común. Para ver más detalle debe accionarse otra cosa.',
+      {
+        disableTimeOut: true,
+        positionClass: 'inline'
+      })
+      .onTap
+      .pipe(take(1))
+      .subscribe(
+        value => this.mostrarMensajeUsuario = false
+    );
+    this.toastr.error(reglasRotas[0].denominacionLarga,
+      'La actividad 9 no puede insertarse al ser enviada por un elemento no válido en la agrupación de sentido común. Para ver más detalle debe accionarse otra cosa.',
+      {
+        disableTimeOut: true,
+        positionClass: 'inline'
+      })
+      .onTap
+      .pipe(take(1))
+      .subscribe(
+        value => this.mostrarMensajeUsuario = false
+    );
+
+
+
+
+
+
+
     }
+
 
 
 

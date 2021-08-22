@@ -1,7 +1,8 @@
+import { ReglaNegocio } from './../../moduloHelpers/models/reglaNegocio';
 import { ListasSelectores } from '../models/listasSelectores.model';
 import { Alumno } from './../models/alumno.model';
 import { Actividad } from './../models/actividad.model';
-import { filter, first, mergeMap } from 'rxjs/operators';
+import { filter, first, mergeMap, catchError } from 'rxjs/operators';
 
 // angular
 import { Injectable } from '@angular/core';
@@ -27,6 +28,8 @@ import { Grupo } from '../models/grupo.model';
 import { Plantilla } from '../models/plantilla.model';
 import { Dependencia } from '../models/dependencia.model';
 import { DiaSemana } from '../models/diaSemana.model';
+import { TipoActividad } from '../models/tipoActividad.model'
+import { EnumTiposReglaNegocio } from 'src/app/moduloHelpers/models/enumerados';
 
 
 @Injectable({
@@ -40,6 +43,7 @@ export class HorarioService {
   asignaturas$: BehaviorSubject<Asignatura[]>;
   plantillas$: BehaviorSubject<Plantilla[]>;
   periodosVigencia$: BehaviorSubject<PeriodoVigencia[]>;
+  tiposActividad$: BehaviorSubject<TipoActividad[]>;
 
   combinacionEntidades$: BehaviorSubject<{
     dependencias: Dependencia[],
@@ -47,7 +51,8 @@ export class HorarioService {
     asignaturas: Asignatura[],
     docentes: Docente[],
     plantillas: Plantilla[],
-    periodosVigencia: PeriodoVigencia[]
+    periodosVigencia: PeriodoVigencia[],
+    tiposActividad: TipoActividad[]
   }>;
 
   diasSemana: DiaSemana[] = [
@@ -68,33 +73,114 @@ export class HorarioService {
       diasSemanaHabiles: ['L','M','J','V'],
     };
 
-  PeriodoVigencia: PeriodoVigencia[] = [
+  tiposActividad: TipoActividad[] =
+  [
     {
-      idPeriodoVigencia: '1',
-      denominacion: 'curso completo',
-      fechaInicio: new Date(2020, 9, 1),
-      fechaFin: new Date(2021, 6, 20),
-      computo: 1
+      idTipoActividad: '1',
+      codigo: 'CCM',
+      denominacionLarga: 'Clase colectiva de una materia',
+      obligaDocentes: true,
+      permiteDocentes: true,
+      obligaAsignaturas: true,
+      permiteAsignaturas: true,
+      obligaGrupos: true,
+      permiteGrupos: true,
+      obligaDetalle: false,
+      permiteDetalle: true,
+      esLectiva: true
+      },
+      {
+        idTipoActividad: '2',
+        codigo: 'GUA',
+        denominacionLarga: 'Guardia',
+        obligaDocentes: true,
+        permiteDocentes: true,
+        obligaAsignaturas: false,
+        permiteAsignaturas: false,
+        obligaGrupos: false,
+        permiteGrupos: false,
+        obligaDetalle: false,
+        permiteDetalle: true,
+        esLectiva: false
+      },
+      {
+        idTipoActividad: '3',
+        codigo: 'RD',
+        denominacionLarga: 'Reunión de departamento',
+        obligaDocentes: true,
+        permiteDocentes: true,
+        obligaAsignaturas: false,
+        permiteAsignaturas: false,
+        obligaGrupos: false,
+        permiteGrupos: false,
+        obligaDetalle: true,
+        permiteDetalle: true,
+        esLectiva: false
+      }
+    ]
+
+  catalogoReglasRotasHorario: ReglaNegocio[] = [
+
+    {
+      idReglaNegocio: '1',
+      codigo: 'TASD',
+      denominacionLarga: 'No de ha definido el tipo de la actividad que se está creando/modificando',
+      tipoReglaNegocio: EnumTiposReglaNegocio.ERROR
     },
 
     {
-      idPeriodoVigencia: '2',
-      denominacion: 'Primer trimestre',
-      fechaInicio: new Date(2020, 9, 1),
-      fechaFin: new Date(2020, 12, 31),
-      computo: 1 / 3
+      idReglaNegocio: '2',
+      codigo: 'SESD',
+      denominacionLarga: 'No de ha asignado una sesión a la actividad que se está creando/editando',
+      tipoReglaNegocio: EnumTiposReglaNegocio.ERROR
     },
 
     {
-      idPeriodoVigencia: '3',
-      denominacion: 'Segundo trimestre',
-      fechaInicio: new Date(2021, 1, 1),
-      fechaFin: new Date(2021, 3, 30),
-      computo: 1 / 3
+      idReglaNegocio: '3',
+      codigo: 'PVSD',
+      denominacionLarga: 'No de ha asignado un periodo de vigencia a la actividad que se está creando/editando',
+      tipoReglaNegocio: EnumTiposReglaNegocio.ERROR
+    },
+
+    {
+      idReglaNegocio: '4',
+      codigo: 'DESD',
+      denominacionLarga: 'No de ha definido el detalle de la actividad que se está creando/modificando',
+      tipoReglaNegocio: EnumTiposReglaNegocio.ERROR
     },
 
 
   ]
+
+
+
+  // PeriodoVigencia: PeriodoVigencia[] = [
+  //   {
+  //     idPeriodoVigencia: '1',
+  //     denominacion: 'curso completo',
+  //     fechaInicio: new Date(2020, 9, 1),
+  //     fechaFin: new Date(2021, 6, 20),
+  //     computo: 1
+  //   },
+
+  //   {
+  //     idPeriodoVigencia: '2',
+  //     denominacion: 'Primer trimestre',
+  //     fechaInicio: new Date(2020, 9, 1),
+  //     fechaFin: new Date(2020, 12, 31),
+  //     computo: 1 / 3
+  //   },
+
+  //   {
+  //     idPeriodoVigencia: '3',
+  //     denominacion: 'Segundo trimestre',
+  //     fechaInicio: new Date(2021, 1, 1),
+  //     fechaFin: new Date(2021, 3, 30),
+  //     computo: 1 / 3
+  //   },
+
+
+  // ]
 
   constructor(private authService: AuthService, private fireBaseDB: AngularFirestore) {
 
@@ -105,6 +191,7 @@ export class HorarioService {
     this.docentes$ = new BehaviorSubject<Docente[]>([]);
     this.plantillas$ = new BehaviorSubject<Plantilla[]>([]);
     this.periodosVigencia$ = new BehaviorSubject<PeriodoVigencia[]>([]);
+    this.tiposActividad$ = new BehaviorSubject<TipoActividad[]>([]);
 
     this.obtenerDocentes()
       .subscribe(docentes => this.docentes$.next(docentes));
@@ -124,6 +211,9 @@ export class HorarioService {
     this.obtenerPeriodosVigencia()
       .subscribe(periodosVigencia => this.periodosVigencia$.next(periodosVigencia));
 
+    this.obtenerTiposActividad()
+      .subscribe(tipoActividad => this.tiposActividad$.next(tipoActividad));
+
     this.combinacionEntidades$= new BehaviorSubject<
     {
       dependencias: Dependencia[],
@@ -131,14 +221,16 @@ export class HorarioService {
       asignaturas: Asignatura[],
       docentes: Docente[],
       plantillas: Plantilla[],
-      periodosVigencia: PeriodoVigencia[]
+      periodosVigencia: PeriodoVigencia[],
+      tiposActividad: TipoActividad[]
     }>({
       dependencias: [],
       grupos: [],
       asignaturas: [],
       docentes: [],
       plantillas: [],
-      periodosVigencia: []
+      periodosVigencia: [],
+      tiposActividad: []
     });
 
     combineLatest(
@@ -147,16 +239,19 @@ export class HorarioService {
       this.asignaturas$,
       this.docentes$,
       this.plantillas$,
-      this.periodosVigencia$])
+      this.periodosVigencia$,
+      this.tiposActividad$
+      ])
       .pipe(
         map(combinacion => {
           return {
-            dependencias: combinacion[0],
-            grupos: combinacion[1],
-            asignaturas: combinacion[2],
-            docentes: combinacion[3],
-            plantillas: combinacion[4],
-            periodosVigencia: combinacion[5]
+            dependencias: combinacion[0] as Dependencia[],
+            grupos: combinacion[1] as Grupo[],
+            asignaturas: combinacion[2] as Asignatura[],
+            docentes: combinacion[3] as Docente[],
+            plantillas: combinacion[4] as Plantilla[],
+            periodosVigencia: combinacion[5] as PeriodoVigencia[],
+            tiposActividad: combinacion[6] as TipoActividad[]
           }
         })
       ).subscribe(combinacion => this.combinacionEntidades$.next(combinacion));
@@ -170,6 +265,12 @@ export class HorarioService {
     const parametrosHorario$ = new BehaviorSubject<ParametrosHorario>(null);
     parametrosHorario$.next(this.parametrosHorario);
     return parametrosHorario$;
+  }
+
+  obtenerTiposActividad(): Observable<TipoActividad[]> {
+    const tiposActividad$ = new BehaviorSubject<TipoActividad[]>(null);
+    tiposActividad$.next(this.tiposActividad);
+    return tiposActividad$;
   }
   obtenerPeriodosVigencia(): Observable<PeriodoVigencia[]>{
     return this.fireBaseDB.collection('periodosVigencia')
@@ -197,6 +298,8 @@ export class HorarioService {
   );
 
   }
+
+
   obtenerPlantillas(): Observable<Plantilla[]> {
     return this.fireBaseDB.collection('plantillas')
     .snapshotChanges()
@@ -447,7 +550,8 @@ export class HorarioService {
           dependencias: combinacion.dependencias,
           periodosVigencia: combinacion.periodosVigencia,
           grupos: combinacion.grupos,
-          plantillas: combinacion.plantillas
+          plantillas: combinacion.plantillas,
+          tiposActividad: combinacion.tiposActividad
         }
         listasSelectores$.next(listasSelectores)
       }
@@ -475,25 +579,56 @@ export class HorarioService {
 
 
 
-  crearActividad(actividad: Actividad): Observable<any> {
+  crearActividad(actividad: Actividad): Observable<Actividad | ReglaNegocio[]>  {
 
 
 
-    const iActividad: IActividad = this.convertirActividadEnIActividad(actividad);
+    const rn: ReglaNegocio[] = [];
+    const resultado$ = new BehaviorSubject<Actividad | ReglaNegocio[]>(null);
 
-    delete iActividad['idActividad'];
+    resultado$.subscribe(
+      v => { console.log('v:', v); }
+    )
 
-    iActividad.detalleActividad = iActividad.detalleActividad ? actividad.detalleActividad : '';
-    iActividad.dependencia = iActividad.dependencia ? iActividad.dependencia : '';
-    iActividad.idPeriodoVigencia = iActividad.idPeriodoVigencia ? iActividad.idPeriodoVigencia : '';
+    if (!actividad.tipoActividad) {
 
-    return from(this.fireBaseDB.collection('actividades').add(iActividad))
-      .pipe(map(reference => {
+      const regla: ReglaNegocio = new ReglaNegocio();
 
-        console.log({ ...actividad, idActividad: reference.id })
+      regla.codigo = '1';
+      regla.denominacionLarga = 'prueba',
+        regla.idReglaNegocio = '1',
+        regla.tipoReglaNegocio = EnumTiposReglaNegocio.WARNING
 
-        return { ...actividad, idActividad: reference.id };
-    } ));
+      rn.push(regla);
+    }
+
+    console.log('tamaño rn', rn.length)
+    if (rn.length > 0) {
+      resultado$.next(rn);
+    }
+    else {
+      const iActividad: IActividad = this.convertirActividadEnIActividad(actividad);
+      delete iActividad['idActividad'];
+
+      iActividad.detalleActividad = iActividad.detalleActividad ? actividad.detalleActividad : '';
+      iActividad.dependencia = iActividad.dependencia ? iActividad.dependencia : '';
+      iActividad.idPeriodoVigencia = iActividad.idPeriodoVigencia ? iActividad.idPeriodoVigencia : '';
+
+      from(this.fireBaseDB.collection('actividades').add(iActividad))
+        .pipe(
+          map(reference => {
+          return { ...actividad, idActividad: reference.id } as Actividad;
+          }
+
+        )// fin map
+
+      ) // Fin pipe
+        .subscribe(
+          actividad => resultado$.next(actividad as Actividad | ReglaNegocio[])
+        );
+    }
+
+    return resultado$;
 
 
 
@@ -529,9 +664,12 @@ export class HorarioService {
               nuevaActividad.detalleActividad = iActividad.detalleActividad;
 
               // JOIN Periodos de vigencia
-
               const periodoVigenciaEnActividad = valor.entidades.periodosVigencia?.filter(periodoVigencia => iActividad.idPeriodoVigencia === periodoVigencia.idPeriodoVigencia);
               nuevaActividad.periodoVigencia = (periodoVigenciaEnActividad && periodoVigenciaEnActividad[0]) ? periodoVigenciaEnActividad[0] : undefined;
+
+             // JOIN Periodos de vigencia
+             const tipoActividadEnActividad = valor.entidades.tiposActividad?.filter(tipoActividad => iActividad.idTipoActividad === tipoActividad.idTipoActividad);
+             nuevaActividad.tipoActividad = (tipoActividadEnActividad && tipoActividadEnActividad[0]) ? tipoActividadEnActividad[0] : undefined;
 
 
               // JOIN Colección de docentes
@@ -630,7 +768,9 @@ export class HorarioService {
       docentes: actividad.docentes?.map( docente => docente.idDocente),
       asignaturas: actividad.asignaturas?.map( asignatura => asignatura.idAsignatura),
       dependencia: actividad.dependencia?.idDependencia,
-      idPeriodoVigencia: actividad.periodoVigencia?.idPeriodoVigencia
+      idPeriodoVigencia: actividad.periodoVigencia?.idPeriodoVigencia,
+      idTipoActividad: actividad.tipoActividad.idTipoActividad
+
 
     }
 

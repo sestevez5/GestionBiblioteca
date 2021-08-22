@@ -116,6 +116,33 @@ export class Utilidades
     });
 
   }
+
+  static calcularColoresActividadesG(actsG: ActividadG[]) {
+
+    const tiposActividad: string[] = [];
+
+
+    // Localizamos todos los diferentes tipos de tipos de actividad y los registramos en TiposActividad.
+    actsG.forEach(
+      actG => {
+        if (!tiposActividad.some(idTipoActividad => idTipoActividad === actG.tipoActividad?.idTipoActividad))
+        { tiposActividad.push(actG.tipoActividad?.idTipoActividad) }
+
+      });
+
+    for (let index = 0; index < tiposActividad.length; index++) {
+      const tipoActividadActual = tiposActividad[index];
+
+      actsG.filter(actG => actG.tipoActividad?.idTipoActividad === tipoActividadActual).forEach(
+        actG => actG.color = Parametros.parametrosGrafico.actividades.colores[index]
+      );
+
+
+    }
+
+}
+
+
   marcarActividadesComoSeleccionadas(identificadoresActividades: string[]) {
     identificadoresActividades.forEach(
       iact => {

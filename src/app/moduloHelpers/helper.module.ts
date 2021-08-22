@@ -21,6 +21,7 @@ import { SelectorListaSimpleComponent } from './components/selector-lista-simple
 import { FormsModule } from '@angular/forms';
 import { CadenabusquedaComponent } from './components/cadenabusqueda/cadenabusqueda.component';
 import { EditorTextoPlanoComponent } from './components/editor-texto-plano/editor-texto-plano.component';
+import { MostrarReglasNegocioComponent } from './components/mostrar-reglas-negocio/mostrar-reglas-negocio.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { EditorTextoPlanoComponent } from './components/editor-texto-plano/edito
     ItemSelectorListaSimpleComponent,
     SelectorListaSimpleComponent,
     CadenabusquedaComponent,
-    EditorTextoPlanoComponent
+    EditorTextoPlanoComponent,
+    MostrarReglasNegocioComponent
   ],
   imports: [
     CommonModule,
@@ -56,7 +58,8 @@ import { EditorTextoPlanoComponent } from './components/editor-texto-plano/edito
     SelectorMultipleDobleListaComponent,
     EditorTextoPlanoComponent,
     SelectorListaSimpleComponent,
-    CadenabusquedaComponent
+    CadenabusquedaComponent,
+    MostrarReglasNegocioComponent
   ]
 })
 export class HelperModule { }

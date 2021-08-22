@@ -22,7 +22,7 @@ export const comunicacionesReducer = createReducer(
     }
   ),
 
-    // Se está realizando la carga de datos.
+    // Se ha generado un mensaje al usuario
   on(
       ComunicacionesAction
       .generarMensajeUsuario,
@@ -31,11 +31,27 @@ export const comunicacionesReducer = createReducer(
       }
   ),
 
-  // Se está realizando la carga de datos.
+  // Se ha eliminado un mensaje al usuario.
   on(
     ComunicacionesAction.descartarMensajeUsuario,
     (state, action) => {
       return { ...state, mensajeUsuario: { tipoMensaje: TipoMensaje.NoMensaje, mensaje: '', observaciones: '' }};
+    }
+  ),
+
+    // Se está realizando la carga de datos.
+  on(
+    ComunicacionesAction.anyadirReglasRotas,
+    (state, action) => {
+      return { ...state, reglasRotas: action.reglasRotas};
+    }
+  ),
+
+  // Se está realizando la carga de datos.
+  on(
+    ComunicacionesAction.eliminarReglasRotas,
+    (state, action) => {
+      return { ...state, reglasRotas: []};
     }
   )
 

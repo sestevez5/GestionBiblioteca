@@ -87,21 +87,6 @@ export const entidadesHorarioReducer = createReducer(
 
 
 
-  // -------------------------------------------------------------------------------
-  // SELECCIONAR ENTIDAD HORARIO
-  // -------------------------------------------------------------------------------
-   // cargando entidad Horario.
-   on(
-    entidadesHorarioActions.seleccionarEntidadHorario,
-    (state, action) => {
-      return {
-        ...state, entidadHorarioActiva: action.entidadHorario
-        // , tipoEntidadActiva: action.tipoEntidadHorario
-        , tipoEntidadActiva: new TipoEntidadHorario(action.tipoEntidadHorario)
-      };
-    }
-  ),
-
 
   // -------------------------------------------------------------------------------
   // MODIFICAR Actividad
@@ -206,6 +191,9 @@ export const entidadesHorarioReducer = createReducer(
       };
     }
   ),
+
+
+
 
 
 )

@@ -7,6 +7,8 @@ import { ScaleControlStyle } from '@agm/core';
 
 
 
+
+
 export const actividadesReducer = createReducer(
   initialActividadesState,
 
@@ -26,14 +28,20 @@ export const actividadesReducer = createReducer(
     actividadesActions.crearActividadOK,
     (state, action) => {
 
-      console.log('antes');
 
       if (!action.actividad) {
         return state
       }
+      else {
 
 
-      return adapter.addOne(action.actividad, { ...state });
+
+        return adapter.addOne(action.actividad, { ...state });
+
+      }
+
+
+
 
     }
   ),
@@ -64,6 +72,7 @@ export const actividadesReducer = createReducer(
     actividadesActions.cargarActividadesOK,
     (state, action) => {
 
+      console.log('action:', action)
       if (state.ids.length === 0 && action.actividades.length === 0) {
         return state;
       }
@@ -101,6 +110,7 @@ export const actividadesReducer = createReducer(
   on(
     actividadesActions.cargarActividadOK,
     (state, action) => {
+
       return { ...state, actividadActiva: action.actividad}
     }
   ),
@@ -155,7 +165,7 @@ export const actividadesReducer = createReducer(
     actividadesActions.eliminarActividad,
     (state, action) => {
       return {
-        ...state, procesandoAccion: true, errorAccion: null
+        ...state, gestionandoActividad: true
       };
     }
     ),
@@ -164,7 +174,7 @@ export const actividadesReducer = createReducer(
     on(
       actividadesActions.eliminarActividadOK,
       (state, action) => {
-        return adapter.removeOne(action.idActividad, { ...state, actividadActiva: undefined})
+        return adapter.removeOne(action.idActividad, { ...state, actividadActiva: undefined, gestionandoActividad: true})
       }
     ),
 
@@ -172,7 +182,7 @@ export const actividadesReducer = createReducer(
     on(
       actividadesActions.eliminarActividadError,
       (state, action) => {
-        return { ...state, actividadActiva: undefined, procesandoAccion: false, errorAccion: action.error};
+        return { ...state, actividadActiva: undefined, gestionandoActividad: true};
       }
   ),
 

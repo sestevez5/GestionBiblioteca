@@ -1,3 +1,4 @@
+import { TipoActividad } from './tipoActividad.model';
 import { IActividad } from './IActividad.model';
 import { Alumno } from './alumno.model';
 import { Dependencia } from './dependencia.model';
@@ -8,6 +9,7 @@ import { Docente } from './docente.model';
 import { Sesion } from './sesion';
 
 export class Actividad {
+  public tipoActividad: TipoActividad;
   public idActividad: string;
   public sesion: Sesion;
   detalleActividad: string;
@@ -19,7 +21,8 @@ export class Actividad {
   alumnos: Alumno[]  // Lazy load
 
   public actualizarActividad(actividad: Actividad): void {
-    this.detalleActividad = actividad.detalleActividad
+    this.tipoActividad = actividad.tipoActividad;
+    this.detalleActividad = actividad.detalleActividad;
     this.sesion = actividad.sesion;
     this.docentes = actividad.docentes;
     this.dependencia = actividad.dependencia;
@@ -38,7 +41,8 @@ export class Actividad {
       docentes: this.docentes.map(docente => docente.idDocente),
       asignaturas: this.asignaturas.map(asignatura => asignatura.idAsignatura),
       dependencia: this.dependencia.idDependencia,
-      idPeriodoVigencia: this.periodoVigencia.idPeriodoVigencia
+      idPeriodoVigencia: this.periodoVigencia.idPeriodoVigencia,
+      idTipoActividad: this.tipoActividad.idTipoActividad
     }
   }
 }

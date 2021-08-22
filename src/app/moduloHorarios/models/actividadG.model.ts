@@ -3,12 +3,13 @@ import { Actividad } from './actividad.model';
 export class ActividadG extends Actividad{
 
   nivelAncho: number;
+  color: string;
   public estado: EstadoActividad;
 
   constructor(actividad: Actividad) {
     super();
     this.idActividad = actividad.idActividad;
-    this.detalleActividad = actividad.detalleActividad
+    this.detalleActividad = actividad.detalleActividad;
     this.sesion = actividad.sesion;
     this.docentes = actividad.docentes;
     this.dependencia = actividad.dependencia;
@@ -16,6 +17,8 @@ export class ActividadG extends Actividad{
     this.asignaturas = actividad.asignaturas;
     this.periodoVigencia = actividad.periodoVigencia;
     this.nivelAncho = 0;
+    this.color = '';
+    this.tipoActividad = actividad.tipoActividad;
 
   }
 

@@ -56,7 +56,8 @@ export class Parametros {
 
     actividades: {
       tamanyoTexto: '12',
-      porcentajeZonaSeleccionActividad: 6
+      porcentajeZonaSeleccionActividad: 6,
+      colores: ['#bde8ef','#ffd4e5','#feffa2','#e0cdff','#fdfd96']
     }
 
   }

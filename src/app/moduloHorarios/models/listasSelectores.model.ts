@@ -1,3 +1,4 @@
+import { TipoActividad } from './tipoActividad.model';
 import { Plantilla } from './plantilla.model';
 import { PeriodoVigencia } from './peridoVigencia';
 import { Asignatura } from './asignatura.model';
@@ -11,5 +12,6 @@ export interface ListasSelectores {
   asignaturas: Asignatura[];
   periodosVigencia: PeriodoVigencia[];
   plantillas: Plantilla[];
+  tiposActividad: TipoActividad[];
 
 }

@@ -9,7 +9,7 @@ export interface actividadesState extends EntityState<Actividad> {
   plantillaActiva: Plantilla;
   lunesSemanaSeleccionada: Date; // null => Se considera que se quiere todo el horario.
   parametrosHorario: ParametrosHorario;
-  creandoModificandoActividad: boolean;
+  gestionandoActividad: boolean;
 }
 
 // Función que devuelve el identificador de la primary key
@@ -38,6 +38,6 @@ export const initialActividadesState: actividadesState = adapter.getInitialState
     plantillaActiva: null,
     lunesSemanaSeleccionada: null,
     parametrosHorario: null,
-    creandoModificandoActividad: false
+    gestionandoActividad: false
   }
 )

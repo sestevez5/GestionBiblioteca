@@ -72,6 +72,8 @@ export class GestionHorarioComponent implements OnInit {
     this.actividadCargada = false;
   }
 
+
+
   //--------------------------------------------------
   // Métodos privados
   //--------------------------------------------------

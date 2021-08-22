@@ -14,11 +14,19 @@
             </td>
             <td>
               <i  *ngIf="this.modoPanelActividad !== this.EnumModosPanelActividad.MOSTRAR"
-                class="fas font-18 fa-edit ml-auto">
+                class="fas font-18 fa-edit ml-auto"
+                (click)="this.onAbrirSelector(EnumEntidadMantenimiento.TIPOSACTIVIDADES)">
               </i>
             </td>
             <td>
-              <p class="font-bold font-18">Clase colectiva de una materia</p>
+
+              <p *ngIf="this.replicaActividad.tipoActividad" class="font-bold form-control-static font-18">
+                {{ this.replicaActividad.tipoActividad.denominacionLarga}}
+              </p>
+              <p *ngIf="!this.replicaActividad.tipoActividad" class="font-bold form-control-static font-18">
+                [No definido]
+              </p>
+
             </td>
 
           </tr>

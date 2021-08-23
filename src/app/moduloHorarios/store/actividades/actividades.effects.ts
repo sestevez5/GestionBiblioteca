@@ -1,3 +1,4 @@
+import { MensajeReglaNegocio } from './../../../moduloHelpers/models/mensajeReglaNegocio';
 import { ReglaNegocio } from './../../../moduloHelpers/models/reglaNegocio';
 import { Actividad } from './../../models/actividad.model';
 import { IActividad } from './../../models/IActividad.model';
@@ -230,12 +231,12 @@ export class actividadesEffects {
                 }),
 
                 map(
-                  (actividad_ReglasRotas: any) => {
+                  (actividad_MensajesReglasRotas: any) => {
 
-                    if (!actividad_ReglasRotas.tipoActividad) {
+                    if (!actividad_MensajesReglasRotas.tipoActividad) {
 
-                      const reglasRotas: ReglaNegocio[] = actividad_ReglasRotas as ReglaNegocio[];
-                      return PrincipalActions.anyadirReglasRotas({ reglasRotas: reglasRotas });
+                      const mensajesReglasRotas: MensajeReglaNegocio[] = actividad_MensajesReglasRotas as MensajeReglaNegocio[];
+                      return PrincipalActions.anyadirMensajesReglasRotas({ mensajesReglasRotas: mensajesReglasRotas });
                     }
                     else {
                       return actividadesActions.accionNulaActividad();

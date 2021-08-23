@@ -27,7 +27,7 @@ export class HorarioG {
   moverActividad$ = new Subject<ActividadG>();
   duplicarActividad$ = new Subject<ActividadG>();
   eliminarActividad$ = new Subject<ActividadG>();
-  anyadirActividadEnSesion = new Subject<Sesion>();
+  anyadirActividadEnSesion$ = new Subject<Sesion>();
 
 
   constructor(elementoRaiz: string) {
@@ -285,7 +285,7 @@ export class HorarioG {
 
     // Definición del panel
     const panelSesion = d3.select(panelDiaSemana).selectAll('g#sesion' + 'pp').data(sesiones).enter().append('g')
-      .attr('transform', d => `translate(${ Parametros.parametrosGrafico.panelSesiones.margenLateral  },${Parametros.parametrosGrafico.escalas.escalaVertical(Utilidades.convertirCadenaHoraEnTiempo(d.horaInicio))})`)
+      .attr('transform', d => `translate(${Parametros.parametrosGrafico.panelSesiones.margenLateral},${Parametros.parametrosGrafico.escalas.escalaVertical(Utilidades.convertirCadenaHoraEnTiempo(d.horaInicio))})`)
       .attr('class', 'panelSesion')
       .attr('id', d => 'ses' + d.idSesion);
 
@@ -304,7 +304,7 @@ export class HorarioG {
       .attr('x', parseInt(anchoSesion) / 2)
       .text(d => d.horaInicio + ' - ' + d.horaFin)
       .attr('y', Parametros.parametrosGrafico.panelSesiones.altoCabecera / 2)
-      .attr('font-size','.5em')
+      .attr('font-size', '.5em')
       .attr('dominant-baseline', 'central')
       .attr('text-anchor', 'middle')
 
@@ -323,6 +323,17 @@ export class HorarioG {
       })
       .attr('width', parseFloat(anchoSesion))
       .attr('fill', Parametros.parametrosGrafico.panelSesiones.colorCuerpo)
+      .on("click", (d: any, e:any) => {
+
+        this.anyadirActividadEnSesion$.next(e);
+      });
+
+
+
+
+
+
+
 
 
 
@@ -568,30 +579,33 @@ export class HorarioG {
 
       const botonesMoverDuplicar = panelesActividades.select('.panelActividadZonaSeleccion').append('svg:foreignObject')
         .attr("width", anchoZonaSeleccion + 'px')
-        .attr("height", altoPanelActividadesEnActividadSesiones + 'px')
+        .attr("height", altoPanelActividadesEnActividadSesiones/2 + 'px')
         .append("xhtml:div")
         .style('text-align', 'center')
         .style("font-size", (d: any) => {
+          if (anchoZonaSeleccion >= 10) { return '10px'}
           return anchoZonaSeleccion / 1.5 + 'px';
         })
-        .html('<i class="fas fa fa-expand-arrows-alt"></i><i class="fas fa fa-copy"></i>');
+        .html('<i class="fas fa fa-expand-arrows-alt"></i><br><i class="fas fa fa-copy"></i>');
 
-        const botonEliminar = panelesActividades.select('.panelActividadZonaSeleccion').append('svg:foreignObject')
+        const panelBotonesAnyadirEliminar = panelesActividades.select('.panelActividadZonaSeleccion').append('svg:foreignObject')
         .attr("width", anchoZonaSeleccion + 'px')
-        .attr("height", altoPanelActividadesEnActividadSesiones + 'px')
-        .attr("y",altoPanelActividadesEnActividadSesiones-2*anchoZonaSeleccion)
+        .attr("height", altoPanelActividadesEnActividadSesiones/2 + 'px')
+        .attr("y",altoPanelActividadesEnActividadSesiones-30)
         .append("xhtml:div")
         .style('text-align', 'center')
-        .style("font-size", (d: any) => {
+          .style("font-size", (d: any) => {
+
+            if (anchoZonaSeleccion >= 10) { return '10px'}
           return anchoZonaSeleccion / 1.5 + 'px';
         })
-          .html('<i class="fas fa fa-trash" > </i><i class="fas fa fa-plus" > </i>')
+          .html('<i class="fas fa fa-trash" > </i><br><i class="fas fa fa-plus" > </i>')
           .on("click", (d: any, i: any, e: any) => {
             const botonEliminarActividadPulsado: boolean = d.srcElement.classList.contains('fa-trash') ? true : false;
             const botonAnyadirActividadPulsado: boolean = d.srcElement.classList.contains('fa-plus') ? true : false;
 
             if (botonEliminarActividadPulsado) { this.eliminarActividad$.next(i); };
-            if (botonAnyadirActividadPulsado) { this.anyadirActividadEnSesion.next(i.sesion)};
+            if (botonAnyadirActividadPulsado) { this.anyadirActividadEnSesion$.next(i.sesion)};
 
 
           })

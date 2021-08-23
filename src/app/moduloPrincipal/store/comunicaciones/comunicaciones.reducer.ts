@@ -41,17 +41,17 @@ export const comunicacionesReducer = createReducer(
 
     // Se está realizando la carga de datos.
   on(
-    ComunicacionesAction.anyadirReglasRotas,
+    ComunicacionesAction.anyadirMensajesReglasRotas,
     (state, action) => {
-      return { ...state, reglasRotas: action.reglasRotas};
+      return { ...state, mensajesReglasRotas: action.mensajesReglasRotas};
     }
   ),
 
   // Se está realizando la carga de datos.
   on(
-    ComunicacionesAction.eliminarReglasRotas,
+    ComunicacionesAction.eliminarMensajesReglasRotas,
     (state, action) => {
-      return { ...state, reglasRotas: []};
+      return { ...state, mensajesReglasRotas: []};
     }
   )
 

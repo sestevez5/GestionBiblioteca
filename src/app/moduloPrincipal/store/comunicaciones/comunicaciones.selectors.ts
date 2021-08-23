@@ -18,7 +18,7 @@ export const selectMensajeUsuario = createSelector(
 
 export const selectReglasRotas = createSelector(
   selectComunicaciones,
-  comunicaciones => comunicaciones.reglasRotas
+  comunicaciones => comunicaciones.mensajesReglasRotas
 )
 
 

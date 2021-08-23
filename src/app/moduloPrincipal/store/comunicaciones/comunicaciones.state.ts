@@ -1,16 +1,17 @@
-import { ReglaNegocio } from './../../../moduloHelpers/models/reglaNegocio';
+import { MensajeReglaNegocio } from './../../../moduloHelpers/models/mensajeReglaNegocio';
+
 import { mensajeUsuario, TipoMensaje } from './../../../shared/models/mensajeUsuario.model';
 import { estadoCarga } from './../../../shared/models/estadoCarga.model';
 
 export interface ComunicacionesState {
   estadoCarga: estadoCarga;
   mensajeUsuario: mensajeUsuario;
-  reglasRotas: ReglaNegocio[]
+  mensajesReglasRotas: MensajeReglaNegocio[]
 }
 
 export const initialComunicacionesState: ComunicacionesState = {
   mensajeUsuario: { tipoMensaje: TipoMensaje.NoMensaje, mensaje: '', observaciones: '' },
   estadoCarga: { cargando: false, mensajeCarga: '' },
-  reglasRotas: []
+  mensajesReglasRotas: []
 
 };

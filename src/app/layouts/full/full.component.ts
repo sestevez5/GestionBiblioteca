@@ -1,3 +1,4 @@
+import { MensajeReglaNegocio } from './../../moduloHelpers/models/mensajeReglaNegocio';
 import { selectReglasRotas } from './../../moduloPrincipal/store/comunicaciones/comunicaciones.selectors';
 import { ModuloPrincipalRootState } from './../../moduloPrincipal/store/index';
 import { ToastContainerDirective,ToastrService } from 'ngx-toastr';
@@ -9,9 +10,9 @@ import { select, Store } from '@ngrx/store';
 import { Component, OnInit, HostListener, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
-import { RootState } from 'src/app/reducers/app.reducer';
+
 import { Subscription, Observable } from 'rxjs';
-import { ReglaNegocio } from 'src/app/moduloHelpers/models/reglaNegocio';
+
 
 @Component({
   selector: 'app-full-layout',
@@ -26,7 +27,7 @@ export class FullComponent implements OnInit {
 
   estadoCarga$: Observable<estadoCarga>;
   mensajeUsuario$: Observable<mensajeUsuario>;
-  reglasRotas$: Observable<ReglaNegocio[]>;
+  mensajesReglasRotas$: Observable<MensajeReglaNegocio[]>;
   mostrarMensajeUsuario = false;
 
 
@@ -102,17 +103,17 @@ export class FullComponent implements OnInit {
     //--------------------------------------------------------
     // Gestión: Mostrar reglas rotas
     //--------------------------------------------------------
-    this.reglasRotas$ = this.store
+    this.mensajesReglasRotas$ = this.store
       .pipe(
 
         select(selectReglasRotas),
-        filter(reglasRotas => reglasRotas.length > 0),
+        filter(mensajesReglasRotas => mensajesReglasRotas.length > 0),
         delay(0)
     );
 
-    this.reglasRotas$.subscribe(
-      reglasRotas => {
-        this.mostrarReglasRotas(reglasRotas);
+    this.mensajesReglasRotas$.subscribe(
+      mensajesReglasRotas => {
+        this.mostrarReglasRotas(mensajesReglasRotas);
       }
     );
 
@@ -127,7 +128,8 @@ export class FullComponent implements OnInit {
            '',
            {
              disableTimeOut: true,
-             positionClass: 'inline'
+             positionClass: 'inline',
+
            })
            .onTap
            .pipe(take(1))
@@ -150,104 +152,46 @@ export class FullComponent implements OnInit {
   }
 
 
-  mostrarReglasRotas(reglasRotas: ReglaNegocio[]) {
+  mostrarReglasRotas(mensajesReglasRotas: MensajeReglaNegocio[]) {
 
 
     this.mostrarMensajeUsuario = true;
 
+    const titulo = 'R#'+mensajesReglasRotas[0].reglaNegocio.idReglaNegocio+': ['+mensajesReglasRotas[0].reglaNegocio.denominacionLarga+']'
+    const detalle = '<i>'+mensajesReglasRotas[0].detalle+'</i>';
 
 
-        this.toastr.error(reglasRotas[0].denominacionLarga,
-          'La actividad 9 no puede insertarse al ser enviada por un elemento no válido en la agrupación de sentido común. Para ver más detalle debe accionarse otra cosa.',
-          {
-            disableTimeOut: true,
-            positionClass: '.toast-bottom-full-width'
-          })
-          .onTap
-          .pipe(take(1))
-          .subscribe(
-            value => this.mostrarMensajeUsuario = false
-    );
-    this.toastr.error(reglasRotas[0].denominacionLarga,
-      'La actividad 9 no puede insertarse al ser enviada por un elemento no válido en la agrupación de sentido común. Para ver más detalle debe accionarse otra cosa.',
+    this.toastr.success(detalle, titulo,
       {
-        disableTimeOut: true,
-        positionClass: 'toast-container'
-      })
-      .onTap
-      .pipe(take(1))
-      .subscribe(
-        value => this.mostrarMensajeUsuario = false
-    );
-    this.toastr.error(reglasRotas[0].denominacionLarga,
-      'La actividad 9 no puede insertarse al ser enviada por un elemento no válido en la agrupación de sentido común. Para ver más detalle debe accionarse otra cosa.',
-      {
-        disableTimeOut: true,
-        positionClass: 'inline'
-      })
-      .onTap
-      .pipe(take(1))
-      .subscribe(
-        value => this.mostrarMensajeUsuario = false
-    );
-    this.toastr.error(reglasRotas[0].denominacionLarga,
-      'La actividad 9 no puede insertarse al ser enviada por un elemento no válido en la agrupación de sentido común. Para ver más detalle debe accionarse otra cosa.',
-      {
-        disableTimeOut: true,
-        positionClass: 'inline'
-      })
-      .onTap
-      .pipe(take(1))
-      .subscribe(
-        value => this.mostrarMensajeUsuario = false
-    );
-    this.toastr.error(reglasRotas[0].denominacionLarga,
-      'La actividad 9 no puede insertarse al ser enviada por un elemento no válido en la agrupación de sentido común. Para ver más detalle debe accionarse otra cosa.',
-      {
-        disableTimeOut: true,
-        positionClass: 'inline'
-      })
-      .onTap
-      .pipe(take(1))
-      .subscribe(
-        value => this.mostrarMensajeUsuario = false
-    );
-    this.toastr.error(reglasRotas[0].denominacionLarga,
-      'La actividad 9 no puede insertarse al ser enviada por un elemento no válido en la agrupación de sentido común. Para ver más detalle debe accionarse otra cosa.',
-      {
-        disableTimeOut: true,
-        positionClass: 'inline'
-      })
-      .onTap
-      .pipe(take(1))
-      .subscribe(
-        value => this.mostrarMensajeUsuario = false
-    );
-    this.toastr.error(reglasRotas[0].denominacionLarga,
-      'La actividad 9 no puede insertarse al ser enviada por un elemento no válido en la agrupación de sentido común. Para ver más detalle debe accionarse otra cosa.',
-      {
-        disableTimeOut: true,
-        positionClass: 'inline'
-      })
-      .onTap
-      .pipe(take(1))
-      .subscribe(
-        value => this.mostrarMensajeUsuario = false
-    );
-    this.toastr.error(reglasRotas[0].denominacionLarga,
-      'La actividad 9 no puede insertarse al ser enviada por un elemento no válido en la agrupación de sentido común. Para ver más detalle debe accionarse otra cosa.',
-      {
-        disableTimeOut: true,
-        positionClass: 'inline'
-      })
-      .onTap
-      .pipe(take(1))
-      .subscribe(
-        value => this.mostrarMensajeUsuario = false
-    );
+        disableTimeOut: false,
+        positionClass: '.toast-bottom-full-width',
+        timeOut: 1500,
+        enableHtml: true
 
+      })
+      .onTap
+      .subscribe(
+        value => {
+          console.log('asjdhasjkdhjkashk');
+          this.mostrarMensajeUsuario = false
+        }
+      );
 
+    this.toastr.success(detalle, titulo,
+      {
+        disableTimeOut: false,
+        positionClass: '.toast-bottom-full-width',
+        timeOut: 1500,
+        enableHtml: true
 
+      })
+      .onHidden
+      .subscribe(
+        value => {
+          console.log('--------------------');
+          this.mostrarMensajeUsuario = false
+        }
+      );
 
 
 

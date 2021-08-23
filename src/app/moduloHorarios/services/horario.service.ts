@@ -1,3 +1,4 @@
+import { MensajeReglaNegocio } from './../../moduloHelpers/models/mensajeReglaNegocio';
 import { ReglaNegocio } from './../../moduloHelpers/models/reglaNegocio';
 import { ListasSelectores } from '../models/listasSelectores.model';
 import { Alumno } from './../models/alumno.model';
@@ -119,31 +120,31 @@ export class HorarioService {
       }
     ]
 
-  catalogoReglasRotasHorario: ReglaNegocio[] = [
+  catalogoReglasNegocio: ReglaNegocio[] = [
 
     {
-      idReglaNegocio: '1',
+      idReglaNegocio: '1246',
       codigo: 'TASD',
       denominacionLarga: 'No de ha definido el tipo de la actividad que se está creando/modificando',
       tipoReglaNegocio: EnumTiposReglaNegocio.ERROR
     },
 
     {
-      idReglaNegocio: '2',
+      idReglaNegocio: '1712',
       codigo: 'SESD',
       denominacionLarga: 'No de ha asignado una sesión a la actividad que se está creando/editando',
       tipoReglaNegocio: EnumTiposReglaNegocio.ERROR
     },
 
     {
-      idReglaNegocio: '3',
+      idReglaNegocio: '2182',
       codigo: 'PVSD',
       denominacionLarga: 'No de ha asignado un periodo de vigencia a la actividad que se está creando/editando',
       tipoReglaNegocio: EnumTiposReglaNegocio.ERROR
     },
 
     {
-      idReglaNegocio: '4',
+      idReglaNegocio: '4111',
       codigo: 'DESD',
       denominacionLarga: 'No de ha definido el detalle de la actividad que se está creando/modificando',
       tipoReglaNegocio: EnumTiposReglaNegocio.ERROR
@@ -579,30 +580,22 @@ export class HorarioService {
 
 
 
-  crearActividad(actividad: Actividad): Observable<Actividad | ReglaNegocio[]>  {
+  crearActividad(actividad: Actividad): Observable<Actividad | MensajeReglaNegocio[]>  {
 
 
 
-    const rn: ReglaNegocio[] = [];
-    const resultado$ = new BehaviorSubject<Actividad | ReglaNegocio[]>(null);
+    const rn: MensajeReglaNegocio[] = [];
+    const resultado$ = new BehaviorSubject<Actividad | MensajeReglaNegocio[]>(null);
 
-    resultado$.subscribe(
-      v => { console.log('v:', v); }
-    )
 
     if (!actividad.tipoActividad) {
 
-      const regla: ReglaNegocio = new ReglaNegocio();
 
-      regla.codigo = '1';
-      regla.denominacionLarga = 'prueba',
-        regla.idReglaNegocio = '1',
-        regla.tipoReglaNegocio = EnumTiposReglaNegocio.WARNING
 
-      rn.push(regla);
+      rn.push(this.crearMensajeReglaRota('1246','No se ha definido ningun'));
     }
 
-    console.log('tamaño rn', rn.length)
+
     if (rn.length > 0) {
       resultado$.next(rn);
     }
@@ -624,7 +617,7 @@ export class HorarioService {
 
       ) // Fin pipe
         .subscribe(
-          actividad => resultado$.next(actividad as Actividad | ReglaNegocio[])
+          actividad => resultado$.next(actividad as Actividad | MensajeReglaNegocio[])
         );
     }
 
@@ -773,6 +766,15 @@ export class HorarioService {
 
 
     }
+
+  }
+
+  private crearMensajeReglaRota(idRegla: string, mensaje: string): MensajeReglaNegocio {
+
+
+    const regla: ReglaNegocio = this.catalogoReglasNegocio.filter(reglaNegocio => reglaNegocio.idReglaNegocio === idRegla)[0];
+
+    return new MensajeReglaNegocio(regla, mensaje)
 
   }
 

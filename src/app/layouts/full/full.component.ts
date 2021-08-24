@@ -1,3 +1,4 @@
+import { EnumTiposReglaNegocio } from './../../moduloHelpers/models/enumerados';
 import { MensajeReglaNegocio } from './../../moduloHelpers/models/mensajeReglaNegocio';
 import { selectReglasRotas } from './../../moduloPrincipal/store/comunicaciones/comunicaciones.selectors';
 import { ModuloPrincipalRootState } from './../../moduloPrincipal/store/index';
@@ -10,8 +11,11 @@ import { select, Store } from '@ngrx/store';
 import { Component, OnInit, HostListener, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
+import * as FromComunicacionesActions from '../../moduloPrincipal/store/comunicaciones/comunicaciones.actions';
+
 
 import { Subscription, Observable } from 'rxjs';
+import { arraysAreNotAllowedMsg } from '@ngrx/store/src/models';
 
 
 @Component({
@@ -28,7 +32,7 @@ export class FullComponent implements OnInit {
   estadoCarga$: Observable<estadoCarga>;
   mensajeUsuario$: Observable<mensajeUsuario>;
   mensajesReglasRotas$: Observable<MensajeReglaNegocio[]>;
-  mostrarMensajeUsuario = false;
+  mostrarInformacionUsuarioModal = false;
 
 
 
@@ -120,7 +124,7 @@ export class FullComponent implements OnInit {
   }
 
   mostrarMensaje(mensaje: mensajeUsuario) {
-    this.mostrarMensajeUsuario = true;
+    this.mostrarInformacionUsuarioModal = true;
      switch (mensaje.tipoMensaje) {
 
        case TipoMensaje.Error: {
@@ -134,7 +138,7 @@ export class FullComponent implements OnInit {
            .onTap
            .pipe(take(1))
            .subscribe(
-             value => this.mostrarMensajeUsuario = false
+             value => this.mostrarInformacionUsuarioModal = false
            );
 
          break;
@@ -154,48 +158,84 @@ export class FullComponent implements OnInit {
 
   mostrarReglasRotas(mensajesReglasRotas: MensajeReglaNegocio[]) {
 
+    this.mostrarInformacionUsuarioModal = true;
 
-    this.mostrarMensajeUsuario = true;
+    var contadorMensajesReglasRotas: number = mensajesReglasRotas.length;
+
 
     const titulo = 'R#'+mensajesReglasRotas[0].reglaNegocio.idReglaNegocio+': ['+mensajesReglasRotas[0].reglaNegocio.denominacionLarga+']'
-    const detalle = '<i>'+mensajesReglasRotas[0].detalle+'</i>';
+    const detalle = '<i>' + mensajesReglasRotas[0].detalle + '</i>';
+
+    //-----------------------
+    // Mostrar Warning
+    //-----------------------
+    const mensajesWarning = mensajesReglasRotas.filter(
+      reglaRota => reglaRota.reglaNegocio.tipoReglaNegocio === EnumTiposReglaNegocio.WARNING
+    ).sort(function (a, b) {
+       return mensajesReglasRotas.indexOf(a) - mensajesReglasRotas.indexOf(a)
+     }
+    )
+
+    const reglasRotas = mensajesReglasRotas.filter(
+      reglaRota => reglaRota.reglaNegocio.tipoReglaNegocio === EnumTiposReglaNegocio.ERROR
+    ).sort(function (a, b) {
+      return mensajesReglasRotas.indexOf(a) - mensajesReglasRotas.indexOf(b)
+    }
+    )
+
+    mensajesWarning.forEach(
+
+      reglaRota => {
+        const panelWarning = this.toastr.warning(detalle, titulo,
+          {
+            disableTimeOut: true,
+            positionClass: '.toast-bottom-full-width',
+            enableHtml: true
+
+          });
+
+        panelWarning
+          .onTap
+          .subscribe(
+            value => {
+              contadorMensajesReglasRotas--;
+              if (contadorMensajesReglasRotas === 0) {
+                this.mostrarInformacionUsuarioModal ==false;
+              }
+              console.log('cliqueando')
+
+              //this.mostrarInformacionUsuarioModal = false
+            }
+        );
+
+      }
+    );
 
 
-    this.toastr.success(detalle, titulo,
-      {
-        disableTimeOut: false,
-        positionClass: '.toast-bottom-full-width',
-        timeOut: 1500,
-        enableHtml: true
+    reglasRotas.forEach(
 
-      })
-      .onTap
-      .subscribe(
-        value => {
-          console.log('asjdhasjkdhjkashk');
-          this.mostrarMensajeUsuario = false
-        }
-      );
+      reglaRota => {
 
-    this.toastr.success(detalle, titulo,
-      {
-        disableTimeOut: false,
-        positionClass: '.toast-bottom-full-width',
-        timeOut: 1500,
-        enableHtml: true
+        const panelError = this.toastr.error(detalle, titulo,
+          {
+            disableTimeOut: true,
+            positionClass: '.toast-bottom-full-width',
+            enableHtml: true
+          });
 
-      })
-      .onHidden
-      .subscribe(
-        value => {
-          console.log('--------------------');
-          this.mostrarMensajeUsuario = false
-        }
-      );
+          panelError.onTap
+          .subscribe(
+            value => {
+              contadorMensajesReglasRotas--;
+              if (contadorMensajesReglasRotas === 0) {
+                this.mostrarInformacionUsuarioModal = false;
+              }
+            }
+          );
 
+      }
 
-
-
+    );
     }
 
 

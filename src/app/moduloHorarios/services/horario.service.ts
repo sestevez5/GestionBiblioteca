@@ -150,6 +150,13 @@ export class HorarioService {
       tipoReglaNegocio: EnumTiposReglaNegocio.ERROR
     },
 
+    {
+      idReglaNegocio: '1112',
+      codigo: 'ASDO',
+      denominacionLarga: 'No se han añadido docentes a la actividad',
+      tipoReglaNegocio: EnumTiposReglaNegocio.WARNING
+    },
+
 
   ]
 
@@ -592,7 +599,8 @@ export class HorarioService {
 
 
 
-      rn.push(this.crearMensajeReglaRota('1246','No se ha definido ningun'));
+      rn.push(this.crearMensajeReglaRota('1246', 'No se ha definido ningun'));
+      rn.push(this.crearMensajeReglaRota('1112','No se han añadido docentes'));
     }
 
 

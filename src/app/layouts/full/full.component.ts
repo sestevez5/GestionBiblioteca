@@ -8,7 +8,7 @@ import { estadoCarga } from './../../shared/models/estadoCarga.model';
 import { delay, map, tap, filter, take } from 'rxjs/operators';
 import { selectEstadoCarga, selectMensajeUsuario} from '../../moduloPrincipal/store/comunicaciones/comunicaciones.selectors';
 import { select, Store } from '@ngrx/store';
-import { Component, OnInit, HostListener, ViewChild } from '@angular/core';
+import { Component, OnInit, HostListener, ViewChild, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 import * as FromComunicacionesActions from '../../moduloPrincipal/store/comunicaciones/comunicaciones.actions';
@@ -33,6 +33,9 @@ export class FullComponent implements OnInit {
   mensajeUsuario$: Observable<mensajeUsuario>;
   mensajesReglasRotas$: Observable<MensajeReglaNegocio[]>;
   mostrarInformacionUsuarioModal = false;
+  panelesMensajesReglasRotas: any[]=[];
+
+
 
 
 
@@ -109,15 +112,23 @@ export class FullComponent implements OnInit {
     //--------------------------------------------------------
     this.mensajesReglasRotas$ = this.store
       .pipe(
-
         select(selectReglasRotas),
-        filter(mensajesReglasRotas => mensajesReglasRotas.length > 0),
         delay(0)
     );
 
     this.mensajesReglasRotas$.subscribe(
       mensajesReglasRotas => {
-        this.mostrarReglasRotas(mensajesReglasRotas);
+        this.panelesMensajesReglasRotas.map(pmrr => {
+          pmrr.toastRef.close();
+        });
+
+        if (mensajesReglasRotas.length > 0) {
+          this.mostrarInformacionUsuarioModal = true;
+          this.mostrarMensajesReglasRotas(mensajesReglasRotas);
+        }
+        else {
+          this.mostrarInformacionUsuarioModal = false;
+        }
       }
     );
 
@@ -156,85 +167,54 @@ export class FullComponent implements OnInit {
   }
 
 
-  mostrarReglasRotas(mensajesReglasRotas: MensajeReglaNegocio[]) {
+  mostrarMensajesReglasRotas(mensajesReglasRotas: MensajeReglaNegocio[]) {
 
     this.mostrarInformacionUsuarioModal = true;
 
-    var contadorMensajesReglasRotas: number = mensajesReglasRotas.length;
+    var mensajes = mensajesReglasRotas.slice();
 
-
-    const titulo = 'R#'+mensajesReglasRotas[0].reglaNegocio.idReglaNegocio+': ['+mensajesReglasRotas[0].reglaNegocio.denominacionLarga+']'
-    const detalle = '<i>' + mensajesReglasRotas[0].detalle + '</i>';
-
-    //-----------------------
-    // Mostrar Warning
-    //-----------------------
-    const mensajesWarning = mensajesReglasRotas.filter(
-      reglaRota => reglaRota.reglaNegocio.tipoReglaNegocio === EnumTiposReglaNegocio.WARNING
-    ).sort(function (a, b) {
-       return mensajesReglasRotas.indexOf(a) - mensajesReglasRotas.indexOf(a)
-     }
-    )
-
-    const reglasRotas = mensajesReglasRotas.filter(
-      reglaRota => reglaRota.reglaNegocio.tipoReglaNegocio === EnumTiposReglaNegocio.ERROR
-    ).sort(function (a, b) {
-      return mensajesReglasRotas.indexOf(a) - mensajesReglasRotas.indexOf(b)
-    }
-    )
-
-    mensajesWarning.forEach(
-
-      reglaRota => {
-        const panelWarning = this.toastr.warning(detalle, titulo,
-          {
-            disableTimeOut: true,
-            positionClass: '.toast-bottom-full-width',
-            enableHtml: true
-
-          });
-
-        panelWarning
-          .onTap
-          .subscribe(
-            value => {
-              contadorMensajesReglasRotas--;
-              if (contadorMensajesReglasRotas === 0) {
-                this.mostrarInformacionUsuarioModal ==false;
-              }
-              console.log('cliqueando')
-
-              //this.mostrarInformacionUsuarioModal = false
-            }
-        );
-
+    mensajes = mensajes.sort(
+      function (a, b) {
+        return a.reglaNegocio.tipoReglaNegocio < b.reglaNegocio.tipoReglaNegocio ? -1 : 1;
       }
     );
 
 
-    reglasRotas.forEach(
+    mensajes.forEach(
 
-      reglaRota => {
+      mensajeReglaRota => {
 
-        const panelError = this.toastr.error(detalle, titulo,
-          {
-            disableTimeOut: true,
-            positionClass: '.toast-bottom-full-width',
-            enableHtml: true
-          });
+        const titulo = 'R#'+mensajeReglaRota.reglaNegocio.idReglaNegocio+': ['+mensajeReglaRota.reglaNegocio.denominacionLarga+']'
+        const detalle = '<i>' + mensajeReglaRota.detalle + '</i>';
 
-          panelError.onTap
-          .subscribe(
-            value => {
-              contadorMensajesReglasRotas--;
-              if (contadorMensajesReglasRotas === 0) {
-                this.mostrarInformacionUsuarioModal = false;
-              }
-            }
-          );
+        var panelMensaje;
+        if (mensajeReglaRota.reglaNegocio.tipoReglaNegocio === EnumTiposReglaNegocio.WARNING) {
+          panelMensaje = this.toastr.warning(detalle, titulo,
+            {
+              disableTimeOut: true,
+              positionClass: '.toast-bottom-full-width',
+              enableHtml: true
+
+            });
+        }
+        else {
+          panelMensaje = this.toastr.error(detalle, titulo,
+            {
+              disableTimeOut: true,
+              positionClass: '.toast-bottom-full-width',
+              enableHtml: true
+
+            });
+
+        }
+
+        panelMensaje
+        .onTap
+        .subscribe(value => this.store.dispatch(FromComunicacionesActions.desactivarMensajeReglasRota({ idMensajeReglaRota: mensajeReglaRota.idMensaje })));
+
+        this.panelesMensajesReglasRotas.push(panelMensaje);
 
       }
-
     );
     }
 

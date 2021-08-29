@@ -236,42 +236,12 @@ export class actividadesEffects {
                     if (!actividad_MensajesReglasRotas.tipoActividad) {
 
                       const mensajesReglasRotas: MensajeReglaNegocio[] = actividad_MensajesReglasRotas as MensajeReglaNegocio[];
-                      return PrincipalActions.anyadirMensajesReglasRotas({ mensajesReglasRotas: mensajesReglasRotas });
+                      return PrincipalActions.activarMensajesReglasRotas({ mensajesReglasRotas: mensajesReglasRotas });
                     }
                     else {
                       return actividadesActions.accionNulaActividad();
 
                     }
-
-
-
-                   // Caso en el que el método ha devuelto una actividad
-                    // if (actividad.tipoActividad) {
-
-                    //   const a: Actividad = actividad as Actividad
-
-                    //   return this.store.select(FromEntidadesHorarioSelectors.selectEntidadHorarioActiva)
-                    //     .pipe(
-                    //       map(
-                    //         entidadActiva => {
-
-                    //           if (a.docentes.some(docente => docente.idDocente === entidadActiva.id)) {
-
-                    //             return actividadesActions.crearActividadOK({ actividad: a });
-                    //           } // fin if
-                    //           return actividadesActions.accionNulaActividad();
-                    //         }
-
-                    //       ) // fin map
-                    //     ) // fin pipe
-                    // }
-                    // else {
-
-                    //   new BehaviorSubject<any>(null).next(actividadesActions.accionNulaActividad())
-                    // }//fin if (actividad.tipoActividad)
-
-
-
 
 
                   }

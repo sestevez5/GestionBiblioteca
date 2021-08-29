@@ -589,18 +589,16 @@ export class HorarioService {
 
   crearActividad(actividad: Actividad): Observable<Actividad | MensajeReglaNegocio[]>  {
 
-
-
     const rn: MensajeReglaNegocio[] = [];
     const resultado$ = new BehaviorSubject<Actividad | MensajeReglaNegocio[]>(null);
 
 
     if (!actividad.tipoActividad) {
 
-
-
       rn.push(this.crearMensajeReglaRota('1246', 'No se ha definido ningun'));
-      rn.push(this.crearMensajeReglaRota('1112','No se han añadido docentes'));
+      rn.push(this.crearMensajeReglaRota('1112', 'No se han añadido docentes'));
+      rn.push(this.crearMensajeReglaRota('1246', 'No se ha definido ningun'));
+      rn.push(this.crearMensajeReglaRota('1112', 'No se han añadido docentes'));
     }
 
 
@@ -780,6 +778,7 @@ export class HorarioService {
   private crearMensajeReglaRota(idRegla: string, mensaje: string): MensajeReglaNegocio {
 
 
+
     const regla: ReglaNegocio = this.catalogoReglasNegocio.filter(reglaNegocio => reglaNegocio.idReglaNegocio === idRegla)[0];
 
     return new MensajeReglaNegocio(regla, mensaje)
@@ -788,6 +787,12 @@ export class HorarioService {
 
 
 
+
+
+
+
+
 }
+
 
 

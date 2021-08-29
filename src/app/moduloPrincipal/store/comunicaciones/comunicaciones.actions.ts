@@ -21,12 +21,18 @@ export const descartarMensajeUsuario = createAction(
   '[PRINCIPAL] descartar mensaje al usuario'
 );
 
-export const anyadirMensajesReglasRotas = createAction(
+export const activarMensajesReglasRotas = createAction(
   '[PRINCIPAL] añadir mensajes reglas rotas',
   props<{ mensajesReglasRotas: MensajeReglaNegocio[] }>()
 );
 
-export const eliminarMensajesReglasRotas = createAction(
+export const desactivarMensajesReglasRotas = createAction(
   '[PRINCIPAL] eliminar mensajes reglas rotas'
 );
+
+export const desactivarMensajeReglasRota = createAction(
+  '[PRINCIPAL] eliminar mensaje regla rota',
+  props<{ idMensajeReglaRota: string }>()
+);
+
 

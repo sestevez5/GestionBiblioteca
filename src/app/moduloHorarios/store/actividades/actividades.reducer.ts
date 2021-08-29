@@ -34,8 +34,6 @@ export const actividadesReducer = createReducer(
       }
       else {
 
-
-
         return adapter.addOne(action.actividad, { ...state });
 
       }

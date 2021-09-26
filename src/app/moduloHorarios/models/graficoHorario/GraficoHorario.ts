@@ -403,7 +403,7 @@ export class HorarioG {
       .attr('x', parseInt(anchoSesion) / 2)
       .text((d: IActividadesSesion) => d.sesion.horaInicio + ' - ' + d.sesion.horaFin)
       .attr('y', altoCabeceraSesion / 2)
-      .attr('font-size', '.8em')
+      .attr('font-size', '.6em')
       .attr('fill', 'white')
       .attr('dominant-baseline', 'central')
       .attr('text-anchor', 'middle');

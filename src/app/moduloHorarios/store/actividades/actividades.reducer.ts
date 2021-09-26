@@ -70,7 +70,6 @@ export const actividadesReducer = createReducer(
     actividadesActions.cargarActividadesOK,
     (state, action) => {
 
-      console.log('action:', action)
       if (state.ids.length === 0 && action.actividades.length === 0) {
         return state;
       }

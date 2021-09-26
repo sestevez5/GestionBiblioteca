@@ -9,7 +9,7 @@ import { HorarioService } from '../../services/horario.service';
 import { Action, Store, select } from '@ngrx/store';
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, map, concatMap, switchMap, tap, mergeMap } from 'rxjs/operators';
+import { catchError, map, concatMap, switchMap, tap, mergeMap, filter } from 'rxjs/operators';
 import { of, Observable, BehaviorSubject } from 'rxjs';
 import * as PrincipalActions from '../../../moduloPrincipal/store/comunicaciones/comunicaciones.actions';
 import * as actividadesActions from './actividades.actions';
@@ -157,8 +157,6 @@ export class actividadesEffects {
 
                   catchError(
                     error => {
-
-                      console.log(error);
                       return of(actividadesActions.cargarActividadError({ error: 'error' }))
                     }
 
@@ -225,13 +223,17 @@ export class actividadesEffects {
             return this.horarioService.crearActividad(action.actividad)
               .pipe(
                 tap(value => {
-
-                  console.log('hola');
-                      this.store.dispatch(PrincipalActions.cargadoDatos())
+                  this.store.dispatch(PrincipalActions.cargadoDatos())
                 }),
 
+                filter( value => !!value),
+
                 map(
+
+
+
                   (actividad_MensajesReglasRotas: any) => {
+
 
                     if (!actividad_MensajesReglasRotas.tipoActividad) {
 
@@ -250,9 +252,7 @@ export class actividadesEffects {
 
                   catchError(
                     error => {
-
-                      console.log('e:',error);
-                      return of(actividadesActions.crearActividadError({ error: 'error' }))
+                       return of(actividadesActions.crearActividadError({ error: 'error' }))
                     }
 
                 )

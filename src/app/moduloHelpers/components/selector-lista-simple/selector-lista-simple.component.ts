@@ -27,10 +27,15 @@ export class SelectorListaSimpleComponent implements OnInit, OnChanges {
 
   ngOnInit() {
 
+    this.itemsFiltrados = this.items;
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    this.filtrarItems('');
+
+    if (changes.items) {
+      this.filtrarItems('');
+    }
+
 
 
     if (changes.itemSeleccionadoPorDefecto && this.itemSeleccionadoPorDefecto) {
@@ -41,19 +46,29 @@ export class SelectorListaSimpleComponent implements OnInit, OnChanges {
 
   onSeleccionar(item: any) {
     if (this.admiteSeleccionInterna) {
-       this.itemSeleccionado = item;
-      this.SeleccionItems.emit(item);
+      if (item === this.itemSeleccionado) {
+        this.itemSeleccionado = null;
+      }
+      else {
+        this.itemSeleccionado = item;
+      }
+
+      this.SeleccionItems.emit(this.itemSeleccionado);
 
     }
 
   }
 
   OnChangeCadenaBusqueda(cadena: string) {
+
+
     this.filtrarItems(cadena);
   }
 
 
   private filtrarItems(cadena: string) {
+
+    
     if (cadena && cadena.length > 0) {
 
       this.itemsFiltrados = this.items.filter(
@@ -61,10 +76,14 @@ export class SelectorListaSimpleComponent implements OnInit, OnChanges {
           const cadenaParaFiltro = item[this.camposConfig.texto] + '~' + item[this.camposConfig.leyenda];
           return (cadenaParaFiltro.indexOf(cadena) !== -1);
         }
-      )
-    } else this.itemsFiltrados = this.items;
+      );
 
 
+
+    }
+    else {
+      this.itemsFiltrados = this.items;
+    }
 
 
   }

@@ -51,7 +51,6 @@ export const comunicacionesReducer = createReducer(
   on(
     ComunicacionesAction.desactivarMensajesReglasRotas,
     (state, action) => {
-      console.log('todas');
       return { ...state, mensajesReglasRotas: []};
     }
   ),
@@ -60,10 +59,7 @@ export const comunicacionesReducer = createReducer(
     ComunicacionesAction.desactivarMensajeReglasRota,
     (state, action) => {
 
-      console.log('reglas viejas', state);
-      console.log('id a buscar', action.idMensajeReglaRota);
       const mensajesActivos = state.mensajesReglasRotas.filter(mensaje => mensaje.idMensaje !== action.idMensajeReglaRota);
-      console.log(mensajesActivos);
       return { ...state, mensajesReglasRotas: mensajesActivos};
     }
   )

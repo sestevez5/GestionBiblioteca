@@ -3,8 +3,9 @@
 
   <div *ngIf="this.modelo === 'lista'" class="mt-2 panelListaSeleccion">
     <ul class="list-group m-0 p-0">
+      
       <div class="item" *ngFor="let item of this.itemsFiltrados" (click)="onSeleccionar(item)" >
-        <app-item-selector-lista-simple
+               <app-item-selector-lista-simple
         [modelo]="'lista'"
         [conFoto]="this.camposConfig.imagen"
         [marcado]="item === this.itemSeleccionado"
@@ -17,6 +18,7 @@
   </div>
 
   <div *ngIf="this.modelo === 'celdas'" class="card-deck mt-2 panelListaSeleccion">
+
 
       <div *ngFor="let item of this.itemsFiltrados" >
         <app-item-selector-lista-simple

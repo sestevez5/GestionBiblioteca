@@ -157,38 +157,15 @@ export class HorarioService {
       tipoReglaNegocio: EnumTiposReglaNegocio.WARNING
     },
 
+    {
+      idReglaNegocio: '1113',
+      codigo: 'ASDE',
+      denominacionLarga: 'No se ha asignado una dependencia a la actividad',
+      tipoReglaNegocio: EnumTiposReglaNegocio.WARNING
+    },
+
 
   ]
-
-
-
-  // PeriodoVigencia: PeriodoVigencia[] = [
-  //   {
-  //     idPeriodoVigencia: '1',
-  //     denominacion: 'curso completo',
-  //     fechaInicio: new Date(2020, 9, 1),
-  //     fechaFin: new Date(2021, 6, 20),
-  //     computo: 1
-  //   },
-
-  //   {
-  //     idPeriodoVigencia: '2',
-  //     denominacion: 'Primer trimestre',
-  //     fechaInicio: new Date(2020, 9, 1),
-  //     fechaFin: new Date(2020, 12, 31),
-  //     computo: 1 / 3
-  //   },
-
-  //   {
-  //     idPeriodoVigencia: '3',
-  //     denominacion: 'Segundo trimestre',
-  //     fechaInicio: new Date(2021, 1, 1),
-  //     fechaFin: new Date(2021, 3, 30),
-  //     computo: 1 / 3
-  //   },
-
-
-  // ]
 
   constructor(private authService: AuthService, private fireBaseDB: AngularFirestore) {
 
@@ -306,7 +283,6 @@ export class HorarioService {
   );
 
   }
-
 
   obtenerPlantillas(): Observable<Plantilla[]> {
     return this.fireBaseDB.collection('plantillas')
@@ -585,21 +561,24 @@ export class HorarioService {
       .pipe(map(value => actividad));
   }
 
-
-
   crearActividad(actividad: Actividad): Observable<Actividad | MensajeReglaNegocio[]>  {
 
-    const rn: MensajeReglaNegocio[] = [];
+    var rn: MensajeReglaNegocio[] = [];
     const resultado$ = new BehaviorSubject<Actividad | MensajeReglaNegocio[]>(null);
 
-
     if (!actividad.tipoActividad) {
-
-      rn.push(this.crearMensajeReglaRota('1246', 'No se ha definido ningun'));
-      rn.push(this.crearMensajeReglaRota('1112', 'No se han añadido docentes'));
-      rn.push(this.crearMensajeReglaRota('1246', 'No se ha definido ningun'));
-      rn.push(this.crearMensajeReglaRota('1112', 'No se han añadido docentes'));
+      rn.push(this.crearMensajeReglaRota('1246', 'El tipo de actividad es obligatorio'));
+    };
+    if (!actividad.tipoActividad) {
+      rn.push(this.crearMensajeReglaRota('2182', 'Es necesario establecer un periodo de vigencia'));
     }
+    if (actividad.docentes && actividad.docentes.length === 0) {
+      rn.push(this.crearMensajeReglaRota('1112', 'la actividad no se reflejará en el horario de ningún docente'))
+    }
+    if (!actividad.dependencia) {
+      rn.push(this.crearMensajeReglaRota('1113', 'la actividad no se reflejará en el horario de ninguna dependencia'))
+    }
+
 
 
     if (rn.length > 0) {

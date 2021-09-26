@@ -92,7 +92,8 @@ export class MostrarActividadComponent implements OnInit {
         }
 
         if (params.idSesion) {
-          this.sesionNuevaActividad= params['idSesion']
+          this.sesionNuevaActividad = params['idSesion'];
+
       }
 
 
@@ -156,7 +157,7 @@ export class MostrarActividadComponent implements OnInit {
   //--------------------------------------------------
   private actualizarentidadMantenimiento( entidadMantenimiento: EnumEntidadMantenimiento) {
     this.entidadMantenimiento = entidadMantenimiento;
-    console.log('entidadMantenimiento:',this.entidadMantenimiento);
+
     switch (entidadMantenimiento) {
 
       case EnumEntidadMantenimiento.PERIODOSVIGENCIA:
@@ -343,7 +344,7 @@ export class MostrarActividadComponent implements OnInit {
       .subscribe(
         listaSelectores =>
         {
-  
+
           if (listaSelectores) {
             this.listaSelectores = listaSelectores;
 
@@ -375,10 +376,14 @@ export class MostrarActividadComponent implements OnInit {
 
 
   }
-  private convertirItemSeleccionadoEnEntidad(): Sesion | PeriodoVigencia | Dependencia | Docente[] | Grupo[] | Asignatura[] | TipoActividad | string {
+  private convertirItemSeleccionadoEnEntidad(): Sesion | PeriodoVigencia | Dependencia | Docente[] | Grupo[] | Asignatura[] | TipoActividad | string | null {
+
+    if (!this.elementosSeleccionados[0]) return null; // La selección de elementos no devuelve ningún valor.
+
     switch (this.entidadMantenimiento) {
 
       case EnumEntidadMantenimiento.PERIODOSVIGENCIA:
+
 
         return this.listaSelectores.periodosVigencia
           .filter(periodoVigenca => periodoVigenca.idPeriodoVigencia === this.elementosSeleccionados[0].id)[0];

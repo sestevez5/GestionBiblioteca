@@ -13,6 +13,8 @@ import { Component, OnInit, ViewChild, OnDestroy, ElementRef } from '@angular/co
 import { ModuloHorarioState } from '../../store';
 import * as FromActividadesSelectors from '../../store/actividades/actividades.selectors';
 import * as FromActividadesActions from '../../store/actividades/actividades.actions';
+import * as FromEntidadesHorariosSelectors from '../../store/entidadesHorario/entidadesHorario.selectors';
+
 @Component({
   selector: 'app-nueva-editar-actividad',
   templateUrl: './nueva-editar-actividad.component.html',
@@ -82,6 +84,20 @@ export class NuevaEditarActividadComponent implements OnInit, OnDestroy {
     }
     else {
       // Nueva actividad
+
+      console.log(this.actividad.sesion);
+      this.store
+        .pipe(
+          select(FromEntidadesHorariosSelectors.selectEntidadHorarioActiva),
+        )
+        .subscribe(
+          entidadHorarioActiva => {
+
+            // this.actividad = actividadActiva;
+            // this.construirFormulario(this.actividad)
+          }
+        );
+
       this.construirFormulario(this.actividad);
       this.modoFormulario = 'Crear';
     };
@@ -142,7 +158,6 @@ entidadesHorarioGrupos(): EntidadHorario[] {
   // ------------------------------------------
   // Métodos no implementados.
   // ------------------------------------------
-
   AbrirVentanaModal() {
 
     this.modalRef = this.modalService.open(this.panelModal, {
@@ -156,7 +171,8 @@ entidadesHorarioGrupos(): EntidadHorario[] {
      backdropClass: "modal-backdrop",
    });
 
- }
+  }
+
   onAbrirVentanaModal() {
     this.AbrirVentanaModal();
   }

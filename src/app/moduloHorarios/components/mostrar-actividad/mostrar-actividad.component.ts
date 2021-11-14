@@ -1,3 +1,4 @@
+import { Filter } from 'angular-feather/icons';
 import { TipoMensaje } from './../../../shared/models/mensajeUsuario.model';
 import { TipoActividad } from './../../models/tipoActividad.model';
 import { Grupo } from './../../models/grupo.model';
@@ -25,6 +26,9 @@ import * as FromActividadesSelectors from '../../store/actividades/actividades.s
 import * as FromActividadesActions from '../../store/actividades/actividades.actions';
 import * as FromEnumerados from '../../models/enumerados';
 import { stringify } from '@angular/compiler/src/util';
+import { NgSwitch, NgSwitchCase } from '@angular/common';
+import { EnumTipoEntidadHorario } from '../../models/tipoEntidadHorario.model';
+import { GroupedObservable } from 'rxjs';
 
 
 @Component({
@@ -63,6 +67,7 @@ export class MostrarActividadComponent implements OnInit {
   entidadMantenimiento: EnumEntidadMantenimiento = EnumEntidadMantenimiento.PERIODOSVIGENCIA;
   modalidadMantenimiento: EnumModalidadMantenimiento = null;
   listaSelectores: ListasSelectores;
+  entidadHorarioActiva: EntidadHorario;
 
   datosSelectorActivo: any[];  // Contiene la colección de elementos que llena el selector.
   elementoPorDefectoEnSelectorSimple: any;
@@ -85,25 +90,56 @@ export class MostrarActividadComponent implements OnInit {
     private router: Router,
     private modalService: ModalManager) {
 
-      this.route.queryParams
-      .subscribe(params => {
-        if (params.returnUrl) {
-            this.returnUrl = params['returnUrl']
-        }
 
-        if (params.idSesion) {
-          this.sesionNuevaActividad = params['idSesion'];
-
-      }
-
-
-      });
 
 
     }
 
   ngOnInit(): void {
 
+    console.log('iniciando');
+
+    if (!this.listaSelectores) {
+      this.store.dispatch(FromEntidadesHorarioActions.cargarListaSelectores());
+    }
+
+    this.gestionarSubscripcionesStore();
+
+
+
+
+  }
+
+
+  private gestionarSubscripcionesStore() {
+
+    // ------------------------------------------------------
+    // Obtención de parámetros de la url
+    // ------------------------------------------------------
+    this.route.queryParams
+    .subscribe(params => {
+      if (params.returnUrl) {
+          this.returnUrl = params['returnUrl']
+      }
+
+      if (params.idSesion) {
+        this.sesionNuevaActividad = params['idSesion'];
+
+    }
+
+
+    });
+
+
+    this.store.pipe(
+      select(FromEntidadesHorarioSelectors.selectEntidadHorarioActiva),
+      filter(entidadHorarioActiva => !!entidadHorarioActiva)
+    )
+    .subscribe(entidadHorarioActiva => this.entidadHorarioActiva = entidadHorarioActiva)
+
+    // ------------------------------------------------------
+    // Obtención del tipo de mantenimiento que se va a realizar.
+    // ------------------------------------------------------
     this.route.url.subscribe(
       url => {
 
@@ -121,7 +157,6 @@ export class MostrarActividadComponent implements OnInit {
 
             case 'nuevaActividad':
               this.modoPanelActividad = FromEnumerados.EnumModosPanelActividad.CREAR;
-
 
               this.replicaActividad = new Actividad();
               this.replicaActividad.detalleActividad = '';
@@ -144,13 +179,86 @@ export class MostrarActividadComponent implements OnInit {
         }
       });
 
+    // ------------------------------------------------------
+    // Carga de los selectores
+    // ------------------------------------------------------
+    this.store.pipe(select(FromEntidadesHorarioSelectors.selectListaSelectores))
+      .subscribe(
+        listaSelectores =>
+        {
+
+          if (listaSelectores) {
+            this.listaSelectores = listaSelectores;
+
+
+            // Definir particularidades de PRESELECCIÓN para el CU: Crear una actividad.
+            if (this.modoPanelActividad === this.EnumModosPanelActividad.CREAR) {
+
+              // 1.- Está definida la sesión en la que se va a crear la nueva actividad
+              if (this.sesionNuevaActividad) {
+
+                // se obtienen todas las sesiones.
+                const Sesiones: Sesion[] = [];
+
+                this.listaSelectores.plantillas.forEach(
+                  plantilla => plantilla.sesionesPlantilla.forEach(
+                    sesion => Sesiones.push(sesion)
+                  )
+                );
+                this.replicaActividad.sesion = Sesiones.filter(sesion => sesion.idSesion === this.sesionNuevaActividad)[0];
+              }
+
+
+              // 2.- A partir de la entidad activa precargamos su valor en el selector correspondiente.
+              if (this.entidadHorarioActiva) {
+
+               switch (this.entidadHorarioActiva.tipoEntidad) {
+                case EnumTipoEntidadHorario.DOCENTE:
+                           this.replicaActividad.docentes = this.listaSelectores.docentes.filter(docente => docente.idDocente === this.entidadHorarioActiva.id);
+                   break;
+
+                case EnumTipoEntidadHorario.GRUPO:
+                    this.replicaActividad.grupos= this.listaSelectores.grupos.filter(grupo => grupo.idGrupo === this.entidadHorarioActiva.id);
+                   break;
+
+                 case EnumTipoEntidadHorario.DEPENDENCIA:
+                   this.replicaActividad.dependencia = this.listaSelectores.dependencias.filter(dependencia => dependencia.idDependencia === this.entidadHorarioActiva.id)[0];
+
+                 default:
+                   break;
+               }
+
+              }
+
+              // 3.- Precargamos el tipo de actividad predeterminado.
+              this.replicaActividad.tipoActividad = this.listaSelectores.tiposActividad.filter(tipoActividad => tipoActividad.tipoPredeterminado)[0];
+
+              // 4.- Precargamos el tipo de actividad predeterminado. PENDIENTE DE ARREGLAR EL JARCODEO
+              this.replicaActividad.periodoVigencia = this.listaSelectores.periodosVigencia.filter(pv => pv.idPeriodoVigencia === 'BAdAbX7aNlgZHwvamEsa')[0];
 
 
 
 
-    this.gestionarSubscripcionesStore()
 
+            }
+          }
+
+
+        }
+
+
+    );
+
+    // ------------------------------------------------------
+    // Carga de la entidad seleccionada. <Solo necesario en el CU: Nueva. Permite obtener entidad pro defecto precargada>
+    // ------------------------------------------------------
+    this.store.pipe(
+      select(FromEntidadesHorarioSelectors.selectEntidadHorarioActiva),
+      filter(entidadHorarioActiva => !!entidadHorarioActiva)
+    )
+      .subscribe(entidadHorarioActiva => this.entidadHorarioActiva = entidadHorarioActiva);
   }
+
 
   //--------------------------------------------------
   // Métodos privados
@@ -336,47 +444,7 @@ export class MostrarActividadComponent implements OnInit {
 
       this.store.dispatch(FromActividadesActions.cargarActividad({ idActividad: this.idActividad }));
     }
-  }
-  private gestionarSubscripcionesStore() {
-
-
-    this.store.pipe(select(FromEntidadesHorarioSelectors.selectListaSelectores))
-      .subscribe(
-        listaSelectores =>
-        {
-
-          if (listaSelectores) {
-            this.listaSelectores = listaSelectores;
-
-            if (this.modoPanelActividad === this.EnumModosPanelActividad.CREAR && this.sesionNuevaActividad) {
-
-              // se obtienen todas las sesiones.
-              const Sesiones: Sesion[]=[];
-
-              this.listaSelectores.plantillas.forEach(
-                plantilla => plantilla.sesionesPlantilla.forEach(
-                  sesion => Sesiones.push(sesion)
-                )
-              );
-
-              this.replicaActividad.sesion = Sesiones.filter(sesion => sesion.idSesion === this.sesionNuevaActividad)[0];
-
-            }
-          }
-
-
-        }
-
-
-    );
-    if (!this.listaSelectores) {
-      this.store.dispatch(FromEntidadesHorarioActions.cargarListaSelectores());
-    }
-
-
-
-  }
-  private convertirItemSeleccionadoEnEntidad(): Sesion | PeriodoVigencia | Dependencia | Docente[] | Grupo[] | Asignatura[] | TipoActividad | string | null {
+  }  private convertirItemSeleccionadoEnEntidad(): Sesion | PeriodoVigencia | Dependencia | Docente[] | Grupo[] | Asignatura[] | TipoActividad | string | null {
 
     if (!this.elementosSeleccionados[0]) return null; // La selección de elementos no devuelve ningún valor.
 

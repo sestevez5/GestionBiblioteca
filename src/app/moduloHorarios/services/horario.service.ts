@@ -88,7 +88,8 @@ export class HorarioService {
       permiteGrupos: true,
       obligaDetalle: false,
       permiteDetalle: true,
-      esLectiva: true
+      esLectiva: true,
+      tipoPredeterminado: true
       },
       {
         idTipoActividad: '2',
@@ -102,7 +103,9 @@ export class HorarioService {
         permiteGrupos: false,
         obligaDetalle: false,
         permiteDetalle: true,
-        esLectiva: false
+        esLectiva: false,
+        tipoPredeterminado: false
+
       },
       {
         idTipoActividad: '3',
@@ -116,7 +119,8 @@ export class HorarioService {
         permiteGrupos: false,
         obligaDetalle: true,
         permiteDetalle: true,
-        esLectiva: false
+        esLectiva: false,
+        tipoPredeterminado: false
       }
     ]
 
@@ -584,27 +588,32 @@ export class HorarioService {
     if (rn.length > 0) {
       resultado$.next(rn);
     }
-    else {
-      const iActividad: IActividad = this.convertirActividadEnIActividad(actividad);
-      delete iActividad['idActividad'];
 
-      iActividad.detalleActividad = iActividad.detalleActividad ? actividad.detalleActividad : '';
-      iActividad.dependencia = iActividad.dependencia ? iActividad.dependencia : '';
-      iActividad.idPeriodoVigencia = iActividad.idPeriodoVigencia ? iActividad.idPeriodoVigencia : '';
 
-      from(this.fireBaseDB.collection('actividades').add(iActividad))
-        .pipe(
-          map(reference => {
-          return { ...actividad, idActividad: reference.id } as Actividad;
-          }
+      console.log(rn.filter(rn => rn.reglaNegocio.tipoReglaNegocio === EnumTiposReglaNegocio.ERROR).length);
+      if (rn.filter(rn => rn.reglaNegocio.tipoReglaNegocio === EnumTiposReglaNegocio.ERROR).length === 0)
+        {
+        const iActividad: IActividad = this.convertirActividadEnIActividad(actividad);
+        delete iActividad['idActividad'];
 
-        )// fin map
+        iActividad.detalleActividad = iActividad.detalleActividad ? actividad.detalleActividad : '';
+        iActividad.dependencia = iActividad.dependencia ? iActividad.dependencia : '';
+        iActividad.idPeriodoVigencia = iActividad.idPeriodoVigencia ? iActividad.idPeriodoVigencia : '';
 
-      ) // Fin pipe
-        .subscribe(
-          actividad => resultado$.next(actividad as Actividad | MensajeReglaNegocio[])
-        );
-    }
+        from(this.fireBaseDB.collection('actividades').add(iActividad))
+          .pipe(
+            map(reference => {
+              return { ...actividad, idActividad: reference.id } as Actividad;
+            }
+
+            )// fin map
+
+          ) // Fin pipe
+          .subscribe(
+            actividad => resultado$.next(actividad as Actividad | MensajeReglaNegocio[])
+          );
+        }
+
 
     return resultado$;
 

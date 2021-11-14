@@ -11,5 +11,6 @@ export interface TipoActividad {
   obligaDetalle: boolean;
   permiteDetalle: boolean;
   esLectiva: boolean;
+  tipoPredeterminado: boolean
 
 }

@@ -122,6 +122,7 @@ export class RegistroComponent implements OnInit, OnDestroy {
 
       case 'Modificar': {
 
+
         this.usuariosActivo = this.store
           .pipe(
             select(FromUsuariosSelectors.selectUsuarioActivo),
@@ -130,6 +131,7 @@ export class RegistroComponent implements OnInit, OnDestroy {
           .subscribe(
 
             usuarioActivo => {
+              
 
                   if (this.returnUrl) {
                     this.router.navigateByUrl(this.returnUrl);

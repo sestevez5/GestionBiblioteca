@@ -71,7 +71,7 @@ export class HorarioService {
     {
       horaMinima: '08:00',
       horaMaxima: '16:00',
-      diasSemanaHabiles: ['L','M','J','V'],
+      diasSemanaHabiles: ['L','M','X','J','V'],
     };
 
   tiposActividad: TipoActividad[] =

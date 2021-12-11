@@ -28,7 +28,7 @@ export class CadenabusquedaComponent implements OnInit {
     this._textoFiltro
       .pipe(
         skip(1), // El primer valor del cuadro de texto queremos omitirlo.
-        debounceTime(700),
+        debounceTime(this.tiempoEspera),
         distinctUntilChanged()
       )
       .subscribe(

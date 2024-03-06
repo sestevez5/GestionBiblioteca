@@ -45,7 +45,6 @@ export class HorarioService {
   plantillas$: BehaviorSubject<Plantilla[]>;
   periodosVigencia$: BehaviorSubject<PeriodoVigencia[]>;
   tiposActividad$: BehaviorSubject<TipoActividad[]>;
-
   combinacionEntidades$: BehaviorSubject<{
     dependencias: Dependencia[],
     grupos: Grupo[],
@@ -762,7 +761,6 @@ export class HorarioService {
     }
 
   }
-
   private crearMensajeReglaRota(idRegla: string, mensaje: string): MensajeReglaNegocio {
 
 
